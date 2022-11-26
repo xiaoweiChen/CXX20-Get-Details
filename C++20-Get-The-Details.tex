@@ -1,0 +1,849 @@
+
+\documentclass[11pt,a4paper,UTF8]{book}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+
+\usepackage{fontspec}                  %引入字体设置宏包
+\setmainfont{Times New Roman}             %设置英文正文字体
+% Courier New
+% Book Antique
+\setsansfont{Arial}                    %英文无衬线字体
+\setmonofont{Courier New}              %英文等宽字体
+
+\usepackage{ctex} %导入中文包
+%\usepackage{ulem}
+\usepackage{tocvsec2}
+\usepackage{verbatim}
+
+\usepackage{tabularx}
+\usepackage{booktabs} 
+\usepackage{multirow}
+\usepackage{bbding}
+\usepackage{float}
+\usepackage{xspace}
+\usepackage[none]{hyphenat}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{pifont}
+
+\usepackage{hyperref}  %制作pdf的目录
+\usepackage{subfiles} %使用多文件方式进行
+
+\usepackage{geometry} %设置页边距的包
+\geometry{left=2.5cm,right=2cm,top=2.54cm,bottom=2.54cm} %设置书籍的页边距
+
+\usepackage{url}
+\hypersetup{hidelinks, %去红框
+  colorlinks=true,
+  allcolors=black,
+  pdfstartview=Fit,
+  breaklinks=true
+}
+
+% 调整itemlist中的行间距
+\usepackage{enumitem}
+\setenumerate[1]{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+\setitemize[1]{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+\setdescription{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+
+% 超链接样式设置
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  filecolor=blue,
+  urlcolor=blue,
+  citecolor=cyan,
+}
+
+\usepackage{indentfirst}
+
+\usepackage{listings}
+\usepackage[usenames,dvipsnames,svgnames, x11names]{xcolor}
+
+\usepackage[most]{tcolorbox}
+
+%展示代码
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\definecolor{keywordcolor}{rgb}{0.8,0.1,0.5}
+\definecolor{webgreen}{rgb}{0,.5,0}
+\definecolor{bgcolor}{rgb}{0.92,0.92,0.92}
+
+%定义CMake
+\lstdefinelanguage{CMake}
+{morekeywords={
+    cmake\_minimum\_required,
+    project,
+    add\_executable,
+    add\_library,
+    target\_link\_libraries,
+    cmake\_parse\_arguments,
+    cmake\_language,
+    set, unset,
+    option,
+    string,
+    list,
+    math,
+    message,
+    if, elseif, else, endif,
+    mark\_as\_advanced,
+    foreach, endforeach,
+    while, endwhile,
+    add\_subdirectory, include, return, include\_gurad,
+    function, endfunction,
+    macro, endmacro,
+    find\_package,
+    cmake\_push\_check\_state,
+    cmake\_pop\_check\_state,
+    cmake\_reset\_check\_state,
+    add\_test,
+    set\_tests\_properties, 
+    check\_c\_source\_runs,
+    check\_cxx\_source\_runs,
+    check\_fortran\_source\_runs,
+    check\_source\_runs,
+    check\_compiler\_flag,
+    check\_c\_compiler\_flag,
+    check\_cxx\_compiler\_flag,
+    check\_fortran\_compiler\_flag,
+    check\_symbol\_exists,
+    check\_cxx\_symbol\_exists,
+    check\_linker\_flag,
+    cmake\_policy,
+    set\_property,
+    get\_property,
+    define\_property,
+    get\_cmake\_property,
+    set\_cmake\_property,
+    set\_target\_properties,
+    get\_target\_property,
+    set\_directory\_properties,
+    get\_directory\_property,
+    set\_source\_files\_properties,
+    get\_source\_file\_property,
+    set\_tests\_properties,
+    get\_tests\_property,
+    get\_test\_property,
+    cmake\_print\_properties,
+    cmake\_print\_variables,
+    variable\_watch,
+    include\_guard,
+    target\_link\_options,
+    target\_compile\_definitions,
+    target\_compile\_options,
+    include\_directories,
+    add\_definitions,
+    remove\_definitions,
+    add\_compile\_definitions,
+    add\_compile\_options,
+    link\_libraries,
+    link\_directories,
+    add\_link\_options,
+    target\_include\_directories,
+    target\_compile\_features,
+    add\_custom\_command,
+    add\_custom\_target,
+    execute\_process,
+    cmake\_path,
+    get\_filename\_component,
+    file,
+    configure\_file,
+    generate\_export\_header,
+    export,
+    find\_file,
+    find\_library,
+    find\_package,
+    find\_program,
+    pkg\_check\_modules,
+    pkg\_search\_module,
+    pkg\_get\_variable,
+    add\_test,
+    enable\_testing,
+    set\_tests\_properties,
+    site\_name,
+    ctest\_empty\_binary\_directory,
+    ctest\_start,
+    ctest\_configure,
+    ctest\_submit,
+    ctest\_build,
+    ctest\_memcheck,
+    ctest\_upload,
+    ctest\_test,
+    gtest\_add\_tests,
+    gtest\_discover\_tests,
+    install,
+    write\_basic\_package\_version\_file,
+    configure\_package\_config\_file,
+    cpack\_add\_component,
+    cpack\_add\_install\_type,
+    cpack\_add\_component\_group,
+    ExternalProject\_Add,
+    ExternalProject\_Add\_StepDependencies,
+    ExternalProject\_Get\_Property,
+    ExternalProject\_Add\_Step,
+    FetchContent\_Declare,
+    FetchContent\_GetProperties,
+    FetchContent\_Populate,
+    source\_group,
+    target\_precompile\_headers,
+    qt5\_wrap\_cpp,
+    qt5\_wrap\_ui,
+    qt5\_add\_resources,
+    qt5\_add\_big\_resources,
+    qt5\_add\_binary\_resources,
+    qt5\_add\_translation,
+    qt5\_create\_translation,
+    compile\_definitions,
+    add\_llvm\_component\_library,
+    add\_llvm\_tool,
+    llvm\_multisource,
+    llvm\_test\_data,
+    doxygen\_add\_docs,
+    cmake\_dependent\_option,
+    target\_sources,
+    conan\_cmake\_autodetect,
+    conan\_cmake\_configure,
+    conan\_cmake\_install,
+    doxygen\_add\_docs,
+    check\_source\_compiles,
+    check\_language,
+    enable\_language,
+    add\_dependencies,
+    find\_path,
+    find\_package\_handle\_standard\_args,
+  }, %定义关键字
+  sensitive=false, %是否大小写敏感
+  morecomment=[l]{\#},
+  morestring=[b]",
+  morestring=[d]',
+}
+
+\lstdefinestyle{styleCXX}{
+  language = C++,  
+  backgroundcolor=\color{blue!3!white}, 
+  %basicstyle = \footnotesize,  
+  basicstyle      =   \zihao{-5}\ttfamily,
+  numberstyle     =   \zihao{-5}\ttfamily,   
+  %breakatwhitespace = false,    
+  basewidth       =   0.5em,    
+  breaklines = true,                 
+  captionpos = b,                    
+  commentstyle = \color{mygray}\bfseries,
+  %extendedchars = false,             
+  frame =shadowbox, 
+  framerule=0.5pt,
+  %frameround = fttt,
+  keepspaces=true,
+  keywordstyle=\color{blue}\bfseries, % keyword style
+  otherkeywords={string}, 
+  numbers=left, 
+  numbersep=5pt,
+  numberstyle=\tiny\color{mygray},
+  rulecolor=\color{black},         
+  %showspaces=false,  
+  %showstringspaces=false, 
+  %showtabs=false,    
+  %stepnumber=1,         
+  stringstyle=\color{mymauve},        % string literal style
+  tabsize=2,          
+  columns         =   fixed,
+  flexiblecolumns,                   
+}
+
+
+\lstdefinestyle{styleCMake}{
+  language=CMake,
+  backgroundcolor=\color{blue!3!white}, 
+  basicstyle=\tt, 
+  breakatwhitespace = false,
+  breaklines = true,
+  captionpos = b,
+  commentstyle = \color{mygray}\bfseries, 
+  extendedchars =false,             
+  frame=shadowbox, 
+  tabsize=2,
+  framerule=0.5pt,
+  keepspaces=true,
+  keywordstyle=\color{blue}\bfseries, % keyword style
+  otherkeywords={string}, 
+  rulecolor=\color{black},
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  stepnumber=1,
+  stringstyle=\color{purple},        % string literal style
+}
+
+\lstdefinestyle{stylePython}{
+  language        =   Python, % 语言选Python
+  backgroundcolor=\color{blue!3!white}, 
+  basicstyle      =   \zihao{-5}\ttfamily,
+  numberstyle     =   \zihao{-5}\ttfamily,
+  keywordstyle    =   \color{blue},
+  keywordstyle    =   [2] \color{teal},
+  stringstyle     =   \color{magenta},
+  commentstyle    =   \color{red}\ttfamily,
+  frame = shadowbox, 
+  breaklines      =   true,   % 自动换行，建议不要写太长的行
+  columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+  basewidth       =   0.5em,
+  %basicstyle          =   \sffamily,          % 基本代码风格
+  %keywordstyle        =   \bfseries,          % 关键字风格
+  %commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+  %stringstyle         =   \ttfamily,  % 字符串风格
+  flexiblecolumns,                % 别问为什么，加上这个
+  %numbers             =   left,   % 行号的位置在左边
+  showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+  numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt等宽字体
+  showstringspaces    =   false,
+  captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top上面
+  frame               =   lrtb,   % 显示边框
+  tabsize=2,  
+}
+
+\tcbset{
+  commandshell/.style={
+    listing only,
+    colback=black!75!white,
+    colupper=white,
+    lowerbox=ignored,
+    listing options={
+      language={bash},
+      basicstyle=\ttfamily,
+      columns = fixed,
+      flexiblecolumns
+    }
+}}
+
+\usepackage{tikz}
+
+% URL 正确换行
+% https://liam.page/2017/05/17/help-the-url-command-from-hyperref-to-break-at-line-wrapping-point/
+\makeatletter
+\def\UrlAlphabet{%
+  \do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j%
+  \do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t%
+  \do\u\do\v\do\w\do\x\do\y\do\z\do\A\do\B\do\C\do\D%
+  \do\E\do\F\do\G\do\H\do\I\do\J\do\K\do\L\do\M\do\N%
+  \do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V\do\W\do\X%
+  \do\Y\do\Z}
+\def\UrlDigits{\do\1\do\2\do\3\do\4\do\5\do\6\do\7\do\8\do\9\do\0}
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+\g@addto@macro{\UrlBreaks}{\UrlAlphabet}
+\g@addto@macro{\UrlBreaks}{\UrlDigits}
+\makeatother
+
+% enable subsubsubsection
+% from https://tex.stackexchange.com/练习题/274212/correct-hierarchy-levels-of-pdf-bookmarks-for-custom-section-subsubsubsection
+\usepackage[depth=3]{bookmark}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{4}
+\hypersetup{bookmarksdepth=4}
+
+\makeatletter
+
+\newcommand{\toclevel@subsubsubsection}{4}
+\newcounter{subsubsubsection}[subsubsection]
+
+\renewcommand{\thesubsubsubsection}{\thesubsubsection.\arabic{subsubsubsection}}
+
+\newcommand{\subsubsubsection}{\@startsection{subsubsubsection}{4}{\z@}%
+  {-3.25ex\@plus -1ex \@minus -.2ex}%
+  {1.5ex \@plus .2ex}%
+  {\normalfont\normalsize\bf\bfseries}}
+
+\newcommand*{\l@subsubsubsection}{\@dottedtocline{4}{11em}{5em}}  
+
+\newcommand{\subsubsubsectionmark}[1]{}
+\makeatother
+
+\begin{document}
+\begin{sloppypar} %latex中一行文字出现溢出问题的解决方法
+  %\maketitle
+  
+  \begin{center}
+    \thispagestyle{empty}
+    %\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{cover.jpg}
+    \begin{tikzpicture}[remember picture, overlay, inner sep=0pt]
+      \node at (current page.center) 
+      {\includegraphics[width=\paperwidth, keepaspectratio=false]{cover.png}};
+    \end{tikzpicture}
+    \newpage
+    \thispagestyle{empty}
+    \huge
+    \textbf{C++20} 
+    \\[9pt]
+    \normalsize
+    Get the Details
+    \\[10pt]
+    \normalsize 
+    作者: Rainer Grimm 
+    \\[8pt]
+    \normalsize
+    译者：陈晓伟
+  \end{center}
+  
+  \hspace*{\fill} \\ %插入空行
+  \noindent\textbf{本书概述}
+  
+  这本书既是C++20标准的教程，也是C++20标准的参考资料。会教你如何使用C++20，并提供新C++标准的细节。这里最主要是C++20的四大特性。
+
+  概念(Concept)改变了思考和编程模板的方式，是模板参数的语义类别，可在类型系统中直接表达意图。若出现错误，将出现一条明确的错误信息。
+
+  新的“范围”库(ranges library)，能够直接在容器上执行算法，用管道符号组合算法，并可应用到无限数据流上。
+
+  因为协程(coroutines)，C++中的异步编程成为主流。协程是协作任务、事件循环、无限数据流或管道的基础。
+
+  模块(Modules)克服了头文件的限制，例如：头文件和源文件的分离和预处理器一样过时。最后，可以享受更快的构建时间和更简单的构建包方法。
+
+  \hspace*{\fill} \\ %插入空行
+  \noindent\textbf{将会了解}
+  \begin{itemize}
+    \item 自动生成的比较运算符
+    \item 日期和时区库
+    \item 格式库
+    \item 连续的内存块
+    \item 加强版可中断线程
+    \item 原子智能指针
+    \item 信号量
+    \item 协调原语，如锁存和栅栏
+  \end{itemize}
+  
+  \hspace*{\fill} \\ %插入空行
+  \noindent\textbf{作者简介}
+  
+  \textbf{Rainer Grimm}自1999年以来一直担任软件架构师、团队领导和讲师。2002年，为公司的进一步教育组织了实习生会议。从2002年起，就开始开设培训课程，第一个教程是关于专有管理软件的，但不久之后开始教授Python和C++。在业余时间，喜欢写关于C++，Python和Haskell的文章，也喜欢在会议上发言。每周都会在英语博客\href{https://www.modernescpp.com/}{Modernes Cpp}和由\href{https://www.grimm-jaud.de/index.php/blog}{German blog}主办的德语博客上发表文章。
+  
+  自2016年以来，其一直是一名独立讲师，讲授现代C++和Python的研讨会。可以用不同的语言出版了几本关于现代C++的书，特别是关于并发性的技术书籍。由于其职业素养，一直在寻找教授现代C++的最佳方法。
+  
+  \hspace*{\fill} \\ %插入空行
+  \noindent\textbf{Cippi简介}
+  
+  来介绍一下Cippi。Cippi将在这本书中陪伴你阅读，希望你能喜欢她。
+  
+  \begin{center}
+  \includegraphics[width=0.3\textwidth]{content/Cippi.png}\\
+  我是Cippi，我好奇、聪明，还有“女人味”十足!!
+  \end{center}
+  
+  Beatrix绘制了Cippi。
+  
+  \hspace*{\fill} \\ %插入空行
+  \noindent\textbf{本书相关}
+  \begin{itemize}
+  \item Github地址：\url{https://github.com/xiaoweiChen/CMake-Best-Practices}
+  \end{itemize}
+  \newpage
+  
+  \pagestyle{empty}
+  
+  \tableofcontents
+  \newpage
+
+  \setsecnumdepth{section}
+  
+  \color{white}
+  \section*{\zihao{1}第一部分：About C++}
+  \pagecolor{mygray}
+  \addcontentsline{toc}{section}{第一部分：About C++}
+  \textbf{\subfile{content/1/Section.tex}}
+  \newpage
+  \color{black}
+  \pagecolor{white}
+
+  \subsection*{\zihao{2} 第1章\hspace{0.5cm}Historical Context}
+  \addcontentsline{toc}{subsection}{第1章\hspace{0.5cm}Historical Context}
+  \subfile{content/1/chapter1/0.tex}
+  
+  \subsubsection*{\zihao{3} 1.1.\hspace{0.2cm}C++98}
+  \addcontentsline{toc}{subsubsection}{1.1.\hspace{0.2cm}C++98}
+  \subfile{content/1/chapter1/1.tex}
+  
+  \subsubsection*{\zihao{3} 1.2.\hspace{0.2cm}C++03}
+  \addcontentsline{toc}{subsubsection}{1.2.\hspace{0.2cm}C++03}
+  \subfile{content/1/chapter1/2.tex}
+  
+  \subsubsection*{\zihao{3} 1.3.\hspace{0.2cm}TR1}
+  \addcontentsline{toc}{subsubsection}{1.3.\hspace{0.2cm}TR1}
+  \subfile{content/1/chapter1/3.tex}
+  
+  \subsubsection*{\zihao{3} 1.4.\hspace{0.2cm}C++11}
+  \addcontentsline{toc}{subsubsection}{1.4.\hspace{0.2cm}C++11}
+  \subfile{content/1/chapter1/4.tex}
+  
+  \subsubsection*{\zihao{3} 1.5.\hspace{0.2cm}C++14}
+  \addcontentsline{toc}{subsubsection}{1.5.\hspace{0.2cm}C++14}
+  \subfile{content/1/chapter1/5.tex}
+  
+  \subsubsection*{\zihao{3} 1.6.\hspace{0.2cm}C++17}
+  \addcontentsline{toc}{subsubsection}{1.6.\hspace{0.2cm}C++17}
+  \subfile{content/1/chapter1/6.tex}
+  \newpage
+  
+  \subsection*{\zihao{2} 第2章\hspace{0.5cm}Standardization}
+  \addcontentsline{toc}{subsection}{第2章\hspace{0.5cm}Standardization}
+  \subfile{content/1/chapter2/0.tex}
+  
+  \subsubsection*{\zihao{3} 2.1.\hspace{0.2cm}Stage 3}
+  \addcontentsline{toc}{subsubsection}{2.1.\hspace{0.2cm}Stage 3}
+  \subfile{content/1/chapter2/1.tex}
+  
+  \subsubsection*{\zihao{3} 2.2.\hspace{0.2cm}Stage 2}
+  \addcontentsline{toc}{subsubsection}{2.2.\hspace{0.2cm}Stage 2}
+  \subfile{content/1/chapter2/2.tex}
+  
+  \subsubsection*{\zihao{3} 2.3.\hspace{0.2cm}Stage 1}
+  \addcontentsline{toc}{subsubsection}{2.3.\hspace{0.2cm}Stage 1}
+  \subfile{content/1/chapter2/3.tex}
+  \newpage
+  
+  \color{white}
+  \section*{\zihao{1}第二部分：A Quick Overview of C++20}
+  \pagecolor{mygray}
+  \addcontentsline{toc}{section}{第二部分：A Quick Overview of C++20}
+  \textbf{\subfile{content/2/Section.tex}}
+  \newpage
+  \color{black}
+  \pagecolor{white}
+  
+  \subsection*{\zihao{2} 第3章\hspace{0.5cm}C++20}
+  \addcontentsline{toc}{subsection}{第3章\hspace{0.5cm}C++20}
+  \subfile{content/2/chapter3/0.tex}
+  
+  \subsubsection*{\zihao{3} 3.1.\hspace{0.2cm}The Big Four}
+  \addcontentsline{toc}{subsubsection}{3.1.\hspace{0.2cm}The Big Four}
+  \subfile{content/2/chapter3/1.tex}
+  
+  \subsubsection*{\zihao{3} 3.2.\hspace{0.2cm}Core Language}
+  \addcontentsline{toc}{subsubsection}{3.2.\hspace{0.2cm}Core Language}
+  \subfile{content/2/chapter3/2.tex}
+  
+  \subsubsection*{\zihao{3} 3.3.\hspace{0.2cm}The Standard Library}
+  \addcontentsline{toc}{subsubsection}{3.3.\hspace{0.2cm}The Standard Library}
+  \subfile{content/2/chapter3/3.tex}
+  
+  \subsubsection*{\zihao{3} 3.4.\hspace{0.2cm}Concurrency}
+  \addcontentsline{toc}{subsubsection}{3.4.\hspace{0.2cm}Concurrency}
+  \subfile{content/2/chapter3/4.tex}
+  \newpage
+  
+  \color{white}
+  \section*{\zihao{1}第三部分：The Details}
+  \pagecolor{mygray}
+  \addcontentsline{toc}{section}{第三部分：The Details}
+  \textbf{\subfile{content/3/Section.tex}}
+  \newpage
+  \color{black}
+  \pagecolor{white}
+  
+  \subsection*{\zihao{2} 第4章\hspace{0.5cm}Core Language}
+  \addcontentsline{toc}{subsection}{第4章\hspace{0.5cm}Core Language}
+  \subfile{content/3/chapter4/0.tex}
+  
+  \subsubsection*{\zihao{3} 4.1.\hspace{0.2cm}Concepts}
+  \addcontentsline{toc}{subsubsection}{4.1.\hspace{0.2cm}Concepts}
+  \subfile{content/3/chapter4/1.tex}
+  
+  \subsubsection*{\zihao{3} 4.2.\hspace{0.2cm}Modules}
+  \addcontentsline{toc}{subsubsection}{4.2.\hspace{0.2cm}Modules}
+  \subfile{content/3/chapter4/2.tex}
+  
+  \subsubsection*{\zihao{3} 4.3.\hspace{0.2cm}Three-Way Comparison Operator}
+  \addcontentsline{toc}{subsubsection}{4.3.\hspace{0.2cm}Three-Way Comparison Operator}
+  \subfile{content/3/chapter4/3.tex}
+  
+  \subsubsection*{\zihao{3} 4.4.\hspace{0.2cm}Designated Initialization}
+  \addcontentsline{toc}{subsubsection}{4.4.\hspace{0.2cm}Designated Initialization}
+  \subfile{content/3/chapter4/4.tex}
+  
+  \subsubsection*{\zihao{3} 4.5.\hspace{0.2cm}consteval and constinit}
+  \addcontentsline{toc}{subsubsection}{4.5.\hspace{0.2cm}consteval and constinit}
+  \subfile{content/3/chapter4/5.tex}
+  
+  \subsubsection*{\zihao{3} 4.6.\hspace{0.2cm}Template Improvements}
+  \addcontentsline{toc}{subsubsection}{4.6.\hspace{0.2cm}Template Improvements}
+  \subfile{content/3/chapter4/6.tex}
+  
+  \subsubsection*{\zihao{3} 4.7.\hspace{0.2cm}Lambda Improvements}
+  \addcontentsline{toc}{subsubsection}{4.7.\hspace{0.2cm}Lambda Improvements}
+  \subfile{content/3/chapter4/7.tex}
+  
+  \subsubsection*{\zihao{3} 4.8.\hspace{0.2cm}New Attributes}
+  \addcontentsline{toc}{subsubsection}{4.8.\hspace{0.2cm}New Attributes}
+  \subfile{content/3/chapter4/8.tex}
+  
+  \subsubsection*{\zihao{3} 4.9.\hspace{0.2cm}Further Improvements}
+  \addcontentsline{toc}{subsubsection}{4.9.\hspace{0.2cm}Further Improvements}
+  \subfile{content/3/chapter4/9.tex}
+  \newpage
+
+  \subsection*{\zihao{2} 第5章\hspace{0.5cm}The Standard Library}
+  \addcontentsline{toc}{subsection}{第5章\hspace{0.5cm}The Standard Library}
+  \subfile{content/3/chapter5/0.tex}
+  
+  \subsubsection*{\zihao{3} 5.1.\hspace{0.2cm}The Ranges Library}
+  \addcontentsline{toc}{subsubsection}{5.1.\hspace{0.2cm}The Ranges Library}
+  \subfile{content/3/chapter5/1.tex}
+  
+  \subsubsection*{\zihao{3} 5.2.\hspace{0.2cm}std::span}
+  \addcontentsline{toc}{subsubsection}{5.2.\hspace{0.2cm}std::span}
+  \subfile{content/3/chapter5/2.tex}
+  
+  \subsubsection*{\zihao{3} 5.3.\hspace{0.2cm}Container Improvements}
+  \addcontentsline{toc}{subsubsection}{5.3.\hspace{0.2cm}Container Improvements}
+  \subfile{content/3/chapter5/3.tex}
+  
+  \subsubsection*{\zihao{3} 5.4.\hspace{0.2cm}Arithmetic Utilities}
+  \addcontentsline{toc}{subsubsection}{5.4.\hspace{0.2cm}Arithmetic Utilities}
+  \subfile{content/3/chapter5/4.tex}
+  
+  \subsubsection*{\zihao{3} 5.5.\hspace{0.2cm}Calendar and Time Zones}
+  \addcontentsline{toc}{subsubsection}{5.5.\hspace{0.2cm}Calendar and Time Zones}
+  \subfile{content/3/chapter5/5.tex}
+  
+  \subsubsection*{\zihao{3} 5.6.\hspace{0.2cm}Formatting Library}
+  \addcontentsline{toc}{subsubsection}{5.6.\hspace{0.2cm}Formatting Library}
+  \subfile{content/3/chapter5/6.tex}
+  
+  \subsubsection*{\zihao{3} 5.7.\hspace{0.2cm}Further Improvements}
+  \addcontentsline{toc}{subsubsection}{5.7.\hspace{0.2cm}Further Improvements}
+  \subfile{content/3/chapter5/7.tex}
+  \newpage
+  
+  \subsection*{\zihao{2} 第6章\hspace{0.5cm}Concurrency}
+  \addcontentsline{toc}{subsection}{第6章\hspace{0.5cm}Concurrency}
+  \subfile{content/3/chapter6/0.tex}
+  
+  \subsubsection*{\zihao{3} 6.1.\hspace{0.2cm}Coroutines}
+  \addcontentsline{toc}{subsubsection}{6.1.\hspace{0.2cm}Coroutines}
+  \subfile{content/3/chapter6/1.tex}
+  
+  \subsubsection*{\zihao{3} 6.2.\hspace{0.2cm}Atomics}
+  \addcontentsline{toc}{subsubsection}{6.2.\hspace{0.2cm}Atomics}
+  \subfile{content/3/chapter6/2.tex}
+  
+  \subsubsection*{\zihao{3} 6.3.\hspace{0.2cm}Semaphores}
+  \addcontentsline{toc}{subsubsection}{6.3.\hspace{0.2cm}Semaphores}
+  \subfile{content/3/chapter6/3.tex}
+  
+  \subsubsection*{\zihao{3} 6.4.\hspace{0.2cm}Latches and Barriers}
+  \addcontentsline{toc}{subsubsection}{6.4.\hspace{0.2cm}Latches and Barriers}
+  \subfile{content/3/chapter6/4.tex}
+  
+  \subsubsection*{\zihao{3} 6.5.\hspace{0.2cm}Cooperative Interruption}
+  \addcontentsline{toc}{subsubsection}{6.5.\hspace{0.2cm}Cooperative Interruption}
+  \subfile{content/3/chapter6/5.tex}
+  
+  \subsubsection*{\zihao{3} 6.6.\hspace{0.2cm}std::jthread}
+  \addcontentsline{toc}{subsubsection}{6.6.\hspace{0.2cm}std::jthread}
+  \subfile{content/3/chapter6/6.tex}
+  
+  \subsubsection*{\zihao{3} 6.7.\hspace{0.2cm}Synchronized Output Streams}
+  \addcontentsline{toc}{subsubsection}{6.7.\hspace{0.2cm}Synchronized Output Streams}
+  \subfile{content/3/chapter6/7.tex}
+  \newpage
+  
+  \subsection*{\zihao{2} 第7章\hspace{0.5cm}Case Studies}
+  \addcontentsline{toc}{subsection}{第7章\hspace{0.5cm}Case Studies}
+  \subfile{content/3/chapter7/0.tex}
+  
+  \subsubsection*{\zihao{3} 7.1.\hspace{0.2cm}Fast Synchronization of Threads}
+  \addcontentsline{toc}{subsubsection}{7.1.\hspace{0.2cm}Fast Synchronization of Threads}
+  \subfile{content/3/chapter7/1.tex}
+  
+  \subsubsection*{\zihao{3} 7.2.\hspace{0.2cm}Variations of Futures}
+  \addcontentsline{toc}{subsubsection}{7.2.\hspace{0.2cm}Variations of Futures}
+  \subfile{content/3/chapter7/2.tex}
+  
+  \subsubsection*{\zihao{3} 7.3.\hspace{0.2cm}Modification and Generalization of a Generator}
+  \addcontentsline{toc}{subsubsection}{7.3.\hspace{0.2cm}Modification and Generalization of a Generator}
+  \subfile{content/3/chapter7/3.tex}
+  
+  \subsubsection*{\zihao{3} 7.4.\hspace{0.2cm}Various Job Workflows}
+  \addcontentsline{toc}{subsubsection}{7.4.\hspace{0.2cm}Various Job Workflows}
+  \subfile{content/3/chapter7/4.tex}
+  \newpage
+  
+  \color{white}
+  \section*{\zihao{1}第四部分：Epilogue}
+  \pagecolor{mygray}
+  \addcontentsline{toc}{section}{第四部分：Epilogue}
+  \textbf{\subfile{content/4/Section.tex}}
+  \newpage
+  \color{black}
+  \pagecolor{white}
+  \newpage
+  
+  \color{white}
+  \section*{\zihao{1}第五部分：Further Information}
+  \pagecolor{mygray}
+  \addcontentsline{toc}{section}{第五部分：Further Information}
+  \textbf{\subfile{content/5/Section.tex}}
+  \newpage
+  \color{black}
+  \pagecolor{white}
+  \newpage
+  
+  \subsection*{\zihao{2} 第8章\hspace{0.5cm}C++23 and Beyond}
+  \addcontentsline{toc}{subsection}{第8章\hspace{0.5cm}C++23 and Beyond}
+  \subfile{content/5/chapter8/0.tex}
+  
+  \subsubsection*{\zihao{3} 8.1.\hspace{0.2cm}C++23}
+  \addcontentsline{toc}{subsubsection}{8.1.\hspace{0.2cm}C++23}
+  \subfile{content/5/chapter8/1.tex}
+  
+  \subsubsection*{\zihao{3} 8.2.\hspace{0.2cm}C++23 or Later}
+  \addcontentsline{toc}{subsubsection}{8.2.\hspace{0.2cm}C++23 or Later}
+  \subfile{content/5/chapter8/2.tex}
+  
+  \subsubsection*{\zihao{3} 8.3.\hspace{0.2cm}Further Information about C++23}
+  \addcontentsline{toc}{subsubsection}{8.3.\hspace{0.2cm}Further Information about C++23}
+  \subfile{content/5/chapter8/3.tex}
+  \newpage
+  
+  \subsection*{\zihao{2} 第9章\hspace{0.5cm}Feature Testing}
+  \addcontentsline{toc}{subsection}{第9章\hspace{0.5cm}Feature Testing}
+  \subfile{content/5/chapter9/0.tex}
+  \newpage
+  
+  \subsection*{\zihao{2} 第10章\hspace{0.5cm}Glossary}
+  \addcontentsline{toc}{subsection}{第10章\hspace{0.5cm}Glossary}
+  \subfile{content/5/chapter10/0.tex}
+  
+  \subsubsection*{\zihao{3} 10.1.\hspace{0.2cm}Callable}
+  \addcontentsline{toc}{subsubsection}{10.1.\hspace{0.2cm}Callable}
+  \subfile{content/5/chapter10/1.tex}
+  
+  \subsubsection*{\zihao{3} 10.2.\hspace{0.2cm}Callable Unit}
+  \addcontentsline{toc}{subsubsection}{10.2.\hspace{0.2cm}Callable Unit}
+  \subfile{content/5/chapter10/2.tex}
+  
+  \subsubsection*{\zihao{3} 10.3.\hspace{0.2cm}Concurrency}
+  \addcontentsline{toc}{subsubsection}{10.3.\hspace{0.2cm}Concurrency}
+  \subfile{content/5/chapter10/3.tex}
+  
+  \subsubsection*{\zihao{3} 10.4.\hspace{0.2cm}Critical Section}
+  \addcontentsline{toc}{subsubsection}{10.4.\hspace{0.2cm}Critical Section}
+  \subfile{content/5/chapter10/4.tex}
+  
+  \subsubsection*{\zihao{3} 10.5.\hspace{0.2cm}Data Race}
+  \addcontentsline{toc}{subsubsection}{10.5.\hspace{0.2cm}Data Race}
+  \subfile{content/5/chapter10/5.tex}
+  
+  \subsubsection*{\zihao{3} 10.6.\hspace{0.2cm}Deadlock}
+  \addcontentsline{toc}{subsubsection}{10.6.\hspace{0.2cm}Deadlock}
+  \subfile{content/5/chapter10/6.tex}
+  
+  \subsubsection*{\zihao{3} 10.7.\hspace{0.2cm}Eager Evaluation}
+  \addcontentsline{toc}{subsubsection}{10.7.\hspace{0.2cm}Eager Evaluation}
+  \subfile{content/5/chapter10/7.tex}
+  
+  \subsubsection*{\zihao{3} 10.8.\hspace{0.2cm}Executor}
+  \addcontentsline{toc}{subsubsection}{10.8.\hspace{0.2cm}Executor}
+  \subfile{content/5/chapter10/8.tex}
+  
+  \subsubsection*{\zihao{3} 10.9.\hspace{0.2cm}Function Objects}
+  \addcontentsline{toc}{subsubsection}{10.9.\hspace{0.2cm}Function Objects}
+  \subfile{content/5/chapter10/9.tex}
+  
+  \subsubsection*{\zihao{3} 10.10.\hspace{0.2cm}Lambda Expressions}
+  \addcontentsline{toc}{subsubsection}{10.10.\hspace{0.2cm}Lambda Expressions}
+  \subfile{content/5/chapter10/10.tex}
+  
+  \subsubsection*{\zihao{3} 10.11.\hspace{0.2cm}Lazy Evaluation}
+  \addcontentsline{toc}{subsubsection}{10.11.\hspace{0.2cm}Lazy Evaluation}
+  \subfile{content/5/chapter10/11.tex}
+  
+  \subsubsection*{\zihao{3} 10.12.\hspace{0.2cm}Lock-free}
+  \addcontentsline{toc}{subsubsection}{10.12.\hspace{0.2cm}Lock-free}
+  \subfile{content/5/chapter10/12.tex}
+  
+  \subsubsection*{\zihao{3} 10.13.\hspace{0.2cm}Lost Wakeup}
+  \addcontentsline{toc}{subsubsection}{10.13.\hspace{0.2cm}Lost Wakeup}
+  \subfile{content/5/chapter10/13.tex}
+  
+  \subsubsection*{\zihao{3} 10.14.\hspace{0.2cm}Math Laws}
+  \addcontentsline{toc}{subsubsection}{10.14.\hspace{0.2cm}Math Laws}
+  \subfile{content/5/chapter10/14.tex}
+  
+  \subsubsection*{\zihao{3} 10.15.\hspace{0.2cm}Memory Location}
+  \addcontentsline{toc}{subsubsection}{10.15.\hspace{0.2cm}Memory Location}
+  \subfile{content/5/chapter10/15.tex}
+  
+  \subsubsection*{\zihao{3} 10.16.\hspace{0.2cm}Memory Model}
+  \addcontentsline{toc}{subsubsection}{10.16.\hspace{0.2cm}Memory Model}
+  \subfile{content/5/chapter10/16.tex}
+  
+  \subsubsection*{\zihao{3} 10.17.\hspace{0.2cm}Non-blocking}
+  \addcontentsline{toc}{subsubsection}{10.17.\hspace{0.2cm}Non-blocking}
+  \subfile{content/5/chapter10/17.tex}
+  
+  \subsubsection*{\zihao{3} 10.18.\hspace{0.2cm}Object}
+  \addcontentsline{toc}{subsubsection}{10.18.\hspace{0.2cm}Object}
+  \subfile{content/5/chapter10/18.tex}
+  
+  \subsubsection*{\zihao{3} 10.19.\hspace{0.2cm}Parallelism}
+  \addcontentsline{toc}{subsubsection}{10.19.\hspace{0.2cm}Parallelism}
+  \subfile{content/5/chapter10/19.tex}
+  
+  \subsubsection*{\zihao{3} 10.20.\hspace{0.2cm}Predicate}
+  \addcontentsline{toc}{subsubsection}{10.20.\hspace{0.2cm}Predicate}
+  \subfile{content/5/chapter10/20.tex}
+  
+  \subsubsection*{\zihao{3} 10.21.\hspace{0.2cm}RAII}
+  \addcontentsline{toc}{subsubsection}{10.21.\hspace{0.2cm}RAII}
+  \subfile{content/5/chapter10/21.tex}
+  
+  \subsubsection*{\zihao{3} 10.22.\hspace{0.2cm}Race Conditions}
+  \addcontentsline{toc}{subsubsection}{10.22.\hspace{0.2cm}Race Conditions}
+  \subfile{content/5/chapter10/22.tex}
+  
+  \subsubsection*{\zihao{3} 10.23.\hspace{0.2cm}Regular}
+  \addcontentsline{toc}{subsubsection}{10.23.\hspace{0.2cm}Regular}
+  \subfile{content/5/chapter10/23.tex}
+  
+  \subsubsection*{\zihao{3} 10.24.\hspace{0.2cm}Scalar}
+  \addcontentsline{toc}{subsubsection}{10.24.\hspace{0.2cm}Scalar}
+  \subfile{content/5/chapter10/24.tex}
+  
+  \subsubsection*{\zihao{3} 10.25.\hspace{0.2cm}SemiRegular}
+  \addcontentsline{toc}{subsubsection}{10.25.\hspace{0.2cm}SemiRegular}
+  \subfile{content/5/chapter10/25.tex}
+  
+  \subsubsection*{\zihao{3} 10.26.\hspace{0.2cm}Spurious Wakeup}
+  \addcontentsline{toc}{subsubsection}{10.26.\hspace{0.2cm}Spurious Wakeup}
+  \subfile{content/5/chapter10/26.tex}
+  
+  \subsubsection*{\zihao{3} 10.27.\hspace{0.2cm}The Big Four}
+  \addcontentsline{toc}{subsubsection}{10.27.\hspace{0.2cm}The Big Four}
+  \subfile{content/5/chapter10/27.tex}
+  
+  \subsubsection*{\zihao{3} 10.28.\hspace{0.2cm}The Big Six}
+  \addcontentsline{toc}{subsubsection}{10.28.\hspace{0.2cm}The Big Six}
+  \subfile{content/5/chapter10/28.tex}
+  
+  \subsubsection*{\zihao{3} 10.29.\hspace{0.2cm}Thread}
+  \addcontentsline{toc}{subsubsection}{10.29.\hspace{0.2cm}Thread}
+  \subfile{content/5/chapter10/29.tex}
+  
+  \subsubsection*{\zihao{3} 10.30.\hspace{0.2cm}Time Complexity}
+  \addcontentsline{toc}{subsubsection}{10.30.\hspace{0.2cm}Time Complexity}
+  \subfile{content/5/chapter10/30.tex}
+  
+  \subsubsection*{\zihao{3} 10.31.\hspace{0.2cm}Translation Unit}
+  \addcontentsline{toc}{subsubsection}{10.31.\hspace{0.2cm}Translation Unit}
+  \subfile{content/5/chapter10/31.tex}
+  
+  \subsubsection*{\zihao{3} 10.32.\hspace{0.2cm}Undefined Behavior}
+  \addcontentsline{toc}{subsubsection}{10.32.\hspace{0.2cm}Undefined Behavior}
+  \subfile{content/5/chapter10/32.tex}
+  \newpage
+
+\end{sloppypar}
+\end{document}
+
