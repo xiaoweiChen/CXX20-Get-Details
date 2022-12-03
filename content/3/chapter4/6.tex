@@ -1,0 +1,265 @@
+\begin{center}
+\includegraphics[width=0.6\textwidth]{content/3/chapter4/images/40.png}\\
+Cippi uses her new tools
+\end{center}
+
+The improvements to templates make C++20 more consistent and, therefore, less error-prone when you are writing generic programs.
+
+\subsubsubsection{4.6.1\hspace{0.2cm} Conditionally Explicit Constructor}
+
+Sometimes you need a class that should have constructors accepting different types. For example, you have a class VariantWrapper that holds a std::variant accepting various types.
+
+\noindent
+A class VariantWrapper holding an attribute std::variant
+\begin{lstlisting}[style=styleCXX]
+class VariantWrapper {
+	std::variant<bool, char, int, double, float, std::string> myVariant;
+};
+\end{lstlisting}
+
+To initialize a VariantWrapper with bool, char, int, double, float, or std::string, the class VariantWrapper needs constructors for each listed type. Laziness is a virtue – at least for programmers – , therefore, you decide to make the constructor generic.
+
+The class Implicit shows a generic constructor.
+
+\noindent
+A generic constructor
+\begin{lstlisting}[style=styleCXX]
+// implicitExplicitGenericConstructor.cpp
+
+#include <iostream>
+#include <string>
+
+struct Implicit {
+template <typename T>
+	Implicit(T t) {
+		std::cout << t << '\n';
+	}
+};
+
+struct Explicit {
+template <typename T>
+	explicit Explicit(T t) {
+		std::cout << t << '\n';
+	}
+};
+
+int main() {
+	
+	std::cout << '\n';
+	
+	Implicit imp1 = "implicit";
+	Implicit imp2("explicit");
+	Implicit imp3 = 1998;
+	Implicit imp4(1998);
+	
+	std::cout << '\n';
+	
+	// Explicit exp1 = "implicit";
+	Explicit exp2{"explicit"};
+	// Explicit exp3 = 2011;
+	Explicit exp4{2011};
+	
+	std::cout << '\n';
+
+}
+\end{lstlisting}
+
+Now, you have an issue. A generic constructor (line 7) is a catch-all constructor because you can invoke it with any type. The constructor is way too greedy. By putting an explicit in front of the constructor (line 14), implicit conversions (lines 31 and 33) are not valid anymore. Only the explicit calls (lines 32 and 34) are valid.
+
+\begin{tcblisting}{commandshell={}}
+implicit
+implicit
+1998
+1998
+
+explicit
+2011
+\end{tcblisting}
+
+\begin{center}
+Implicit and explicit generic constructors
+\end{center}
+
+In C++20, explicit is even more useful. Imagine you have a type MyBool that should only support the implicit conversion from bool, but no other implicit conversion. In this case, explicit can be used conditionally.
+
+\noindent
+A generic constructor that allows implicit conversions from bool
+\begin{lstlisting}[style=styleCXX]
+// conditionallyConstructor.cpp
+
+#include <iostream>
+#include <type_traits>
+#include <typeinfo>
+
+struct MyBool {
+	template <typename T>
+	explicit(!std::is_same<T, bool>::value) MyBool(T t) {
+		std::cout << typeid(t).name() << '\n';
+	}
+};
+
+void needBool(MyBool b){ }
+
+int main() {
+
+	MyBool myBool1(true);
+	MyBool myBool2 = false;
+	
+	needBool(myBool1);
+	needBool(true);
+	// needBool(5);
+	// needBool("true");
+
+}
+\end{lstlisting}
+
+The explicit(!std::is\_same<T, bool>::value) expression guarantees that MyBool can only be implicitly created from a bool value. The function std::is\_same is a compile-time predicate from the \href{https://en.cppreference.com/w/cpp/header/type_traits}{type\_traits library}. A compile-time predicate, such as std::is\_same is evaluated at compile time and returns a boolean. Consequently, the implicit conversions from bool (lines 19 and 22) are possible, but not the commented-out conversions from int and C-string (lines 23 and 24).
+
+\subsubsubsection{4.6.2\hspace{0.2cm} Non-Type Template Parameters}
+
+C++ supports non-types as template parameters. Essentially non-types could be
+
+\begin{itemize}
+\item 
+integers and enumerators
+
+\item 
+pointers or references to objects, to functions and to attributes of a class
+
+\item 
+std::nullptr\_t
+\end{itemize}
+
+\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Typical Non-Type Template Parameter}]
+When I ask the students in my class if they ever used a non-type as template parameter they say: No! Of course, I answer my tricky question and show an often-used example for non-type template parameters:
+
+\noindent
+Defining a std::array
+\begin{lstlisting}[style=styleCXX]
+std::array<int, 5> myVec;
+\end{lstlisting}
+
+Constant 5 is a non-type used as a template argument.
+\end{tcolorbox}	
+
+Since the first C++-standard, C++98, there has been an ongoing discussion in the C++ community about supporting floating-point template parameters. Now, we have them and more: C++20 supports floating-points, literal types, and string literals as non-types.
+
+\noindent
+4.6.2.1\hspace{0.2cm} Floating-Points and Literal Types
+
+Literal Types have the following two properties:
+
+\begin{itemize}
+\item 
+all base classes and non-static data members are public and non-mutable
+
+\item 
+the types of all base classes and non-static data members are structural types or arrays of these
+\end{itemize}
+
+A literal type must have a constexpr constructor. The following program uses floating-point types and literal types as non-type template parameters.
+
+\noindent
+Floating-points and literal types as non-type template parameters
+\begin{lstlisting}[style=styleCXX]
+// nonTypeTemplateParameter.cpp
+
+struct ClassType {
+	constexpr ClassType(int) {}
+};
+
+template <ClassType cl>
+auto getClassType() {
+	return cl;
+}
+
+template <double d>
+auto getDouble() {
+	return d;
+}
+
+int main() {
+
+	auto c1 = getClassType<ClassType(2020)>();
+	
+	auto d1 = getDouble<5.5>();
+	auto d2 = getDouble<6.5>();
+
+}
+\end{lstlisting}
+
+ClassType has a constexpr constructor (line 4) and can, therefore, be used as a template argument (line 19). The same holds for the function template getDouble (line 13), which accepts only double. I want to emphasize that each call of the function template getDouble (lines 21 and 22) creates a new function getDouble. This function is a full specialization for the given double value.
+
+Since C++20, strings can be used as non-type template parameters.
+
+\noindent
+4.6.2.2\hspace{0.2cm} String Literals
+
+The class StringLiteral has a constexpr constructor.
+
+\noindent
+String literals as non-type template parameters
+\begin{lstlisting}[style=styleCXX]
+// nonTypeTemplateParameterString.cpp
+
+#include <algorithm>
+#include <iostream>
+
+template <int N>
+class StringLiteral {
+public:
+	constexpr StringLiteral(char const (&str)[N]) {
+		std::copy(str, str + N, data);
+	}
+	char data[N];
+};
+
+template <StringLiteral str>
+class ClassTemplate {};
+
+template <StringLiteral str>
+void FunctionTemplate() {
+	std::cout << str.data << '\n';
+}
+
+ int main() {
+	
+	std::cout << '\n';
+	
+	ClassTemplate<"string literal"> cls;
+	FunctionTemplate<"string literal">();
+	
+	std::cout << '\n';
+
+}
+\end{lstlisting}
+
+StringLiteral is a literal type and, therefore, can be used as non-type template parameter for ClassTemplate (line 15) and FunctionTemplate (line 18). The constexpr constructor (line 9) takes a C-string as an argument.
+
+\begin{tcblisting}{commandshell={}}
+string literal
+\end{tcblisting}
+
+\begin{center}
+String literals as non-type template parameters
+\end{center}
+
+You may wonder why we need string literals as non-type template parameter?
+
+\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Compile-Time Regular Expressions}]
+
+A very impressive use-case for string literals is \href{https://github.com/hanickadot/compile-time-regular-expressions}{compile-time parsing of regular expressions}. There is already a proposal for C++23 in the pipeline: \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1433r0.pdf}{P1433R0: Compile-Time Regular Expressions}. Hana Dusíková as the author of the proposal motivates compile-time regular expressions in C++: “The current std::regex design and implementation [\href{https://en.cppreference.com/w/cpp/regex}{regular expression library}] are slow, mostly because the RE [regular expression] pattern is parsed and compiled at run time. Users often don’t need a runtime RE [regular expression] parser engine as the pattern is known during compilation in many common use cases. I think this breaks C++’s promise of ’don’t pay for what you don’t use’.
+
+If the RE [regular expression] is known at compile time, the pattern should be checked during the compilation. The design of std::regex doesn’t allow for this[compile-time evaluation,] as the RE input is a run-time string and syntax errors are reported as exceptions.”.
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Distilled Information}]
+\begin{itemize}
+\item 
+A conditionally explicit constructor allows it to control explicitly for a generic constructor which types can be used in a constructor.
+
+\item 
+C++20 supports further types as non-type template parameters: floating-points and string literals.
+\end{itemize}
+\end{tcolorbox}
