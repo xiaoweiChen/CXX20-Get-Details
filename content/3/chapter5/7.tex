@@ -1,0 +1,243 @@
+\begin{center}
+\includegraphics[width=0.4\textwidth]{content/3/chapter5/images/32.png}\\
+Cippi goes up
+\end{center}
+
+\subsubsubsection{5.7.1\hspace{0.2cm} std::bind\_front}
+
+std::bind\_front (Func\&\& func, Args\&\& ... args) creates a callable wrapper for a callable func. std::bind\_front can have an arbitrary number of arguments and binds its arguments to the front.
+
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={std::bind\_front versus std::bind}]
+	
+Since C++11, we have had \href{https://en.cppreference.com/w/cpp/utility/functional/bind}{std::bind} and \href{https://en.cppreference.com/w/cpp/language/lambda}{lambda expressions}. With C++20, we get \href{https://en.cppreference.com/w/cpp/utility/functional/bind_front}{std::bind\_front}. This may make you wonder. To be pedantic std::bind is available since the \href{https://en.wikipedia.org/wiki/C%2B%2B_Technical_Report_1}{Technical Report 1} (TR1). std::bind and lambda expressions can be used as a replacement of std::bind\_front. Furthermore, std::bind\_front seems like the little sister of std::bind, because only std::bind supports the rearranging of arguments. Of course, there is a reason to use std::bind\_front in the future: in contrast to std::bind, std::bind\_front propagates the exception specification of the underlying call operator.
+	
+\end{tcolorbox}
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+Comparing std::bind\_front, std::bind, and a lambda expression
+\begin{lstlisting}[style=styleCXX]
+// bindFront.cpp
+
+#include <functional>
+#include <iostream>
+
+int plusFunction(int a, int b) {
+	return a + b;
+}
+
+auto plusLambda = [](int a, int b) {
+	return a + b;
+};
+
+int main() {
+
+	std::cout << '\n';
+	
+	auto twoThousandPlus1 = std::bind_front(plusFunction, 2000);
+	std::cout << "twoThousandPlus1(20): " << twoThousandPlus1(20) << '\n';
+	
+	auto twoThousandPlus2 = std::bind_front(plusLambda, 2000);
+	std::cout << "twoThousandPlus2(20): " << twoThousandPlus2(20) << '\n';
+	
+	auto twoThousandPlus3 = std::bind_front(std::plus<int>(), 2000);
+	std::cout << "twoThousandPlus3(20): " << twoThousandPlus3(20) << '\n';
+	
+	std::cout << "\n\n";
+	
+	using namespace std::placeholders;
+	
+	auto twoThousandPlus4 = std::bind(plusFunction, 2000, _1);
+	std::cout << "twoThousandPlus4(20): " << twoThousandPlus4(20) << '\n';
+	
+	auto twoThousandPlus5 = [](int b) { return plusLambda(2000, b); };
+	std::cout << "twoThousandPlus5(20): " << twoThousandPlus5(20) << '\n';
+	
+	std::cout << '\n';
+
+}
+\end{lstlisting}
+
+Each call (lines 18, 21, 24, 31, and 34) gets a callable taking two arguments and returns a callable taking only one argument because the first argument is bound to 2000. The callable is a function (line 18), a lambda expression (line 21), and a predefined function object (line 24). Parameter \_1 is a socalled placeholder (line 31) and stands for the missing argument. With lambda expression (line 34), you can directly apply one argument and provide an argument b for the missing parameter. From the readability perspective, std::bind\_front may be easier to read than std::bind or a lambda expression.
+
+\begin{tcblisting}{commandshell={}}
+twoThousandPlus1(20): 2020
+twoThousandPlus2(20): 2020
+twoThousandPlus3(20): 2020
+
+twoThousandPlus4(20): 2020
+twoThousandPlus5(20): 2020
+\end{tcblisting}
+
+\begin{center}
+Applying std::bind, std::bind\_front, and a lambda expression
+\end{center}
+
+\subsubsubsection{5.7.2\hspace{0.2cm} std::is\_constant\_evaluated}
+
+The function std::is\_constant\_evaluted determines whether the function is executed at compile time or run time. Why do we need this function from the type-traits library? In C++20, we have roughly spoken of three kinds of functions:
+
+\begin{itemize}
+\item 
+consteval declared functions run at compile time: consteval int alwaysCompiletime();
+
+\item 
+constexpr declared functions can run at compile time or run time: constexpr int itDepends();
+
+\item 
+usual functions run at run time: int alwaysRuntime();
+\end{itemize}
+
+Now, I have to write about the complicated case: constexpr. A constexpr function can run at compile time or run time. Sometimes these functions should behave differently, depending on whether the function is executed at compile time or run time. A constexpr function such as getSum has the potential to run at compile time.
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+A constexpr-declared function
+\begin{lstlisting}[style=styleCXX]
+constexpr int getSum(int l, int r) {
+	return l + r;
+}
+\end{lstlisting}
+
+How can we be sure that the function is executed at compile time? Essentially, there are three possibilities.
+
+\begin{enumerate}
+\item 
+A constexpr function is executed at compile time:
+\begin{itemize}
+\item 
+The function is used in a so-called constant-evaluated context. A constant-evaluated context could be inside a constexpr function or a static\_assert.
+
+\item 
+The client of the function explicitly wants to have the result at compile time: constexpr auto res = getSum(2000, 11). Now, getSum() has to run at compile time.
+\end{itemize}
+
+\item 
+A constexpr function can only be performed at run time if the arguments are not constexpr. This would be the case if the function getSum(a, 11) is invoked with a variable, which was not declared as constexpr : int a = 2000.
+
+\item 
+A constexpr function can be executed at compile time or run time when neither rule 1 nor rule 2 applies. In this case, both options are valid and the decision is up to the compiler.
+\end{enumerate}
+
+Exactly in point 3, the power of std::is\_constant\_evaluated kicks in. You can detect if the program runs at compile time or run time and perform different operations. \href{https://en.cppreference.com/w/cpp/types/is_constant_evaluated}{cppreference.com/is\_constant\_evaluted} shows a smart use case. At compile time, you calculate the power of two numbers manually; at run time, you use std::pow.
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+Executing different code at compile time and run time
+\begin{lstlisting}[style=styleCXX]
+// constantEvaluated.cpp
+
+#include <type_traits>
+#include <cmath>
+#include <iostream>
+
+constexpr double power(double b, int x) {
+	if (std::is_constant_evaluated() && !(b == 0.0 && x < 0)) {
+		
+		if (x == 0)
+			return 1.0;
+		double r = 1.0, p = x > 0 ? b : 1.0 / b;
+		auto u = unsigned(x > 0 ? x : -x);
+		while (u != 0) {
+			if (u & 1) r *= p;
+			u /= 2;
+			p *= p;
+		}
+		return r;
+	}
+	else {
+		return std::pow(b, double(x));
+	}
+}
+
+int main() {
+	
+	std::cout << '\n';
+	
+	constexpr double kilo1 = power(10.0, 3);
+	std::cout << "kilo1: " << kilo1 << '\n';
+	
+	int n = 3;
+	double kilo2 = power(10.0, n);
+	std::cout << "kilo2: " << kilo2 << '\n';
+	
+	std::cout << '\n';
+}
+\end{lstlisting}
+
+There is one interesting observation I want to share. It is possible to use std::is\_constant\_evaluated in a consteval declared function or in a function that can only run at run time. Of course, the result of these calls is always true or false.
+
+\subsubsubsection{5.7.3\hspace{0.2cm} std::source\_location}
+
+std::source\_location represents information about the source code. This information includes file names, line numbers, and function names. The information is very valuable when you need information about the call site such as for debugging, logging, or testing purposes. The class std::source\_location is the better alternative than the predefined C++11 macros \_\_FILE\_\_ and \_\_LINE\_\_ and should be used instead.
+
+std::source\_location can give you the following information.
+
+\begin{center}
+std::source\_location src
+\end{center}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\textbf{Function}                & \textbf{Description}                      \\ \hline
+std::source\_location::current() & Creates a new source\_location object src \\
+src.line()                       & Returns the line number                   \\
+src.column()                     & Returns the column number                 \\
+src.file\_name()                 & Returns the file name                     \\
+src.function\_name()             & Returns the function name                
+\end{tabular}
+\end{table}
+
+The call std::source\_location::current() creates a new source location object src that represents the information of the call site. At the end of 2020, no C++ compiler supports std::source\_location. Consequently, the following program sourceLocation.cpp is from \href{https://en.cppreference.com/w/cpp/utility/source_location}{cppreference.com/source\_location}.
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+Displaying information about the call site with std::source\_location
+\begin{lstlisting}[style=styleCXX]
+// sourceLocation.cpp
+ // from cppreference.com
+
+#include <iostream>
+#include <string_view>
+#include <source_location>
+
+void log(std::string_view message,
+		 const std::source_location& location = std::source_location::current())
+{
+	std::cout << "info:"
+			  << location.file_name() << ':'
+			  << location.line() << ' '
+			  << message << '\n';
+}
+
+int main()
+{
+	log("Hello world!"); // info:main.cpp:19 Hello world!
+}
+\end{lstlisting}
+
+The output of the program is part of its source code.
+
+\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+
+\begin{itemize}
+\item 
+std::bind\_front is the easier-to-use variant for std::bind (C++11). In constrast to std::bind, std::bind\_front does not enable the rearranging of its arguments.
+
+\item 
+The function std::is\_constant\_evaluted determines whether the function is executed at compile time or run time.
+
+\item 
+std::source\_location represents information about the source code. This information includes file names, line numbers, and function names, and is highly valuable for debugging, logging, or testing.
+\end{itemize}
+
+\end{tcolorbox}
+
+
+
+
+
+
+
+
