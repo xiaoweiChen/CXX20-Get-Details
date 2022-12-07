@@ -1,0 +1,19 @@
+First of all, don’t call them \href{https://en.wikipedia.org/wiki/Functor}{functors}. That’s a well-defined term from a branch of mathematics called \href{https://en.wikipedia.org/wiki/Category_theory}{category theory}.
+
+Function objects are objects that behave like functions. They achieve this by implementing the function call operator. As function objects are objects, they can have attributes and, therefore, state.
+
+\begin{lstlisting}[style=styleCXX]
+struct Square{
+	void operator()(int& i){i= i*i;}
+};
+
+std::vector<int> myVec{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+std::for_each(myVec.begin(), myVec.end(), Square());
+
+for (auto v: myVec) std::cout << v << " "; // 1 4 9 16 25 36 49 64 81 100
+\end{lstlisting}
+
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Instantiate function objects to use them}]
+It’s a common error that the name of the function object (Square) is used in an algorithm instead of an instance of function object (Square()) itself: std::for\_each(myVec.begin(), myVec.end(), Square). Of course, that’s a typical error. You have to use the instance: std::for\_each(myVec.begin(), myVec.end(), Square())
+\end{tcolorbox}

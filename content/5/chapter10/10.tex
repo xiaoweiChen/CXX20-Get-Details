@@ -1,0 +1,7 @@
+Lambda expressions provide their functionality in-place. The compiler gets all the necessary information to optimize the code optimally. Lambda functions can receive their arguments by value or by reference. They can capture the variables of their defining environment by value or by reference as well.
+
+\begin{lstlisting}[style=styleCXX]
+std::vector<int> myVec{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+std::for_each(myVec.begin(), myVec.end(), [](int& i){ i= i*i; });
+                                        // 1 4 9 16 25 36 49 64 81 100
+\end{lstlisting}

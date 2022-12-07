@@ -1,0 +1,3 @@
+Resource Acquisition Is Initialization, in short RAII, stands for a popular technique in C++ in which the resource acquisition and release are bound to the lifetime of an object. This means for a lock that the mutex will be locked in the constructor and unlocked in the destructor.
+
+Typical use cases in C++ are locks that handle the lifetime of its underlying mutex, smart pointers that handle the lifetime of its resource (memory), or \href{https://en.cppreference.com/w/cpp/container}{containers of the standard template library} that handle the lifetime of their elements.
