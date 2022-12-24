@@ -1,11 +1,11 @@
-A deadlock is a state in which at least one thread is blocked forever because it waits for the release of a resource that it will never get.
+死锁是一种状态，在这种状态下，至少有一个线程永远阻塞，因为它等待无法释放的资源。
 
-There are two main reasons for deadlocks:
+造成死锁的主要原因有两个:
 
 \begin{enumerate}
 \item 
-A mutex has not been unlocked.
+互斥对象未解锁。
 
 \item 
-You lock your mutexes in an incorrect order.
+以错误的顺序锁定互斥对象。
 \end{enumerate}

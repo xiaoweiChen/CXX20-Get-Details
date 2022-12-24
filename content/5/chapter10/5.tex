@@ -1,11 +1,1 @@
-A deadlock is a state in which at least one thread is blocked forever because it waits for the release of a resource that it will never get.
-
-There are two main reasons for deadlocks:
-
-\begin{enumerate}
-\item 
-A mutex has not been unlocked.
-
-\item 
-You lock your mutexes in an incorrect order.
-\end{enumerate}
+数据竞争是指至少有两个线程同时访问一个共享变量的情况。至少有一个线程尝试修改变量，而另一个线程尝试读取或修改变量。若的程序存在数据竞争，则该程序具有未定义的行为，所以任何结果都是可能的。

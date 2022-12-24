@@ -8,36 +8,37 @@
 
 \subsubsubsection{3.1.1\hspace{0.2cm}概念}
 
-Generic programming with templates enables it to define functions and classes which can be used with various types. As a result, it is not uncommon that you instantiate a template with the wrong type. The result can be many pages of cryptic error messages. This problem ends with concepts. Concepts empower you to write requirements for template parameters that are checked by the compiler, and revolutionize the way we think about and write generic code. Here is why:
+使用模板的泛型编程，使其能够定义可用于各种类型的函数和类。因此，使用错误类型实例化模板的情况并不少见，可能会看到长达数页的编译错误。这个问题可以通过概念解决，概念可编写编译器检查模板参数的需求，并彻底改变开发者思考和编写泛型代码的方式。原因如下:
 
 \begin{itemize}
 \item 
-Requirements for template parameters become part of their public interface.
+模板参数的需求成为其公共接口的一部分。
 
 \item 
-The overloading of functions or specializations of class templates can be based on concepts.
+函数的重载或类模板的特化可以基于概念。
 
 \item 
-We get improved error messages because the compiler checks the defined template parameter requirements against the given template arguments.
+因为编译器根据给定的模板参数检查已定义的模板形参需求，所以我们得到了更明显的错误消息。
 \end{itemize}
 
-Additionally, this is not the end of the story.
+这还没完。
 
 \begin{itemize}
 \item 
-You can use predefined concepts or define your own.
+开发者可以使用预定义的概念，也可以自定义概念。
 
 \item 
-The usage of auto and concepts is unified. Instead of auto, you can use a concept.
+auto和概念的用法统一，可以用概念来代替auto。
 
 \item 
-If a function declaration uses a concept, it automatically becomes a function template. Writing function templates is, therefore, as easy as writing a function.
+若函数声明使用了概念，则自动成为函数模板。这样，编写函数模板就像编写函数一样简单。
 \end{itemize}
 
-The following code snippet demonstrates the definition and the use of the straightforward concept Integral:
+下面的代码片段演示了简单概念Integral的定义和使用:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Definition and use of the Integral concept
+\textbf{Integral概念的定义和使用}
 \begin{lstlisting}[style=styleCXX]
 template <typename T>
 concept Integral = std::is_integral<T>::value;
@@ -48,14 +49,15 @@ Integral auto gcd(Integral auto a, Integral auto b) {
 }
 \end{lstlisting}
 
-The Integral concept requires from its type parameter T that std::is\_integral<T>::value be true. std::is\_integral<T>::value is a value from the \href{https://en.cppreference.com/w/cpp/header/type_traits}{type traits library} checking at compile time if T is integral. If std::is\_integral<T>::value evaluates to true, all is fine; otherwise, you get a compiletime error.
+Integral概念从其类型参数T中要求std::is\_integral<T>::value为true。std::is\_integral<T>::value是来自\href{https://en.cppreference.com/w/cpp/header/type_traits}{类型特征库}的值，在编译时检查T是否为整数。若std::is\_integral<T>::value计算为true，则一切正常;否则，将会看到相应的编译时错误。
 
-The gcd algorithm determines the greatest common divisor based on the \href{https://en.wikipedia.org/wiki/Euclid}{Euclidean} algorithm. The code uses the so-called abbreviated function template syntax to define gcd. Here, gcd requires that its arguments and return type support the concept Integral. In other words, gcd is a kind of function template that puts requirements on its arguments and return value. When I remove the syntactic sugar, you can see the real nature of gcd.
+gcd算法基于\href{https://en.wikipedia.org/wiki/Euclid}{Euclidean}算法确定最大公约数，代码使用缩写函数模板语法来定义gcd。这里，gcd要求参数和返回类型支持Integral概念。换句话说，gcd是一种对其参数和返回值提出要求的函数模板。当删除语法糖时，可以看到真正的gcd。
 
-Here is the semantically equivalent gcd algorithm, using a requires clause.
+下面是语义等效的gcd算法，使用了require子句。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Use of the concept Integral in the requires clause
+\textbf{required子句中使用Integral概念}
 \begin{lstlisting}[style=styleCXX]
 template<typename T>
 requires Integral<T>
@@ -65,33 +67,34 @@ T gcd(T a, T b) {
 }
 \end{lstlisting}
 
-The requires clause states the requirements on the type parameters of gcd.
+require子句声明了对gcd类型参数的要求。
 
 \subsubsubsection{3.1.2\hspace{0.2cm}模块}
 
-Modules promise a lot:
+模块的承诺很多:
 
 \begin{itemize}
 \item 
-Faster compile times
+更快的编译时间
 
 \item 
-Reduce the need to define macros
+减少宏定义
 
 \item 
-Express the logical structure of the code
+表达代码的逻辑结构
 
 \item 
-Make header files obsolete
+淘汰头文件
 
 \item 
-Get rid of ugly macro workarounds
+摆脱丑陋的宏替换
 \end{itemize}
 
-Here is the first simple math module:
+这是一个简单的数学模块:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-The math module
+\textbf{数学模块}
 \begin{lstlisting}[style=styleCXX]
 export module math;
 
@@ -100,10 +103,11 @@ export int add(int fir, int sec) {
 }
 \end{lstlisting}
 
-The expression export module math (line 1) is the module declaration. Putting export before the function add (line 3) exports the function. Now, it can be used by a consumer of the module.
+表达式会导出模块math(第1行)是模块声明。将export放在函数add之前(第3行)导出函数。现在，模块的使用者可以使用它。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Use of the math module
+\textbf{使用数学模块}
 \begin{lstlisting}[style=styleCXX]
 import math;
 
@@ -112,11 +116,11 @@ int main() {
 }
 \end{lstlisting}
 
-The expression import math imports the math module and makes the exported names visible in the current scope.
+表达式import math导入math模块，并使导出的名称在当前作用域中可见。
 
 \subsubsubsection{3.1.3\hspace{0.2cm}范围库}
 
-The ranges library supports algorithms which
+范围库支持的算法有如下特征
 
 \begin{itemize}
 \item 
@@ -133,6 +137,7 @@ To make it short: The ranges library supports functional patterns.
 
 The following example demonstrates function composition using the pipe symbol.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Function composition with the pipe symbol
 \begin{lstlisting}[style=styleCXX]
@@ -158,6 +163,7 @@ C++20 does not provide concrete coroutines, instead C++20 provides a framework f
 
 The following code snippet uses a generator to create a potentially infinite data-stream. The chapter coroutines provides the implemenation of the Generator.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 A generator for an infinite data-stream
 \begin{lstlisting}[style=styleCXX]

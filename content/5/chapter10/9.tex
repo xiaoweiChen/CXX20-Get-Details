@@ -1,6 +1,6 @@
-First of all, don’t call them \href{https://en.wikipedia.org/wiki/Functor}{functors}. That’s a well-defined term from a branch of mathematics called \href{https://en.wikipedia.org/wiki/Category_theory}{category theory}.
+首先，它们不叫\href{https://en.wikipedia.org/wiki/Functor}{functors}。这是一个定义明确的术语，来自数学的一个分支，叫做\href{https://en.wikipedia.org/wiki/Category_theory}{category理论}。
 
-Function objects are objects that behave like functions. They achieve this by implementing the function call operator. As function objects are objects, they can have attributes and, therefore, state.
+函数对象是行为类似于函数的对象，通过实现函数调用操作符来实现。由于函数对象是对象，若依具有属性，也可以具有状态。
 
 \begin{lstlisting}[style=styleCXX]
 struct Square{
@@ -14,6 +14,6 @@ std::for_each(myVec.begin(), myVec.end(), Square());
 for (auto v: myVec) std::cout << v << " "; // 1 4 9 16 25 36 49 64 81 100
 \end{lstlisting}
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Instantiate function objects to use them}]
-It’s a common error that the name of the function object (Square) is used in an algorithm instead of an instance of function object (Square()) itself: std::for\_each(myVec.begin(), myVec.end(), Square). Of course, that’s a typical error. You have to use the instance: std::for\_each(myVec.begin(), myVec.end(), Square())
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={实例化函数对象}]
+算法中使用函数对象(Square)的名称而不是函数对象(Square())本身的实例是一个常见的错误:std::for\_each(myVec.begin()， myVec.end(), Square)。必须使用实例:std::for\_each(myVec.begin(), myVec.end(), Square())
 \end{tcolorbox}
