@@ -62,7 +62,7 @@
 
 ![](content/Cippi.png)
 
-<center>我是Cippi，我好奇、聪明，还有“女人味”十足!!  </center>
+<center>我是Cippi，我好奇、聪明，并且“女人味”十足!!  </center>
 
 Beatrix绘制了Cippi。
 
@@ -76,7 +76,7 @@ Beatrix绘制了Cippi。
 
 ## 本书相关
 
-* github地址：https://github.com/xiaoweiChen/Cpp-20-Get-Details
+* github地址：https://github.com/xiaoweiChen/CXX20-Get-Details
 * 译文的LaTeX 环境配置：https://www.cnblogs.com/1625--H/p/11524968.html 
   * 禁用拼写检查：https://blog.csdn.net/weixin_39278265/article/details/87931348
 

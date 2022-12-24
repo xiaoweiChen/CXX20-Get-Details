@@ -1,21 +1,39 @@
-The Big Six consists of the following functions:
+六大构造函数:
 
 \begin{itemize}
 \item 
-Default constructor: X()
+默认构造函数: 
+\begin{lstlisting}[style=styleCXX]
+X()
+\end{lstlisting}
 
 \item 
-Copy constructor: X(const X\&)
+复制构造函数:
+\begin{lstlisting}[style=styleCXX]
+ X(const X&)
+\end{lstlisting}
 
 \item 
-Copy assignment: X\& operator = (const X\&)
+复制赋值操作符: 
+\begin{lstlisting}[style=styleCXX]
+X& operator = (const X&)
+\end{lstlisting}
 
 \item 
-Move constructor: X(X\&\&)
+移动构造函数: 
+\begin{lstlisting}[style=styleCXX]
+X(X&&)
+\end{lstlisting}
 
 \item 
-Move assignment: X\& operator = (X\&\&)
+移动赋值操作符: 
+\begin{lstlisting}[style=styleCXX]
+X& operator = (X&&)
+\end{lstlisting}
 
 \item 
-Destructor: ∼X()
+析构函数: 
+\begin{lstlisting}[style=styleCXX]
+~X()
+\end{lstlisting}
 \end{itemize}
