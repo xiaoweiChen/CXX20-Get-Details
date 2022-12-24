@@ -4,14 +4,15 @@
 \includegraphics[width=1.0\textwidth]{content/2/chapter3/images/4.png}\\
 \end{center}
 
-\subsubsubsection{3.2.1\hspace{0.2cm}Three-Way Comparison Operator}
+\subsubsubsection{3.2.1\hspace{0.2cm}三向比较操作符}
 
-The three-way comparison operator <=>, or spaceship operator, determines, for two values A and B, whether A < B, A == B, or A > B.
+三向比较操作符<=>，或宇宙飞船操作符，确定对于两个值A和B的大小关系, A< B，A == B，或A > B。
 
-By declaring the three-way comparison operator default, the compiler will attempt to generate a consistent relational operator for the class. In this case, you get all six comparison operators: ==, !=, <, <=, >, and >=.
+通过将三向比较操作符声明为default，编译器将尝试为该类生成一致的关系操作符。在本例中，将得到所有六个比较运算符:==、!=、<、<=、>和>=。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Auto-generating the three-way comparison operator
+\textbf{自动生成三向比较运算符}
 \begin{lstlisting}[style=styleCXX]
 struct MyInt {
 	int value;
@@ -20,10 +21,11 @@ struct MyInt {
 };
 \end{lstlisting}
 
-The compiler-generated operator <=> performs lexicographical comparison, starting with the base classes and taking into account all the non-static data members in their declaration order. Here is a quite sophisticated example from the Microsoft blog: \href{https://devblogs.microsoft.com/cppblog/simplify-your-code-with-rocket-science-c20s-spaceship-operator/}{Simplify Your Code with Rocket Science: C++ 20’s Spaceship Operator}.
+编译器生成的操作符<=>执行字典比较，从基类开始，按照声明顺序考虑所有非静态数据成员。下面是来自微软博客的一个相当复杂的例子:\href{https://devblogs.microsoft.com/cppblog/simplify-your-code-with-rocket-science-c20s-spaceship-operator/}{使用“航天学”简化你的代码:C++20的宇宙飞船操作符}。
 
-\subsubsubsection{3.2.3\hspace{0.2cm} consteval and constinit}
+\subsubsubsection{3.2.3\hspace{0.2cm}consteval和constinit}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Spaceship operator for derived classes
 \begin{lstlisting}[style=styleCXX]
@@ -65,6 +67,7 @@ I assume the most complicated stuff in this code snippet is not the spaceship op
 
 Before I discuss designated initialization, let me show more about aggregate initialization. Here is a straightforward example.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Aggregate initialization
 \begin{lstlisting}[style=styleCXX]
@@ -100,6 +103,7 @@ Aggregate initialization
 
 The aggregate initialization is quite error-prone, because you can swap the constructor arguments, and you will never notice. Explicit is better than implicit. Let’s see what that means. Take a look at how designated initializers from \href{https://en.wikipedia.org/wiki/C99}{C99}, now part of the C++ standard, kick in.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Designated initialization
 \begin{lstlisting}[style=styleCXX]
@@ -132,11 +136,12 @@ int main(){
 
 The arguments for the instances of Point2 and Point3D are explicitly named. The output of the program is identical to the output of the previous one. The commented-out lines 16 and 18 are quite interesting. Line 16 would give an error because the order of the designators does not match the declaration order of the data members. As for line 18, the designator for y is missing. In this case, y is initialized to 0, such as when using braced initialization list {1, 0, 3}.
 
-\subsubsubsection{3.2.2\hspace{0.2cm}Designated Initialization}
+\subsubsubsection{3.2.2\hspace{0.2cm}指定初始化}
 
 The new consteval specifier, which was added in C++20, creates an immediate function. For an immediate function, every call of the function must produce a compile-time constant expression.
 An immediate function is implicitly a constexpr function but not necessarily the other way around.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 An immediate function
 \begin{lstlisting}[style=styleCXX]
@@ -155,10 +160,11 @@ constinit ensures that the variable with static storage duration or thread stora
 
 constinit ensures for this kind of variable (static storage duration or thread storage duration) that they are initialized at compile time. constinit does not imply constness.
 
-\subsubsubsection{3.2.4\hspace{0.2cm}Template Improvements}
+\subsubsubsection{3.2.4\hspace{0.2cm}改进的模板}
 
 C++20 offers various improvements to programming with templates. A generic constructor is a catch-all constructor because you can invoke it with any type.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 An implicit and explicit generic constructor
 \begin{lstlisting}[style=styleCXX]
@@ -182,12 +188,13 @@ Explicit exp2{"explicit"};
 
 The generic constructor of the class Implicit is way too generic. By putting the keyword explicit in front of the constructor, as for Explicit, the constructor becomes explicit. This means that implicit conversions are not valid anymore.
 
-\subsubsubsection{3.2.5\hspace{0.2cm}Lambda Improvements}
+\subsubsubsection{3.2.5\hspace{0.2cm}改进的Lambda}
 
 Lambdas get many improvements in C++20. They can have template parameters, can be used in unevaluated contexts, and stateless lambdas can also be default-constructed and copy-assigned. Furthermore, the compiler can now detect when you implicitly copy the this pointer, which means a significant cause of undefined behavior with lambdas is gone.
 
 If you want to define a lambda that accepts only a std::vector, template parameters for lambdas enable this:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Template parameters for lambdas
 \begin{lstlisting}[style=styleCXX]
@@ -196,10 +203,11 @@ auto foo = []<typename T>(std::vector<T> const& vec) {
 	};
 \end{lstlisting}
 
-\subsubsubsection{3.2.6\hspace{0.2cm}New Attributes}
+\subsubsubsection{3.2.6\hspace{0.2cm}新属性}
 
 C++20 has new attributes, including [[likely]] and [[unlikely]]. Both attributes allow us to give the optimizer a hint, specifying which path of execution is more or less likely.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 The attribute [[likely]]
 \begin{lstlisting}[style=styleCXX]
