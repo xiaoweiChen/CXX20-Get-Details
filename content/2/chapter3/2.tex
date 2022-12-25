@@ -23,11 +23,11 @@ struct MyInt {
 
 编译器生成的操作符<=>执行字典比较，从基类开始，按照声明顺序考虑所有非静态数据成员。下面是来自微软博客的一个相当复杂的例子:\href{https://devblogs.microsoft.com/cppblog/simplify-your-code-with-rocket-science-c20s-spaceship-operator/}{使用“航天学”简化你的代码:C++20的宇宙飞船操作符}。
 
-\subsubsubsection{3.2.3\hspace{0.2cm}consteval和constinit}
+\subsubsubsection{3.2.2\hspace{0.2cm}consteval和constinit}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Spaceship operator for derived classes
+\textbf{派生类的太空船操作符}
 \begin{lstlisting}[style=styleCXX]
 struct Basics {
 	int i;
@@ -63,13 +63,13 @@ int main() {
 }
 \end{lstlisting}
 
-I assume the most complicated stuff in this code snippet is not the spaceship operator, but the initialization of Base using aggregate initialization. Aggregate initialization essentially means that you can directly initialize the members of class types (class, struct, or union) if all members are public. In this case, you can use a braced initialization list, as in the example.
+假设这个代码片段中最复杂的不是太空船操作符，而是使用聚合初始化初始化Base。聚合初始化意味着若所有成员都是public，则可以直接初始化类类型(class、struct或union)的成员。在这种情况下，可以使用带括号的初始化列表，如示例所示。
 
-Before I discuss designated initialization, let me show more about aggregate initialization. Here is a straightforward example.
+在讨论指定初始化之前，先来详细介绍一下聚合初始化。这里有一个简单的例子。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Aggregate initialization
+\textbf{聚合初始化}
 \begin{lstlisting}[style=styleCXX]
 struct Point2D{
 	int x;
@@ -94,18 +94,18 @@ int main(){
 }
 \end{lstlisting}
 
-This is the output of the program:
+输出为:
 
 \begin{center}
 \includegraphics[width=1.0\textwidth]{content/2/chapter3/images/5.png}\\
-Aggregate initialization
+聚合初始化
 \end{center}
 
-The aggregate initialization is quite error-prone, because you can swap the constructor arguments, and you will never notice. Explicit is better than implicit. Let’s see what that means. Take a look at how designated initializers from \href{https://en.wikipedia.org/wiki/C99}{C99}, now part of the C++ standard, kick in.
+因为可以交换构造函数参数，所以聚合初始化非常容易出错，而且不太会注意到，显性比隐性好。来看下\href{https://en.wikipedia.org/wiki/C99}{C99}(现在是C++标准的一部分)中的指定初始化是如何工作的。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Designated initialization
+\textbf{指定初始化}
 \begin{lstlisting}[style=styleCXX]
 struct Point2D{
 	int x;
@@ -134,16 +134,15 @@ int main(){
 }
 \end{lstlisting}
 
-The arguments for the instances of Point2 and Point3D are explicitly named. The output of the program is identical to the output of the previous one. The commented-out lines 16 and 18 are quite interesting. Line 16 would give an error because the order of the designators does not match the declaration order of the data members. As for line 18, the designator for y is missing. In this case, y is initialized to 0, such as when using braced initialization list {1, 0, 3}.
+Point2和Point3D实例的参数是显式命名的，该程序的输出与前一个程序的输出完全相同。注释掉的第16行和第18行非常有趣。第16行会报错，因为指示符的顺序与数据成员的声明顺序不匹配。至于第18行，y的指示符不见了。在这种情况下，y初始化为0，等效于使用带括号的初始化列表\{1,0,3\}。
 
-\subsubsubsection{3.2.2\hspace{0.2cm}指定初始化}
+\subsubsubsection{3.2.3\hspace{0.2cm}指定初始化}
 
-The new consteval specifier, which was added in C++20, creates an immediate function. For an immediate function, every call of the function must produce a compile-time constant expression.
-An immediate function is implicitly a constexpr function but not necessarily the other way around.
+C++20中新增的consteval说明符创建了一个即时函数。对于即时函数，每次调用该函数都必须生成一个编译时常量表达式。即时函数是隐式constexpr函数，但不一定是constexpr函数。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-An immediate function
+\textbf{即时函数}
 \begin{lstlisting}[style=styleCXX]
 consteval int sqr(int n) {
 	return n*n;
@@ -154,19 +153,19 @@ int x = 100;
 int r2 = sqr(x); // Error
 \end{lstlisting}
 
-The final assignment gives an error because x is not a constant expression and, therefore, sqr(x) cannot be performed at compile time 
+最后的赋值会给出一个错误，因为x不是一个常量表达式，因此不能在编译时执行sqr(x)。
 
-constinit ensures that the variable with static storage duration or thread storage duration is initialized at compile time. Static storage duration means that the object is allocated when the program begins and is deallocated when the program ends. Thread storage duration means that the objects lifetime is bound to the lifetime of the thread.
+constinit确保静态存储持续时间或线程存储持续时间的变量，在编译时初始化。静态存储持续时间意味着对象在程序开始时分配，在程序结束时释放。线程存储持续时间，意味着对象的生存期与线程的生存期绑定。
 
-constinit ensures for this kind of variable (static storage duration or thread storage duration) that they are initialized at compile time. constinit does not imply constness.
+constinit确保在编译时对这类变量(静态存储持续时间或线程存储持续时间)进行初始化。不过，constinit并不意味着常量。
 
 \subsubsubsection{3.2.4\hspace{0.2cm}改进的模板}
 
-C++20 offers various improvements to programming with templates. A generic constructor is a catch-all constructor because you can invoke it with any type.
+C++20对模板编程提供了各种改进。泛型构造函数是一种万能构造函数，可以用任何类型使用。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-An implicit and explicit generic constructor
+\textbf{隐式和显式泛型构造函数}
 \begin{lstlisting}[style=styleCXX]
 struct Implicit {
 	template <typename T>
@@ -186,17 +185,17 @@ Explicit exp1 = "implicit"; // Error
 Explicit exp2{"explicit"};
 \end{lstlisting}
 
-The generic constructor of the class Implicit is way too generic. By putting the keyword explicit in front of the constructor, as for Explicit, the constructor becomes explicit. This means that implicit conversions are not valid anymore.
+隐式类的构造函数很泛型，通过将关键字explicit放在构造函数前面，就像显式构造函数一样，从而隐式转换不再有效。
 
 \subsubsubsection{3.2.5\hspace{0.2cm}改进的Lambda}
 
-Lambdas get many improvements in C++20. They can have template parameters, can be used in unevaluated contexts, and stateless lambdas can also be default-constructed and copy-assigned. Furthermore, the compiler can now detect when you implicitly copy the this pointer, which means a significant cause of undefined behavior with lambdas is gone.
+Lambda在C++20中进行了许多改进，可以有模板参数，可以在未求值的上下文中使用，无状态Lambda也可以默认构造和复制赋值。此外，编译器现在可以检测何时隐式复制this指针，从而消除了Lambdas未定义行为的一个重要可能。
 
-If you want to define a lambda that accepts only a std::vector, template parameters for lambdas enable this:
+若想定义一个只接受std::vector的Lambda，Lambda的模板参数可以这样写:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Template parameters for lambdas
+\textbf{Lambda的模板参数}
 \begin{lstlisting}[style=styleCXX]
 auto foo = []<typename T>(std::vector<T> const& vec) {
 		// do vector-specific stuff
@@ -205,11 +204,11 @@ auto foo = []<typename T>(std::vector<T> const& vec) {
 
 \subsubsubsection{3.2.6\hspace{0.2cm}新属性}
 
-C++20 has new attributes, including [[likely]] and [[unlikely]]. Both attributes allow us to give the optimizer a hint, specifying which path of execution is more or less likely.
+C++20有了新的属性，包括[[likely]]和[[unlikely]]。这两个属性都可以给优化器一些提示，指定哪个执行路径更可能或更不可能(可以更好的进行分支预测)。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-The attribute [[likely]]
+\textbf{属性[[likely]]}
 \begin{lstlisting}[style=styleCXX]
 for(size_t i=0; i < v.size(); ++i){
 	if (v[i] < 0) [[likely]] sum -= sqrt(-v[i]);
