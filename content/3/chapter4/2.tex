@@ -11,6 +11,7 @@ Modules are one of the four big features of C++20: concepts, modules, ranges, an
 
 Let me start with a simple executable. For obvious reasons, I create a helloWorld.cpp program.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 A simple hello world program
 \begin{lstlisting}[style=styleCXX]
@@ -26,27 +27,28 @@ int main() {
 Making an executable helloWorld out of the program helloWorld.cpp with \href{http://gcc.gnu.org/}{GCC} increases its size by factor 130.
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/12.png}\\
+\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/12.png}\\
 Size of an object file
 \end{center}
 
 The numbers 100 and 12928 in the screenshot stand for the number of bytes. Okay. We should have a basic understanding of what’s happening under the hood.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.1.1\hspace{0.2cm} The Classical Build Process
 
 The build process consists of three steps: preprocessing, compilation, and linking.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.1.1.1\hspace{0.2cm} Preprocessing
-
 
 The preprocessor handles the directives as \#include and \#define. The preprocessor substitutes \#include directives with the corresponding header files, and it substitutes the macros (\#define). Thanks to directives such as \#if, \#else, \#elif, \#ifdef, \#ifndef, and \#endif parts of the source code can be included or excluded.
 
 This straightforward text substitution process can be observed by using the compiler flag -E on GCC/Clang, or /E on Windows.
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/13.png}\\
+\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/13.png}\\
 Preprocessors output
 \end{center}
 
@@ -54,6 +56,7 @@ WOW!!! The output of the preprocessing step has more than half a million bytes. 
 
 The result of this preprocessing step is the translation unit.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.1.1.2\hspace{0.2cm} Compilation
 
@@ -61,6 +64,7 @@ The compilation is performed separately on each output of the preprocessor. The 
 
 The objects files that the compiler produces are the inputs for the linker.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.1.1.3\hspace{0.2cm} Linking
 
@@ -68,11 +72,13 @@ The output of the linker can be an executable or a static or shared library. It�
 
 This build process that consists of the three steps is inherited from C. It works sufficiently well if you have only one translation unit. But when you have more than one, many issues can occur.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.1.2\hspace{0.2cm} Issues of the Build Process
 
 Here’s an incomplete list of the flaws in a classical build process, which can be overcome with modules.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.1.2.1\hspace{0.2cm} Repeated Substitution
 
@@ -158,14 +164,14 @@ int main() {
 Building and executing the program works as expected:
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/14.png}\\
+\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/14.png}\\
 Compilation of a simple program
 \end{center}
 
 Here is the issue. The preprocessor runs on each source file. This means that the header file <iostream> is included a total of three times. Consequently, each source file is blown up to more than half a million lines.
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/15.png}\\
+\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/15.png}\\
 Size of the preprocessed source file
 \end{center}
 
@@ -173,6 +179,7 @@ This is a waste of compile time.
 
 Unlike header files, a module is only imported once and is literally for free.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.1.2.2\hspace{0.2cm} Isolation from Preprocessor Macros
 
@@ -180,6 +187,7 @@ If there is one consensus in the C++ community, it’s the following one: we sho
 
 Imagine you have two header files webcolors.h and productinfo.h.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 First definition of macro RED
 \begin{lstlisting}[style=styleCXX]
@@ -187,6 +195,7 @@ First definition of macro RED
 #define RED 0xFF0000
 \end{lstlisting}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Second definition of macro RED
 \begin{lstlisting}[style=styleCXX]
@@ -198,6 +207,7 @@ When a source file client.cpp includes both headers, the value of macro RED depe
 
 With modules, import order makes no difference.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.1.2.3\hspace{0.2cm} Isolation from Preprocessor Macros
 
@@ -215,6 +225,7 @@ Inline functions with external linkage can be defined in more than one translati
 
 Let’s see what my linker has to say when I try to link a program breaking the one-definition rule. The following code example has two header files, header.h and header2.h. The main program includes the header files header.h twice and, therefore, breaks the one-definition rule because two definitions of func are included.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Definition of the function func
 \begin{lstlisting}[style=styleCXX]
@@ -222,6 +233,7 @@ Definition of the function func
 void func() {}
 \end{lstlisting}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Indirect inclusion of the function definition to func
 \begin{lstlisting}[style=styleCXX]
@@ -229,6 +241,7 @@ Indirect inclusion of the function definition to func
 #include "header.h"
 \end{lstlisting}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Double definitions of the function func
 \begin{lstlisting}[style=styleCXX]
@@ -243,12 +256,13 @@ int main() {}
 The linker complains about the multiple definitions of func:
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/16.png}\\
+\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/16.png}\\
 Breakion the one definition rule
 \end{center}
 
 We are used to ugly workarounds, such as putting an include guard around your header. Adding the include guard FUNC\_H to the header file header.h solves the issue.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Using include guards to solve ODR
 \begin{lstlisting}[style=styleCXX]
@@ -297,6 +311,7 @@ In 2004, Daveed Vandevoorde wrote proposal \href{http://www.open-std.org/jtc1/sc
 
 The purpose of this section is straightforward: I will give you an introduction to modules. More advanced features of modules are in the following sections. Let’s start with a simple math module.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 A simple math module
 \begin{lstlisting}[style=styleCXX]
@@ -311,6 +326,7 @@ export int add(int fir, int sec){
 
 The expression export module math is the module declaration. By putting export before function add’s definition, add is exported and can, therefore, be used by a consumer of the module.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Use of the simple math module
 \begin{lstlisting}[style=styleCXX]
@@ -327,6 +343,7 @@ import math imports module math and makes the exported names in the module visib
 
 Let me start with the module declaration file.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.3.1\hspace{0.2cm} Module Declaration File
 
@@ -347,6 +364,7 @@ The global module fragment is meant to compose module interfaces. It starts with
 
 The second version of the module math supports the two functions add and getProduct.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 A module definition with a global module fragment
 \begin{lstlisting}[style=styleCXX]
@@ -370,6 +388,7 @@ export int getProduct(const std::vector<int>& vec) {
 
 I included the necessary headers between the global module fragment (line 3) and the module declaration (line 8).
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Use of the improved module math
 \begin{lstlisting}[style=styleCXX]
@@ -397,7 +416,7 @@ int main() {
 The client imports module math and uses its functionality:
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/17.png}\\
+\includegraphics[width=0.5\textwidth]{content/3/chapter4/images/17.png}\\
 Execution of the program client1.exe
 \end{center}
 
@@ -409,18 +428,20 @@ To compile the module math.ixx used by the client program client.cpp, you have t
 
 The compilation of a module is challenging. For that reason, I show as an example the compilation of the module with the Microsoft compiler and the Clang compiler.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.4.1\hspace{0.2cm} Microsoft Visual Compiler
 
 First, I use the cl.exe 19.25.28614 for x64 compiler.
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/18.png}\\
+\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/18.png}\\
 Microsoft compiler for modules
 \end{center}
 
 These are the steps to compile and use the module with the Microsoft compiler. I only show the minimal command line. As promised, more details follow. Additionally, with an older Microsoft compiler, you have to use the flag /std:cpplatest.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Building the executable with the Microsoft compiler
 \begin{tcblisting}{commandshell={}}
@@ -438,18 +459,20 @@ Line 2 creates the executable client.exe. Without the implicitly used math.ifc f
 
 For obvious reasons, I do not show the output of the program execution.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.4.2\hspace{0.2cm} Clang Compiler
 
 On Linux, I use the Clang 10.0.0 compiler.
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/19.png}\\
+\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/19.png}\\
 Clang compiler for modules
 \end{center}
 
 With the clang compiler, the module declaration file is simply a cpp file. Consequently, I have to rename the math.ixx file to math.cpp.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 A simple math module
 \begin{lstlisting}[style=styleCXX]
@@ -464,6 +487,7 @@ export int add(int fir, int sec){
 
 The client file client.cpp is unchanged. These are the necessary steps to create the executable.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Building the executable with the Clang compiler
 \begin{tcblisting}{commandshell={}}
@@ -482,6 +506,7 @@ Line 1 creates the module math.pcm. The suffix pcm stands for precompiled module
 Line 4 creates the executable client, which uses the module math.pcm. You specify the path to the module with the -fprebuilt-module-path flag.
 \end{itemize}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.4.3\hspace{0.2cm} Used Compiler
 
@@ -492,11 +517,13 @@ I use the cl.exe from Microsoft in this book. Microsoft currently has (end 2020)
 
 There are three ways to export names in a module interface unit.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.5.1\hspace{0.2cm} Export Specifier
 
 You can export each name explicitly.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Export specifier
 \begin{lstlisting}[style=styleCXX]
@@ -505,11 +532,13 @@ export int mult(int fir, int sec);
 export void doTheMath();
 \end{lstlisting}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.5.2\hspace{0.2cm} Export Group
 
 An export group exports all of its names.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Export group
 \begin{lstlisting}[style=styleCXX]
@@ -520,11 +549,13 @@ export {
 }
 \end{lstlisting}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.5.3\hspace{0.2cm} Export Namespace
 
 Instead of an exported group, you can use an exported namespace.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Export namespace
 \begin{lstlisting}[style=styleCXX]
@@ -543,6 +574,7 @@ Only names that don’t have an internal linkage can be exported.
 
 Let’s examine guidelines for how to structure a module.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Guidelines for the structure of a module
 \begin{lstlisting}[style=styleCXX]
@@ -579,9 +611,11 @@ The module has only declared names. Let’s write about the separation of the in
 
 When the module becomes bigger, you should structure it into a module interface unit and one or more module implementation units. Following the previously mentioned guidelines to structure a module, I will refactor the previous version of the math module.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.7.1\hspace{0.2cm} Module Interface Unit
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 The module interface unit
 \begin{lstlisting}[style=styleCXX]
@@ -613,9 +647,11 @@ The names add and getProduct are exported (lines 11 and 13).
 A module can have only one module interface unit.
 \end{itemize}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.7.2\hspace{0.2cm} Module Implementation Unit
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 The module implementation unit
 \begin{lstlisting}[style=styleCXX]
@@ -645,9 +681,11 @@ The module implementation unit contains non-exporting module declarations: modul
 A module can have more than one module implementation unit.
 \end{itemize}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.7.3\hspace{0.2cm} Main Program
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 The client uses module math
 \begin{lstlisting}[style=styleCXX]
@@ -682,6 +720,7 @@ When my explanations become compiler dependent, I put them in a separate tip box
 	
 Manually building the executable includes a few steps.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Building a module with a module interface unit and a module implementation unit
 \begin{tcblisting}{commandshell={}}
@@ -719,6 +758,7 @@ Execution of the program client2.exe
 
 When your module becomes bigger, you want to divide its functionality into manageable components. C++20 modules offer two approaches: submodules and partitions.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.8.1\hspace{0.2cm} Submodules
 
@@ -726,6 +766,7 @@ A module can import modules and then re-export them.
 
 In the following example, module math imports the submodules math.math1 and math.math2.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 The module math
 \begin{lstlisting}[style=styleCXX]
@@ -739,6 +780,7 @@ The expression export import math.math1 imports module math.math1 and re-exports
 
 For completeness, here are the modules math.math1 and math.math2. I used a period to separate the module math from its submodules. This period is not necessary.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 The submodule math.math1
 \begin{lstlisting}[style=styleCXX]
@@ -749,6 +791,7 @@ export int add(int fir, int sec) {
 }
 \end{lstlisting}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 The submodule math.math2
 \begin{lstlisting}[style=styleCXX]
@@ -765,6 +808,7 @@ If you look carefully, you recognize a small difference in the export statements
 
 From the client’s perspective, using the math module is straightforward.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 The main program
 \begin{lstlisting}[style=styleCXX]
@@ -787,6 +831,7 @@ The usage of function modules and submodules
 
 \begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=Building the Executable with the Microsoft Compiler]
 	
+\hspace*{\fill} \\ %插入空行
 \noindent
 Building the executable out of the modules and its submodules
 \begin{tcblisting}{commandshell={}}
@@ -803,6 +848,7 @@ Each compilation process of the three modules creates two artifacts: The IFC fil
 
 I already mentioned that a submodule is also a module. Each submodule has a module declaration. Consequently, I can create a second client that is only interested in the math.math1 module.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 The main program uses only submodule math.math1
 \begin{lstlisting}[style=styleCXX]
@@ -822,6 +868,7 @@ The usage of function modules and submodules
 
 The division of modules into modules and submodules is a means for the module designer to give the user of the module the possibility to import fine-grained parts of the module. This observation does not apply to module partitions.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.8.2\hspace{0.2cm} Module Partitions
 
@@ -829,6 +876,7 @@ A module can be divided into partitions. Each partition consists of a module int
 
 The description of module partitions is more difficult to understand than its implementation. In the following lines, I rewrite the math module and its submodules math.math1 and math.math2 (see Submodules) to module partitions. In this straightforward process, I refer to the shortly introduced terms of module partitions.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Primary interface file
 \begin{lstlisting}[style=styleCXX]
@@ -842,6 +890,7 @@ export import :math2;
 
 The primary interface file consists of the module declaration (line 3). It imports and re-exports the partitions math1 and math2 using colons (lines 5 and 6). The name of the partitions must begin with the name of the module. Consequently, you don’t have to specify them.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 First module partition
 \begin{lstlisting}[style=styleCXX]
@@ -854,6 +903,7 @@ export int add(int fir, int sec) {
 }
 \end{lstlisting}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Second module partition
 \begin{lstlisting}[style=styleCXX]
@@ -870,6 +920,7 @@ export {
 
 Similar to the module declaration, the expressions export module math:math1 and export module math:math2 (line 3) declare a module interface partition. A module interface partition is also a module interface unit. The name math stands for the module and the names math1 or math2 for the partition.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Import the module partition
 \begin{lstlisting}[style=styleCXX]
@@ -893,6 +944,7 @@ The usage of function modules and submodules
 
 I often hear the question: How are templates exported by modules? When you instantiate a template, its definition must be available. This is the reason that template definitions are hosted in headers. Conceptually, the usage of a template has the following structure
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.9.1\hspace{0.2cm} Without Modules
 
@@ -926,6 +978,7 @@ int main() {
 
 The main program directly includes the header templateSum.h. The call sum(1, 1.5) triggers the template instantiation. In this case, the compiler generates out of the function template sum the concrete function sum, which takes an int and a double as arguments. If you want to visualize this process, use the example on \href{https://cppinsights.io/}{C++ Insights}.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.9.2\hspace{0.2cm} With Modules
 
@@ -998,6 +1051,7 @@ Module linkage: Names with module linkage are only accessible inside the module.
 
 A small variation of the previous module declaration mathModuleTemplate.ixx makes my point. Imagine that I want to return to the user of my function template sum not only the result of the addition, but also the return type the compiler deduces.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 An improved definition of the function template sum
 \begin{lstlisting}[style=styleCXX]
@@ -1029,6 +1083,7 @@ export namespace math {
 
 nstead of the sum of the numbers, the function template sum returns a \href{https://en.cppreference.com/w/cpp/utility/pair}{std::pair} (line 21) consisting of the sum and a string representation of the type of the value res. Note that I put the function template showType (line 11) outside the exported namespace math (line 16). Consequently, invoking it from outside the module math is not possible. Function template showType uses \href{https://www.modernescpp.com/index.php/perfect-forwarding}{perfect forwarding} to preserve the value categories of the function argument t. The \href{https://en.cppreference.com/w/cpp/language/typeid}{typeid} operator queries information about the type at run time (\href{https://en.cppreference.com/w/cpp/types}{run time type identification (RTTI)}).
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Use of the improved function template sum
 \begin{lstlisting}[style=styleCXX]
@@ -1065,6 +1120,7 @@ Use of the improved function template sum
 
 At the end of 2020, no compiler, so far, supports header units. Header units are a smooth way to transition from headers to modules. You just have to replace the \#include directive with the new import directive.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Replacing \#include directives with import directives
 \begin{lstlisting}[style=styleCXX]
@@ -1076,6 +1132,7 @@ First, import respects the same lookup rules as include. This means in the case 
 
 Second, this is way more than text replacement. In this case, the compiler generates something module-like out of the import directive and treats the result as if it would be a module. The importing module statement gets all exportable names from the header. The exported names include macros. Importing these synthesized header units is faster than including header files and comparable in speed to precompiled headers.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.2.11.1\hspace{0.2cm} One Drawback
 

@@ -1820,11 +1820,11 @@ int main() {
 Haskell类型的层次结构
 \end{center}
 
-The class hierarchy shows that the type class Ord is a refinement of the type class Eq. Haskell expresses this elegantly.
+类层次结构表明类型Ord是类型Eq的细化，Haskell优雅地表达了这一点。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-A part of Haskell’s type classes hierarchy
+\textbf{Haskell类型层次结构的一部分}
 \begin{lstlisting}[style=styleCXX]
 class Eq a where
 	(==) :: a -> a -> Bool
@@ -1839,19 +1839,19 @@ class Eq a => Ord a where
 	max :: a -> a -> a
 \end{lstlisting}
 
-Each type a supporting the type class Eq (line 1), has to support equality (line 2) and inequality (line 3). Now to the interesting part of this definition. Each type a supporting the type class Ord has to support the type class Eq (class Eq a => Ord a in line 5). Additionally, type a has to support the four comparison operators and the functions compare and max (lines 6 - 11).
+每个类型a支持类型类Eq(第1行)，必须支持等式(第2行)和不等式(第3行)。现在是这个定义有趣的部分。支持类型类Ord的每个类型a都必须支持类型类Eq(在第5行中，(Eq a => Ord a)。此外，类型a必须支持四个比较操作符,以及compare和max函数(第6-11行)。
 
-Here is my challenge. Can we express Haskell’s relationship between the type classes Eq and Ord with concepts in C++20? For simplicity, I ignore Haskell’s functions compare and max.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-4.1.9.1.1\hspace{0.2cm} The Concept Ordering
-
-Thanks to the requires expression, the definition of the concept Ordering looks quite similar to the definition of the type class ord in Haskell.
+这就到挑战时刻了。能否用C++ 20中的概念来表达Haskell在类型Eq和Ord之间的关系?简单起见，这里忽略Haskell的compare和max函数。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-The concept Ordering
+\textbf{4.1.9.1.1\hspace{0.2cm}排序概念}
+
+多亏了需求表达式，排序概念的定义看起来与Haskell中类型类ord的定义相似。
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{排序概念}
 \begin{lstlisting}[style=styleCXX]
 template <typename T>
 concept Ordering =
@@ -1864,11 +1864,11 @@ concept Ordering =
 	};
 \end{lstlisting}
 
-The Ordering concept uses nested requirements under the hood. A type T supports the concept Ordering if it supports the concept Equal and, additionally, the four comparison operators. Let’s try it out.
+排序概念在底层使用了嵌套的需求。类型T若支持Equal概念，则支持排序概念，此外还支持四个比较运算符。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Definition and usage of the concept Ordering
+\textbf{排序概念的定义和使用}
 \begin{lstlisting}[style=styleCXX]
 // conceptsDefinitionOrdering.cpp
 
@@ -1924,9 +1924,9 @@ int main() {
 }
 \end{lstlisting}
 
-The function template areEqual (line 25) requires that both arguments a and b have the same type and support the concept Equal. Additionally, the function template getSmaller (line 30) requires that both arguments support the concept Ordering. Of course, integrals such as 1 and 5 support both concepts. A \href{https://en.cppreference.com/w/cpp/container/unordered_set}{std::unordered\_set}, as its name implies, does not fulfill the concept Ordering.
+函数模板areEqual(第25行)要求实参a和b具有相同的类型并支持Equal概念。此外，函数模板getsmall(第30行)要求两个参数都支持有序概念。当然，像1和5这样的整数同时匹配这两个概念。\href{https://en.cppreference.com/w/cpp/container/unordered_set}{std::unordered\_set}，并不满足有序概念。
 
-Consequently, I commented out line 48.
+因此，我将第48行注释掉。
 
 \begin{tcblisting}{commandshell={}}
 areEqual(1, 5): false
@@ -1934,75 +1934,71 @@ getSmaller(1, 5): 1
 areEqual(firSet, secSet): true
 \end{tcblisting}
 
-\begin{center}
-Use of the concept Ordering
-\end{center}
-
-Let’s look at the more interesting case now. What happens, when we compile line 48: auto smallerSet = getSmaller(firSet, secSet);? The GCC compiler complains unambiguously that a std::unordered\_set is not a valid argument for the function template getSmaller.
+接下来，看看更有趣的情况。当编译第48行会发生什么?GCC编译器明确指出std::unordered\_set不是函数模板getsmall的有效参数。
 
 \begin{center}
 \includegraphics[width=1.0\textwidth]{content/3/chapter4/images/1-5.png}\\
-Erroneous usage of the function template getSmaller
+函数模板getsmall的使用错误
 \end{center}
 
-The Ordering concept is already part of the C++20 standard.
+排序概念已经是C++20标准的一部分。
 
 \begin{itemize}
 \item 
-std::three\_way\_comparable: is equivalent to the concept Ordering presented above
+std::three\_way\_comparable:等价于上面提出的排序概念
 
 \item 
-std::three\_way\_comparable\_with: allows the comparison of values of different types; e.g.: 1.0 < 1.0f
+std::three\_way\_comparable\_with:允许比较不同类型的值;例如:1.0 < 1.0f
 \end{itemize}
 
-With C++20, we get the three-way comparison operator, also known as the spaceship operator <=>. I present it in full depth in the three-way comparison operator chapter.
+C++20中，可以使用三向比较操作符，也称为宇宙飞船操作符<=>。我将在三向比较运算符的章节中全面深入地介绍它。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.1.9.2\hspace{0.2cm} The Concepts SemiRegular and Regular
+\textbf{4.1.9.2\hspace{0.2cm}半常规和常规的概念}
 
-When you want to define a concrete type that works well in the C++ ecosystem, you should define a type that “behaves like an int”. Formally, your concrete type should be a regular type. In this section, I define the concepts SemiRegular and Regular.
+想要在C++生态系统中定义一个工作良好的类型时，应该定义一个“行为像int型”的类型。形式上，具体类型应该是常规类型在本节中，来定义半常规和常规概念。
 
-SemiRegular and Regular are essential ideas in C++. Sorry, I should say concepts. For example, here is rule \href{http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rt-regular}{T.46 from the C++ Core Guidelines: T.46: Require template arguments to be at least Regular or SemiRegular}. Now, only one important question is left to answer: What are Regular or SemiRegular types? Before I dive into the details, this is the informal answer:
-
-\begin{itemize}
-\item 
-A regular type “behaves like an int.” It can be copied and the result of the copy operation is independent of the original one and has the same value.
-\end{itemize}
-
-Okay, let me be more formal. A regular type is also a semiregular type, so let’s begin.
-
-
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title=Regular Types]
-
-\href{https://en.wikipedia.org/wiki/Alexander_Stepanov}{Alexander Stepanov}, the designer of the Standard Template Library, defined the terms regular type and semiregular type. A type, according to him, is regular if it supports these functions
+半常规和常规是C++中的基本思想。抱歉，我应该说概念。例如，下面是常规\href{http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rt-regular}{T.46:要求模板参数至少是半常规和常规类型}。现在，只剩下一个重要的问题需要回答:什么是常规类型或半常规类型?在我深入讨论之前，先简单回答一下:
 
 \begin{itemize}
 \item 
-Copy construction
-
-\item 
-Assignment
-
-\item 
-Equality
-
-\item 
-Destruction
-
-\item 
-Total ordering
+常规类型“行为类似于int型”，可以复制，并且复制操作的结果独立于原始操作，具有相同的值。
 \end{itemize}
 
-Copy construction implies default construction and Equality implies Inequality. When Stepanov defined the requirements above, move semantics was not present in C++. The book \href{http://elementsofprogramming.com/}{Elements of Programming}, which Alexander Stepanov wrote together with \href{https://www.mcjones.org/paul/}{Paul McJones}, is devoted to regular types.
+更正式一点。常规类型也是半常规类型，让我们开始吧。
+
+
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={常规类型}]
+
+\href{https://en.wikipedia.org/wiki/Alexander_Stepanov}{Alexander Stepanov}，标准模板库的设计者，定义了术语常规类型和半常规类型。根据他的说法，若一个类型支持这些函数，那么它就是常规类型
+
+\begin{itemize}
+\item 
+复制构造
+
+\item 
+赋值
+
+\item 
+等式
+
+\item 
+析构
+
+\item 
+全序
+\end{itemize}
+
+复制构造意味着默认构造，等式构造意味着不相等。当Stepanov定义上述需求时，C++中还没有移动语义。Alexander Stepanov和\href{https://www.mcjones.org/paul/}{Paul McJones}合著的书\href{http://elementsofprogramming.com/}{Elements of Programming}专门介绍了常规类型。
 
 \end{tcolorbox}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.1.9.2.1\hspace{0.2cm} The Concept SemiRegular
+\textbf{4.1.9.2.1\hspace{0.2cm}半常规概念}
 
-A semiregular type X has to support the Big Six and has to be swappable. The Big Six consists of the following functions:
+一个半常规的X型必须支持六大函数，并且可交换。六大函数包括:
 
 \begin{itemize}
 \item 
@@ -2042,9 +2038,9 @@ X& operator = (X&&)
 \end{lstlisting}
 \end{itemize}
 
-Additionally, X has to be swappable: swap(X\&, X\&)
+此外，X必须是可交换的: swap(X\&, X\&)
 
-Thanks to the \href{https://en.cppreference.com/w/cpp/header/type_traits}{type-traits library}, defining the corresponding concept is a no-brainer. First, I define the type trait isSemiRegular and then use it to define the concept SemiRegular.
+\href{https://en.cppreference.com/w/cpp/header/type_traits}{类型特性库}中定义了相应概念。这里，我定义了类型特征isSemiRegular，然后用它来定义概念SemiRegular。
 
 \begin{lstlisting}[style=styleCXX]
 template<typename T>
@@ -2062,36 +2058,36 @@ template<typename T>
 concept SemiRegular = isSemiRegular<T>::value;
 \end{lstlisting}
 
-The type trait isSemiRegular (line 1) is fulfilled when all type traits to the Big Six (lines 3 - 8) and the type trait std::is\_swappable (line 9) are fulfilled. The remaining step to define the concept SemiRegular is to use the type traits isSemiRegular (line 13).
+类型特性isSemiRegular(第1行)是当所有的类型特性到六大函数(第3-8行)和类型特质std::is\_swappable(第9行)都满足时实现的。定义SemiRegular概念的剩余步骤，就是使用类型特征isSemiRegular(第13行)。
 
-Let’s continue with the concept Regular.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-4.1.9.2.2\hspace{0.2cm} The Concept Regular
-
-There is only one step and we are done with defining the concept Regular. In addition to the requirements of the concept SemiRegular, the concept Regular requires that the type is equally comparable. I already defined the Equal concept in the section on requires expressions. Consequently, you are already done. You only have to conjunct the concepts Equal and SemiRegular.
+让我们继续解读Regular这个概念。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Definition of the concept Regular
+\textbf{4.1.9.2.2\hspace{0.2cm}常规概念}
+
+这里只有一步骤，我们已经完成了对Regular概念的定义。除了SemiRegular概念的需求外，Regular概念还要求类型具有相等的可比性。我已经在需求表达式一节中定义了Equal概念。因此，已经完成了，只需要把Equal和SemiRegular这两个概念组合起来就可以了。
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{定义常规概念}
 \begin{lstlisting}[style=styleCXX]
 template<typename T>
 concept Regular = Equal<T> &&
 					SemiRegular<T>;
 \end{lstlisting}
 
-Now, I’m curious. How can we define the corresponding concepts std::semiregular and std::regular in C++20?
+现在，如何在C++20中定义相应的概念std::semiregular和std::regular ?
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.1.9.2.3\hspace{0.2cm} std::semiregular and std::regular
+\textbf{4.1.9.2.3\hspace{0.2cm}std::semiregular和std::regular}
 
-C++20 combines the concepts std::semiregular and std::regular using of existing type traits and concepts.
+C++20使用了现有类型特征和概念，定义了std::semiregular和std::regular概念。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Definition of the concept std::semiregular and std::regular
+\textbf{定义std::semiregular和std::regular概念}
 \begin{lstlisting}[style=styleCXX]
 template<class T>
 concept movable = is_object_v<T> && move_constructible<T> &&
@@ -2109,11 +2105,11 @@ template<class T>
 concept regular = semiregular<T> && equality_comparable<T>;
 \end{lstlisting}
 
-Interestingly, the std::regular concept is defined similarly to concept Regular. On the other hand, the std::semiregular concept is combined with more elementary concepts, such as std::copyable and std::moveable. The concept std::movable is based on the type-traits function \href{https://en.cppreference.com/w/cpp/types/is_object}{std::is\_object}. cppreference.com also provides a possible implementation of the compile-time predicate.
+有趣的是，std::regular概念的定义类似于Regular概念。另一方面，std::semiregular概念与基本概念相结合，如std::copyable和std::moveable。std::movable概念基于类型特征函数\href{https://en.cppreference.com/w/cpp/types/is_object}{std::is\_object}。cppreference.com还提供了编译时谓词的可能实现。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-A possible implementation of the type trait std::is\_object
+\textbf{类型特性std::is\_object的可能实现}
 \begin{lstlisting}[style=styleCXX]
 template< class T>
 struct is_object : std::integral_constant<bool,
@@ -2123,13 +2119,13 @@ struct is_object : std::integral_constant<bool,
 					std::is_class<T>::value> {};
 \end{lstlisting}
 
-A type is an object if it is either a scalar, an array, a union, or a class.
+若类型是标量、数组、联合体或类，则它是对象。
 
-To conclude this section, I want to apply the user-defined concept Regular and the C++20 concept std::regular. The program regularSemiRegular.cpp does this job.
+为了结束本节，我想使用用户定义的概念Regular和C++20的概念std::regular。regularSemiRegular.cpp完成了这项工作。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Application of the concepts Regular and SemiRegular
+\textbf{概念Regular和SemiRegular的应用}
 \begin{lstlisting}[style=styleCXX]
 // regularSemiRegular.cpp
 
@@ -2200,27 +2196,27 @@ int main() {
 }
 \end{lstlisting}
 
-I put all pieces from the previous code-snippets together to define the concept Regular (line 27). The function templates behavesLikeAnInt (line 31) and behavesLikeAnInt2 (line 36) check if the arguments “behave like an int.” This means the user-defined concept Regular and the C++20 concept std::regular are used to establish the condition. As the name suggests, the type EqualityComparable (line 41) supports equality, but the type NotEqualityComparable (line 47) does not. The use of the type NotEqualityComparable in both function calls (lines 64 and 65) is the most interesting part of the program.
+我将前面代码片段中的所有部分放在一起定义Regular概念(第27行)。函数模板behavesLikeAnInt(第31行)和behavesLikeAnInt2(第36行)检查参数是否“行为像int”。使用用户定义的概念Regular和C++20的概念std::regular来建立条件。顾名思义，类型EqualityComparable(第41行)支持相等，但类型NotEqualityComparable(第47行)不支持。在两个函数中(第64行和第65行)使用NotEqualityComparable类型是这个程序中最有趣的部分。
 
-Although I’m in the early stage of concepts implementation, I want to compare the error messages of a new GCC and MSVC compilers.
+虽然目前处于概念实现的早期阶段，这里就比较一下新的GCC和MSVC编译器的错误消息。
 
 \begin{itemize}
 \item 
 GCC
 \end{itemize}
 
-I used the current GCC 10.2 with the command line argument -std=c++20 on \href{https://godbolt.org/}{Compiler Explorer}. These are essentially the error messages when I use the user-defined concept Regular (line 64):
+我在\href{https://godbolt.org/}{Compiler Explorer}上使用当前的GCC 10.2命令行参数-std=c++20。当使用用户定义的Regular(第64行)概念时，这是比较重要的错误消息:
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/1-6.png}\\
-Error message when using the concept Regular
+\includegraphics[width=1.0\textwidth]{content/3/chapter4/images/1-6.png}\\
+使用Regular概念时出现错误消息
 \end{center}
 
-The C++20 concept std::regular is more comprehensive. Consequently, the call in line 65 gives a more comprehensive error message:
+C++20概念std::regular更加全面。因此，第65行中的调用给出了一个更全面的错误消息:
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/1-7.png}\\
-Error message when using the concept std::regular
+\includegraphics[width=1.0\textwidth]{content/3/chapter4/images/1-7.png}\\
+使用std::regular概念时出现错误消息
 \end{center}
 
 \begin{itemize}
@@ -2228,79 +2224,80 @@ Error message when using the concept std::regular
 MSVC
 \end{itemize}
 
-The error message given by the MSVC compiler is too unspecific.
+MSVC编译器给出的错误信息就不太具体了。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/10.png}\\
-Error message when using the concepts Regular and std::regular
+\includegraphics[width=1.0\textwidth]{content/3/chapter4/images/10.png}\\
+使用std::regular概念时出现错误消息
 \end{center}
 
-As you can see from the screenshot, I applied version 19.27.29112 for x64 with the command line /EHSC /std:c++latest.
+从截图中看到的，编译器为19.27.29112的x64版本，并且使用了命令行参数/EHSC和/std:c++latest。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title=Regular Types]
+\hspace*{\fill} \\ %插入空行
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={常规类型}]
 
-This small detour expresses my opinion. First, I present the facts, then I draw my conclusion. The facts are based on what has been presented in this chapter. So which arguments speak for evolution or for revolution?
+这一小段弯路表达了我的观点。首先，我陈述事实，然后得出结论。这些事实都是基于本章所述内容。那么，哪些论点支持改进，哪些论点支持革命呢?
 
 \noindent
-\textbf{Evolution}
+\textbf{改进派}
 
 \begin{itemize}
 \item 
-Concepts promote working with generic code at a higher level of abstraction.
+概念促进在更高抽象级别上使用泛型代码。
 
 \item 
-Concepts give you understandable error messages when compiling a template fails. They provide nothing you could not achieve with the \href{https://en.cppreference.com/w/cpp/header/type_traits}{type-traits library}, \href{https://en.cppreference.com/w/cpp/language/sfinae}{SFINAE}, and \href{https://en.cppreference.com/w/cpp/language/static_assert}{static\_assert}.
+当编译模板失败时，概念会给出可以理解的错误消息。它们提供了无法通过\href{https://en.cppreference.com/w/cpp/header/type_traits}{type-traits库}、\href{https://en.cppreference.com/w/cpp/language/sfinae}{SFINAE}和\href{https://en.cppreference.com/w/cpp/language/static_assert}{static\_assert}实现的功能。
 
 \item 
-auto is a kind of unconstrained placeholder. With C++20, we can use concepts as constrained placeholders.
+auto是一种不受约束的占位符。C++20中，可以将概念用作有约束的占位符。
 
 \item 
-With C++14, we could use generic lambdas as a convenient way to define function templates.
+C++14中，可以使用泛型lambda定义函数模板。
 \end{itemize}
 
 \noindent
-\textbf{Revolution}
+\textbf{革命派}
 
 \begin{itemize}
 \item 
-Concepts promote working with generic code at a higher level of abstraction.
+概念促进在更高抽象级别上使用泛型代码。
 
 \item 
-Concepts allow us, for the first time, to verify template requirements. Of course, you can also achieve the verification of template parameters with a combination of \href{https://en.cppreference.com/w/cpp/header/type_traits}{type-traits library}, \href{https://en.cppreference.com/w/cpp/language/sfinae}{SFINAE}, and \href{https://en.cppreference.com/w/cpp/language/static_assert}{static\_assert}, but this technique is way too advanced to regard it as a general solution.
+概念允许我们验证模板需求。当然，也可以通过组合\href{https://en.cppreference.com/w/cpp/header/type_traits}{type-traits library}、\href{https://en.cppreference.com/w/cpp/language/sfinae}{SFINAE}和\href{https://en.cppreference.com/w/cpp/language/static_assert}{static\_assert}来实现模板参数的验证，但是这种技术太高级了，不能将其视为通用解决方案。
 
 \item 
-Thanks to the abbreviated function-templates syntax, defining templates has been radically improved.
+因为有了简写的函数模板语法，模板定义得到了根本性的改进。
 
 \item 
-Concepts represent semantic categories, but not syntactic constraints. Instead of a concept such as Addable, which requires that a type supports the + operator, we should think in terms of a concept Number, where Number is a semantic category such as Equal or Ordering.
+概念表示语义类别，而不是语法约束。我们不应该考虑像Addable这样的概念，要求类型支持加法操作符，而应该考虑数字概念，其中数字是一个语义类别，例如相等或有序。
 \end{itemize}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{My Conclusion}
+\textbf{我的结论}
 
-There are many arguments whether concepts are an evolutionary step or a revolutionary jump. Mainly because of the semantic categories, I’m on the revolution side. Concepts such as Number, Equality, or Ordering remind me of \href{https://en.wikipedia.org/wiki/Plato}{Plato’s} world of ideas. It is revolutionary that we can now reason about programming in such categories.
+关于概念是该改进稳步向前，还是进行革命性的飞跃，有很多争论。争端主要是因为语义分类，我是站在革命派这一边的。诸如“数”、“等号”或“排序”等概念让我想起了\href{https://en.wikipedia.org/wiki/Plato}{Plato}的思想世界。若我们现在可以在这样的语义中进行编程，这将是具有革命性的。
 \end{tcolorbox}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title=Distilled Information]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title=总结]
 \begin{itemize}
 \item 
-Functions or classes defined on a specific type or a type parameter have their set of problems. Concepts overcome these problems by putting semantic constraints on type parameters.
+定义在特定类型或类型参数上的函数或类有一组问题，概念通过对类型参数施加语义约束来解决这些问题。
 
 \item 
-Concepts can be applied in requires clauses, in trailing requires clauses, as constrained template parameters, or in the abbreviated function templates.
+概念可以应用在requires子句中，在后面的requires子句中，作为约束的模板参数，或在缩写函数模板中。
 
 \item 
-Concept are compile-time predicates that can be used for all kinds of templates. You can overload on concepts, specialize templates on concepts, use concepts for member functions or variadic templates.
+概念是编译时谓词，可用于各种模板。也可以重载概念，使用概念特化模板，将概念用于成员函数或可变参数模板。
 
 \item 
-Thanks to C++20 and concepts, the use of unconstrained placeholders (auto) and constrained placeholders (concepts) is unified. Whenever you use auto, you can use concepts in C++20.
+感谢C++20和概念，不受约束占位符(auto)和受约束占位符(concept)的使用是统一的。无论何时使用auto，都可以使用C++20中的概念。
 
 \item 
-Thanks to the new abbreviated function-templates syntax, defining a function template has become a piece of cake.
+新的简化的函数模板语法，使得定义函数模板变得更加简单。
 
 \item 
-Don’t reinvent the wheel. Before you define your own concepts, study the rich set of predefined concepts in the C++20 standard. When you define your concepts, you can apply two techniques: combine concepts and compile-time predicates or use requires expressions.
+定义自己的概念之前，请先研究C++20标准中丰富的预定义概念集。定义概念时，可以使用两种技术:结合概念和编译时谓词，或者使用需求表达式。
 \end{itemize}
 \end{tcolorbox}
 
