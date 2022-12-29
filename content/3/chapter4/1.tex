@@ -111,11 +111,11 @@ bool提升为int
 \noindent
 \textbf{4.1.1.2\hspace{0.2cm}太通用}
 
-Sorting a container is a general idea. It should work for each container if its elements support ordering. In the following example, I apply the standard algorithm std::sort to the standard container std::list.
+对容器排序是一个很普遍的需求。若容器的元素支持排序，那么就应该适用于每个容器。下面的示例中，我将标准算法std::sort应用于标准容器std::list。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Sorting a std::list
+\textbf{对std::list排序}
 \begin{lstlisting}[style=styleCXX]
 // tooGeneric.cpp
 
@@ -133,10 +133,10 @@ int main(){
 
 \begin{center}
 \includegraphics[width=1.0\textwidth]{content/3/chapter4/images/4.png}\\
-A compiler error when trying to sort a std::list
+对std::list进行排序时，编译器报错
 \end{center}
 
-I don’t even want to decipher this long message. What’s gone wrong? Let’s take a look at the signature of the specific overload of \href{https://en.cppreference.com/w/cpp/algorithm/sort}{std::sort} used in this example.
+我不想解析这么长的信息，但还是要看看出什么问题了。看一下本例中使用的\href{https://en.cppreference.com/w/cpp/algorithm/sort}{std::sort}特定重载的签名。
 
 \hspace*{\fill} \\ %插入空行
 \begin{lstlisting}[style=styleCXX]
@@ -144,44 +144,45 @@ template< class RandomIt >
 constexpr void sort( RandomIt first, RandomIt last );
 \end{lstlisting}
 
-std::sort uses strange-named argument types such as RandomIt. RandomIt stands for a randomaccess iterator and gives the key hint for the overwhelming error message. A std::list only provides a bidirectional iterator, but std:sort requires a random-access iterator. The following graphic shows why a std::list does not support a random access iterator.
+std::sort使用了奇怪的参数类型RandomIt。RandomIt代表随机访问迭代器，也就是编译错误提供的关键信息。std::list只提供双向迭代器，但std:sort需要一个随机访问迭代器。下图显示了为什么std::list不支持随机访问迭代器。
 
 \begin{center}
-\includegraphics[width=0.5\textwidth]{content/3/chapter4/images/5.png}\\
+\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/5.png}\\
 \end{center}
 
-If you study the std::sort documentation on cppreference.com, you will find something exciting: type requirements on template parameters. They place conceptual requirements on the types that have been formalized into the C++20 feature, concepts.
+若去了解一下cppreference.com上的std::sort文档，会发现一些模板参数的类型要求。它们对类型提出了概念性的要求，这些要求形成了C++20的概念。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.1.3\hspace{0.2cm}拯救概念
+\textbf{4.1.1.3\hspace{0.2cm}概念}
 
-Concepts put semantic constraints on template parameters. std::sort has overloads that accept a comparator.
+概念对模板参数施加语义约束，std::sort具有接受比较器的重载。
 
 \begin{lstlisting}[style=styleCXX]
 template< class RandomIt, class Compare >
 constexpr void sort(RandomIt first, RandomIt last, Compare comp);
 \end{lstlisting}
 
-These are the type requirements for the more powerful overload of std::sort:
+下面是std::sort重载的类型要求:
 
 \begin{itemize}
 \item 
-RandomIt must meet the requirements of ValueSwappable and LegacyRandomAccessIterator
+RandomIt必须满足ValueSwappable和LegacyRandomAccessIterator的要求
 
 \item 
-The type of the dereferenced RandomIt must meet the requirements of MoveAssignable and MoveConstructible.
+解引用RandomIt的类型必须满足MoveAssignable和MoveConstructible的要求。
 
 \item 
-The type of the dereferenced RandomIt must meet the requirements of Compare.
+可解引用的RandomIt的类型必须满足Compare的要求。
 \end{itemize}
 
-Requirements such as ValueSwappable or LegacyRandomAccessIterator are so-called named requirements. Some of these requirements are formalized in C++20 in \href{https://en.cppreference.com/w/cpp/language/constraints}{concepts}.
+诸如ValueSwappable或LegacyRandomAccessIterator之类的需求就是所谓的类型需求，其中一些需求在C++20的\href{https://en.cppreference.com/w/cpp/language/constraints}{概念}中形式化了。
 
-In particular, std::sort requires a LegacyRandomAccessIterator. Let’s have a closer look at the named requirement LegacyRandomAccessIterator that is called random\_access\_iterator (part of <iterator>) in C++20:
+并且，std::sort还需要一个LegacyRandomAccessIterator。来看看LegacyRandomAccessIterator，在C++20中称为random\_access\_iterator(是<iterator>的一部分):
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-std::random\_access\_iterator
+\textbf{std::random\_access\_iterator}
 \begin{lstlisting}[style=styleCXX]
 template<class I>
 	concept random_access_iterator =
@@ -199,87 +200,90 @@ template<class I>
 		};
 \end{lstlisting}
 
-A type I supports the concept random\_access\_iterator if it supports the concept bidirectional\_iterator and all the following requirements. For example, the requirement { i += n } -> same\_as<I\&> as part of the requires expression means that for a value of type I, { i += n } is a valid expression, and it returns a value of type I\&. To complete the sorting story, std::list does support a bidirectional\_iterator, and not a random\_access\_iterator that std::sort requires.
+类型I支持概念random\_access\_iterator，若支持概念bidirectional\_iterator和以下所有需求。例如，\{i += n\} \texttt{->} same\_as<I\&>作为需求表达式的一部分，意味着对于类型为i的值，\{i += n\}是一个有效的表达式，它返回类型为I\&的值。为了完成排序过程，std::list支持的是bidirectional\_iterator，而非std::sort要求的random\_access\_iterator。
 
-When you now use an algorithm that requires a random\_access\_iterator, but you only provide a birectional\_iterator, you get a concise and readable error message saying that your iterator does not satisfy the concept random\_access\_iterator.
+现在需要random\_access\_iterator的算法，但若只提供birectional\_iterator时，就会得到一条简洁易懂的错误消息，明确的表示迭代器不满足random\_access\_iterator的概念。
 
 \begin{center}
-\includegraphics[width=0.5\textwidth]{content/3/chapter4/images/6.png}\\
-The Standard Template Library
+\includegraphics[width=0.7\textwidth]{content/3/chapter4/images/6.png}\\
+标准模板库
 \end{center}
 
 \begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={泛型编程的本质}]
-I want to start this short historical detour with a quote from the invaluable book \href{https://www.fm2gp.com/}{From Mathematics to Generic Programming}, written by Alexander Stepanov (creator of the Standard Template Library) and Daniel Rose (information retrieval researcher): “The essence of generic programming lies in the idea of concepts. A concept is a way of describing a family of related object types.” These related object types can be integral types such as bool, char, or int. A concept embodies a set of requirements on related types such as their supported operations, semantics, and time and space complexity.
+我想引用Alexander Stepanov(标准模板库的创建者)和Daniel Rose(信息检索研究员)写的书\href{https://www.fm2gp.com/}{From Mathematics to Generic Programming}中的一段话来开始这段简短的回顾:“泛型编程的本质在于概念的思想，概念是描述一系列相关对象类型的一种方式。”这些相关的对象类型可以是整型，如bool、char或int。概念是对相关类型的一组需求，例如：所支持的操作、语义，以及时间和空间的复杂度。
 
-The Standard Template Library (STL) as a generic library is based on concepts. From a bird’seye view, the STL consists of three components. Those are containers, algorithms that run on containers, and iterators that connect both of them.
+\hspace*{\fill} \\ %插入空行
+标准模板库(STL)作为一个通用库是基于概念的。从鸟瞰的角度来看，STL由三个部分组成：容器，运行在容器上的算法，以及连接它们的迭代器。
 
-Each container provides iterators that respect its structure, and the algorithms operate on these iterators. A container, such as a sequence container or an associative container, models a semi-open range. Access to the container’s elements is provided through iterators, as well as iterating through them, and the equality comparison of them. The abstraction of the STL is based on concepts such as semi-open range and iterator and allow for transparent use of the containers and algorithms of the STL.
+\hspace*{\fill} \\ %插入空行
+每个容器都提供了符合其结构的迭代器，算法可以对这些迭代器进行操作。容器(如序列容器或关联容器)的模型为半开放范围的。迭代器提供对容器元素的访问，并且可以遍历容器，从而可对其进行比较。STL的抽象基于半开放范围模型和迭代器等概念，并允许使用STL的容器和算法。
 \end{tcolorbox}
 
-More generally, what are the advantages of concepts?
+那么，概念的优势是什么?
 
-\subsubsubsection{4.1.2\hspace{0.2cm} Advantages of Concepts}
+\subsubsubsection{4.1.2\hspace{0.2cm}概念的优势}
 
 \begin{itemize}
 \item 
-Requirements for template parameters are part of the interface.
+对模板参数的需求描述是接口的一部分。
 
 \item 
-The overloading of functions and specialization of class templates can be based on concepts.
+函数的重载和类模板的特化可以基于概念。
 
 \item 
-Concepts can be used for function templates, class templates, and generic member functions of classes or class templates.
+概念可用于函数模板、类模板和类或类模板的泛型成员函数。
 
 \item 
-You get improved error messages because the compiler compares the requirements of the template parameters with the given template arguments.
+可得到明确的错误消息，因为编译器会将模板形参的要求与给定的模板实参进行比较。
 
 \item 
-You can use predefined concepts or define your own.
+可以使用预定义概念，也可以自定义概念。
 
 \item 
-The usage of auto and concepts is unified. Instead of auto, you can use a concept.
+auto和概念的用法统一，可以用一个概念来代替auto。
 
 \item 
-If a function declaration uses a concept, it automatically becomes a function template. Writing function templates is, therefore, as easy as writing a function.
+若函数声明使用了概念，则它自动成为函数模板。因此，编写函数模板就会如同编写函数一样简单。
 \end{itemize}
 
 
-\subsubsubsection{4.1.3\hspace{0.2cm} The long, long History}
+\subsubsubsection{4.1.3\hspace{0.2cm}漫长的历史}
 
-The first time I heard about concepts was around 2005 - 2006. They reminded me of Haskell type classes. Type classes in Haskell are interfaces for similar types. Here is a part of \href{https://en.wikipedia.org/wiki/Haskell_(programming_language)}{Haskell’s} type classes hierarchy.
+我第一次听说概念是在2005 - 2006年左右。他们让我想起Haskell式的课程，Haskell类型就具有类似的接口。下面是\href{https://en.wikipedia.org/wiki/Haskell_(programming_language)}{Haskell的}类型类层次结构的一部分。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter4/images/7.png}\\
-Haskell Type Classes Hierarchy
+Haskell类型的层次结构
 \end{center}
 
-But C++ concepts are different. Here are a few observations.
+但C++的概念不同。以下是我观察到的结果。
 
 \begin{itemize}
 \item 
-In Haskell, any type has to be an instance of a type class. In C++20, a type has to fulfill the requirements of a concept.
+Haskell中，类型都必须是实例。在C++20中，类型必须满足概念的需求。
 
 \item 
-Concepts can be used on non-type arguments of templates in C++. For example, numbers such as the value 5 are non-type arguments. For example, when you want to have a std::array of ints with 5 elements, you use the non-type argument 5: std::array<int, 5> myArray .
+C++中，概念可以用在模板的非类型参数上。例如，像值5这样的数字就是非类型参数。例如，当想要一个包含5个元素的整型数组std::array时，可以使用非类型参数5:std::array<int, 5> myArray。
 
 \item 
-Concepts add no run-time costs.
+概念不会增加运行时的成本。
 \end{itemize}
 
-Originally, concepts were going to be the key feature of C++11, but they were removed during a standardization meeting in July 2009 in Frankfurt. The quote from Bjarne Stroustrup speaks for itself: \href{https://isocpp.org/blog/2013/02/concepts-lite-constraining-templates-with-predicates-andrew-sutton-bjarne-s}{“The C++0x concept design evolved into a monster of complexity.”}. A few years later, the next try was also not successful: concepts lite were removed from the C++17 standard. They finally become part of C++20.
+最初，概念是C++11的关键特性，但在2009年7月法兰克福的标准化会议上被删除了。这里引用Bjarne Stroustrup对当时概念的看法:\href{https://isocpp.org/blog/2013/02/concepts-lite-constraining-templates-with-predicates-andrew-sutton-bjarne-s}{“C++0x的概念变成一个复杂的怪物”}。几年后，第二次尝试也没有成功:精简的概念从C++17标准中删除了。所以，其最终，成为了C++20的一部分。
 
-\subsubsubsection{4.1.4\hspace{0.2cm} Use of Concepts}
+\subsubsubsection{4.1.4\hspace{0.2cm}概念的使用}
 
-Essentially, there are four ways to use a concept.
-
-\noindent
-4.1.4.1\hspace{0.2cm} Four Ways to use a Concept
-
-I apply the predefined concept std::integral in the program conceptsIntegralVariations.cpp in all four ways.
+可以用四种方式来概念。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Four variations using the concept std::integral
+\textbf{4.1.4.1\hspace{0.2cm}四种方式}
+
+我在conceptsintegralvariables.cpp中演示所有四种方式，使用了预定义的概念std::integral。
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{使用std::integral概念的四种方式}
 \begin{lstlisting}[style=styleCXX]
 // conceptsIntegralVariations.cpp
 
@@ -324,25 +328,25 @@ int main(){
 }
 \end{lstlisting}
 
-Thanks to the header <concepts> in line 3, I can use the concept std::integral. The concept is fulfilled if T is the type \href{https://en.cppreference.com/w/cpp/types/is_integral}{integral}. The function name gcd stands for the greatest-common-divisor algorithm based on the \href{https://en.wikipedia.org/wiki/Euclid}{Euclidean} algorithm.
+多亏了第3行中的<concepts>，可以在这里使用std::integral概念。若T是类型\href{https://en.cppreference.com/w/cpp/types/is_integral}{integral}，则匹配了这个概念。函数名gcd代表基于\href{https://en.wikipedia.org/wiki/Euclid}{Euclidean}的最大公约数算法。
 
-Here are the four ways to use concepts:
+下面是使用概念的四种方式:
 
 \begin{itemize}
 \item 
-Requires clause (line 6)
+requires子句(第6行)
 
 \item 
-Trailing requires clause (line 13)
+尾部requires子句(第14行)
 
 \item 
-Constrained template parameter (line 19)
+约束模板参数(第19行)
 
 \item 
-Abbreviated function template (line 25)
+简化的函数模板(第25行)
 \end{itemize}
 
-For simplicity reasons, each function template returns just auto. There is a semantic difference between the function templates gcd, gcd1, gcd2, and the function gcd3. In the case of gcd, gcd1, or gcd2, the arguments a and b must have the same type. This does not hold for the function gcd3. Parameters a and b can have different types, but must both fulfil the concept integral.
+简单起见，每个函数模板只返回auto。函数模板gcd、gcd1、gcd2和函数gcd3之间存在语义差异。对于gcd、gcd1或gcd2，参数a和b必须具有相同的类型。这对函数gcd3不成立。参数a和b可以有不同的类型，但必须都满足std::integral概念。
 
 \begin{tcblisting}{commandshell={}}
 gcd(100, 10) = 10
@@ -351,24 +355,21 @@ gcd2(100, 10) = 10
 gcd3(100, 10) = 10
 \end{tcblisting}
 
-\begin{center}
-Use of the concept std::integral
-\end{center}
-
-The functions gcd and gcd1 use requires clauses. Requires clauses are more powerful than you may think. Let me discuss more details to requires clauses.
-
-\noindent
-4.1.4.2\hspace{0.2cm} Requires Clause
-
-The previous program, conceptsIntegralVariations.cpp, exemplifies that you can use a concept to define a function or function template. Of course, there are more use cases. For completeness, I want to add that you can specify the return type of a function or a function template using concepts.
-
-The keyword requires introduces a requires clause which specifies constraints on a template argument (gcd) or on a function declaration (gcd1). requires must be followed by a compile-time predicate such as a named concept (gcd), a conjunction/disjunction of named concepts, or a requires expression.
-
-The compile-time predicate can also be an expression:
+gcd和gcd1使用的函数requires子句。其实，requires子句很强大。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Using a compile-time predicate in a requires clause
+\textbf{4.1.4.2\hspace{0.2cm}requires子句}
+
+conceptsIntegralVariations.cpp演示了如何使用概念来定义函数或函数模板。当然，还有更多的用例。为了完整起见，我想补充一点：可以使用概念指定函数或函数模板的返回类型。
+
+关键字requires引入了一个requires子句，指定了模板参数(gcd)或函数声明(gcd1)上的约束。requires后面必须跟一个编译时谓词，例如命名概念(gcd)、命名概念的连接/析取，或是requires表达式。
+
+编译时谓词也可以是表达式:
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{requires子句中使用编译时谓词}
 \begin{lstlisting}[style=styleCXX]
 // requiresClause.cpp
 
@@ -393,36 +394,32 @@ int main() {
 }
 \end{lstlisting}
 
-The compile-time predicate used in line 6 exemplifies an interesting point: the requirement is applied on the non-type i, and not on a type as usual.
+第6行中使用的编译时谓词，说明了一个有趣的观点:需求应用于非类型i，而不是通常的类型。
 
 \begin{tcblisting}{commandshell={}}
 sum<20>(2000): 2020
 \end{tcblisting}
 
-\begin{center}
-Compile-time predicates in a requires clause
-\end{center}
-
-When you use line 17, the clang compiler reports the following error:
+当打开第17行时，clang编译器报告以下错误:
 
 \begin{center}
 \includegraphics[width=1.0\textwidth]{content/3/chapter4/images/1-2.png}\\
-Failing compile time predicates in a requires clauses
+requires子句中，使用编译时谓词失败
 \end{center}
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=Avoid Compile-Time Predicates in Requires Clauses]
-When you constrain template parameter or function templates using concepts, you should use named concepts or combinations of them. Concepts are meant to be semantic categories, but not syntactic constraints like i <= 20. Giving concepts a name enables their reuse.
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={避免在requires子句中使用编译时谓词}]
+当使用概念约束模板参数或函数模板时，应该使用命名概念或组合它们。概念是语义范畴的，而不是像i <= 20这样的语法约束。并且，为概念命名可以使其重用。
 \end{tcolorbox}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.1.4.3\hspace{0.2cm} Concepts as Return Type of a Function
+\textbf{4.1.4.3\hspace{0.2cm}函数的返回类型为概念}
 
-Here are the definitions of the function template gcd and the function gcd1 using concepts as return types.
+下面是使用概念作为返回类型的函数模板gcd和函数gcd1的定义。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Using a concept as return type
+\textbf{使用概念作为返回类型}
 \begin{lstlisting}[style=styleCXX]
 template<typename T>
 requires std::integral<T>
@@ -437,20 +434,21 @@ std::integral auto gcd1(std::integral auto a, std::integral auto b) {
 }
 \end{lstlisting}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.4.4\hspace{0.2cm} Use-Cases for Concepts
+\textbf{4.1.4.4\hspace{0.2cm}概念的用例}
 
-First and foremost, concepts are compile-time predicates. A compile-time predicate is a function that is executed at compile time and returns a boolean. Before I dive into the various use cases of concepts, I want to demystify concepts and present them simply as functions returning a boolean at compile time.
+首先，概念是编译时谓词。编译时谓词是在编译时执行，并返回布尔值的函数。在深入研究概念的各种用例前，我想揭开概念的神秘面纱，并将它们简单地表示为在编译时返回布尔值的函数。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.1.4.4.1\hspace{0.2cm} Compile-Time Predicates
+\textbf{4.1.4.4.1\hspace{0.2cm}编译时谓词}
 
-A concept can be used in a control structure, which is executed at run time or compile time.
+概念可用于在运行时或编译时执行的控制结构中。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Concepts as compile-time predicates
+\textbf{概念作为编译时谓词}
 \begin{lstlisting}[style=styleCXX]
 // compileTimePredicate.cpp
 
@@ -493,7 +491,7 @@ int main() {
 }
 \end{lstlisting}
 
-In the program above, I use the concept std::three\_way\_comparable<T>, which checks at comp time if T supports the six comparison operators. Being a compile-time predicate means, that std::thre\_way\_comparable can be used at run time (lines 16 and 20) or at compile time. static\_assert (line 25) and \href{https://en.cppreference.com/w/cpp/language/if}{constepr if} (lines 28 and 34) are evaluated at compile time.
+在上面的程序中，我使用了std::three\_way\_comparable<T>这个概念，它在比较时检查T是否支持六个比较运算符。作为编译时谓词std::thre\_way\_comparable可以在运行时(第16行和第20行)或编译时使用。static\_assert(第25行)和\href{https://en.cppreference.com/w/cpp/language/if}{constepr if}(第28和34行)会在编译时进行计算。
 
 \begin{tcblisting}{commandshell={}}
 std::three_way_coparable<int>: True
@@ -503,21 +501,17 @@ std::three_way_coparable<Test>: False
 std::three_way_coparable<std::vector<int>>: True
 \end{tcblisting}
 
-\begin{center}
-Concepts as compile-time predicates
-\end{center}
-
-After this short detour on concepts as compile-time predicates, let me continue this section with the various use cases of concepts. The concepts’ applications are not too elaborate, and I mainly use predefined concepts, which I describe in more depth in the section predefined concepts.
+对编译时谓词的概念进行简短的介绍之后，我们继续本节的概念的各种用例。这些概念的应用不是很详细，这里主要使用的是预定义概念，我将后续的章节中深入地讨论这些概念。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.1.4.4.2\hspace{0.2cm} Class Templates
+\textbf{4.1.4.4.2\hspace{0.2cm}类模板}
 
-The class template MyVector requires that its template parameter T be regular, meaning that T behaves such as an int. The formal definition of regular is provided in the define concepts section.
+类模板MyVector要求模板形参T是常规的，所以T的行为类似于int型。\href{https://en.cppreference.com/w/cpp/concepts/regular}{std::regular}的定义在之前有提到。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Using a concept in a class definition
+\textbf{类定义中使用概念}
 \begin{lstlisting}[style=styleCXX]
 // conceptsClassTemplate.cpp
 
@@ -535,21 +529,22 @@ int main() {
 }
 \end{lstlisting}
 
-Line 12 causes a compile-time error because a reference is not regular. Here is the essential part of the GCC compiler message:
+第12行会导致编译时错误，因为引用类型非常规。下面是GCC编译器消息的重要部分:
 
 \begin{center}
 \includegraphics[width=1.0\textwidth]{content/3/chapter4/images/1-3.png}\\
-A reference is not regular
+引用非常规类型
 \end{center}
 
-
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.4.4.3\hspace{0.2cm} Generic Member Functions
+\textbf{4.1.4.4.3\hspace{0.2cm}泛型成员函数}
 
-In this example, I add a generic push\_back member function to the class MyVector. The push\_back requires that its arguments be copyable.
+这个例子中，向MyVector类添加了一个通用的push\_back成员函数。push\_back要求参数可复制。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Using a concept in a generic member function
+\textbf{泛型成员函数中使用概念}
 \begin{lstlisting}[style=styleCXX]
 // conceptMemberFunction.cpp
 
@@ -577,15 +572,17 @@ int main() {
 }
 \end{lstlisting}
 
-The compilation fails intentionally in line 22. Instances of NotCopyable are not copyable because the copy constructor is declared as deleted.
+编译在第22行中故意失败。因为复制构造函数声明为已删除，所以NotCopyable的实例不可复制。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.4.4.4\hspace{0.2cm} Variadic Templates
+\textbf{4.1.4.4.4\hspace{0.2cm}可变模板}
 
-You can use concepts in variadic templates.
+可以在可变模板中使用概念。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Applying concepts to variadic templates
+\textbf{将概念应用于可变模板}
 \begin{lstlisting}[style=styleCXX]
 // allAnyNone.cpp
 
@@ -614,9 +611,9 @@ int main(){
 }
 \end{lstlisting}
 
-The definitions of the function templates above are based on fold expressions. C++11 supports variadic templates that can accept an arbitrary number of template arguments. The arbitrary number of template parameters is held by a so-called parameter pack. Additionally, with C++17 you can directly reduce a parameter pack with a binary operator. This reduction is called a \href{https://www.modernescpp.com/index.php/fold-expressions}{fold expression}.
+上述函数模板的定义基于折叠表达式。C++11支持可变参数模板，可以接受任意数量的模板参数，任意数量的模板参数由一个所谓的参数包保存。此外，在C++17中，可以使用二进制操作符直接简化参数包。这种简化称为\href{https://www.modernescpp.com/index.php/fold-expressions}{折叠表达式}。
 
-In this example, the logical and \&\& (line 7), the logical or || (line 10), and the negation of the logical or (line 13) are applied as binary operators. Furthermore, all, any, and none requires from their type parameters that they have to support the concept std::integral.
+在本例中，逻辑和\&\&(第7行)、逻辑或||(第10行)以及逻辑或的否定(第13行)作为二元运算符。此外，all、any和none要求类型参数必须支持std::integral概念。
 
 \begin{tcblisting}{commandshell={}}
 all(5, true, false): false
@@ -625,16 +622,18 @@ none(5, ture, false): false
 \end{tcblisting}
 
 \begin{center}
-Applying concepts onto a fold expression
+将概念应用于折叠表达式
 \end{center}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.4.4.5\hspace{0.2cm} Overloading
+\textbf{4.1.4.4.5\hspace{0.2cm}重载}
 
-\href{https://en.cppreference.com/w/cpp/iterator/advance}{std::advance} is an algorithm of the Standard Template Library. It increments a given iterator iter by n elements. Based on the capabilities of the given iterator, a different advance strategy could be used. For example, a std::forward\_list supports an iterator that can only advance in one direction, while a std::list supports a bidirectional iterator, and a std::vector supports a random access iterator. Consequently, for an iterator provided by a std::forward\_list or std::list, a call to std::advance(iter, n) has to be incremented n times (see the structure of a std::list). This time complexity does not hold for a std::randomaccess\_iterator provided by a std::vector. The number n can just be added to the iterator. A linear time complexity O(n) becomes, therefore, a constant complexity O(1). To distinguish iterator types, concepts can be used. The program conceptsOverloadingFunctionTemplates.cpp should give you the general idea.
+\href{https://en.cppreference.com/w/cpp/iterator/advance}{std::advance}是标准模板库的一个算法，对给定的迭代器iter增加n个元素。根据给定迭代器的功能，可以使用不同的策略。例如，std::forward\_list支持只能朝一个方向前进的迭代器，而std::list支持双向迭代器，std::vector支持随机访问迭代器。因此，对于std::forward\_list或std::list提供的迭代器，对std::advance(iter, n)的调用必须加n倍(参见std::list的结构)。这个时间复杂度不适用于std::vector提供的std::randomaccess\_iterator，数字n可以直接加到迭代器中。因此，线性时间复杂度O(n)变成了O(1)。为了区分迭代器类型，可以使用概念。conceptsOverloadingFunctionTemplates.cpp展示了这样使用概念的大致方式。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Overloading function templates on concepts
+\textbf{使用概念重载函数模板}
 \begin{lstlisting}[style=styleCXX]
 // conceptsOverloadingFunctionTemplates.cpp
 
@@ -679,7 +678,7 @@ int main() {
 }
 \end{lstlisting}
 
-The three variations of the function advance are overloaded on the concepts std::forward\_iterator (line 9), std::bidirectional\_iterator (line 14), and std::random\_access\_iterator (line 19). The compiler chooses the best-fitting overload. This means that for a std::forward\_list (line 28) the overload based on the concept std::forward\_list, for a std::list (line 32) the overload based on the concept std::bidirectional\_iterator, and for a std::vector (line 36) the overload based on the concept std::random\_access\_iterator is used.
+函数advance的三种重载位于std::forward\_iterator(第9行)、std::bidirectional\_iterator(第14行)和std::random\_access\_iterator(第19行)这三个概念上，编译器会选择最合适的重载。所以，对于std::forward\_list(第28行)，是基于std::forward\_list概念的重载；对于std::list(第32行)，是基于std::bidirectional\_iterator概念的重载；对于std::vector(第36行)，是基于std::random\_access\_iterator概念的重载。
 
 \begin{tcblisting}{commandshell={}}
 forward_iterator
@@ -687,19 +686,17 @@ bidirectional_iterator
 random_access_iterator
 \end{tcblisting}
 
-\begin{center}
-Overloading function templates on concepts
-\end{center}
+std::random\_access\_iterator可以作为std::bidirectional\_iterator看待，std::bidirectional\_iterator可以作为std::forward\_iterator看待。
 
-A std::random\_access\_iterator is a std::bidirectional\_iterator, and std::bidirectional\_iterator is a std::forward\_iterator.
-
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.4.4.6\hspace{0.2cm} Template Specialization
+\textbf{4.1.4.4.6\hspace{0.2cm}模板的特化}
 
-You can also specialize templates using concepts.
+还可以使用概念特化模板。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Template specialization on concepts
+\textbf{使用概念特化模板}
 \begin{lstlisting}[style=styleCXX]
 // conceptsSpecialization.cpp
 
@@ -732,7 +729,7 @@ int main() {
 }
 \end{lstlisting}
 
-When instantiating the class template, the compiler chooses the most specialized one. This means for the call Vector<int> myVec (line 24), the partial template specialization for std::regular (line 13) is chosen. A reference Vector<int\&> myVec2 (line 25) is not regular. Consequently, the primary template (line 6) is chosen.
+实例化类模板时，编译器选择最特化的一个。从而，对于Vector<int> myVec(第24行)，会选择std::regular(第13行)的偏特化模板。引用Vector<int\&> myVec2(第25行)不是常规类型，因此选择主模板(第6行)。
 
 \begin{tcblisting}{commandshell={}}
 Vector<std::regular>
@@ -740,16 +737,18 @@ Vector<T>
 \end{tcblisting}
 
 \begin{center}
-Partial template specialization of concepts
+使用概念的偏特化模板
 \end{center}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.4.4.7\hspace{0.2cm} Using More than One Concept
+\textbf{4.1.4.4.7\hspace{0.2cm}使用多个概念}
 
-So far, the uses of the concepts were straightforward, but most of the time more than one concept is used at the same time.
+目前为止，这些概念的使用都很简单，但大多数情况下，可以同时使用多个概念。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Template specialization on concepts
+\textbf{使用概念特化模板}
 \begin{lstlisting}[style=styleCXX]
 template<typename Iter, typename Val>
 	requires std::input_iterator<Iter>
@@ -757,37 +756,40 @@ template<typename Iter, typename Val>
 Iter find(Iter b, Iter e, Val v)
 \end{lstlisting}
 
-find requires for the iterator Iter and its comparison with Val that
+find需要Iter迭代器及其与Val的比较
 
 \begin{itemize}
 \item 
-the Iterator has to be an input iterator;
+迭代器必须是输入迭代器;
 
 \item 
-the Iterator’s value type must be equality comparable with Val.
+迭代器的值类型必须与Val相等。
 \end{itemize}
 
-The same restriction on the iterator can also be expressed as a constrained template parameter.
+对迭代器的限制也可以表示为受约束的模板形参。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Using more than one concept
+\textbf{使用多个概念}
 \begin{lstlisting}[style=styleCXX]
 template<std::input_iterator Iter, typename Val>
 	requires std::equality_comparable<Value_type<Iter>, Val>
 Iter find(Iter b, Iter e, Val v)
 \end{lstlisting}
 
-\subsubsubsection{4.1.5\hspace{0.2cm} Constrained and Unconstrained Placeholders}
+\subsubsubsection{4.1.5\hspace{0.2cm}约束和非约束占位符}
 
-First, let me tell you about an asymmetry in C++14.
+首先，让我告诉你C++14中的一个不对称。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.5.1\hspace{0.2cm} The Big Asymmetry in C++14
+\textbf{4.1.5.1\hspace{0.2cm}C++14中的不对称}
 
-I often have a discussion in my classes, that goes the following way. With C++14, we had generic lambdas. Generic lambdas are lambdas that use auto instead of a concrete type.
+我经常在课堂上进行讨论。在C++14中，我们有泛型lambda。泛型lambda是使用auto，而不是具体类型的lambda。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Comparison of a generic lambda and a function template
+\textbf{泛型lambda和函数模板的比较}
 \begin{lstlisting}[style=styleCXX]
 // genericLambdaTemplate.cpp
 
@@ -816,22 +818,24 @@ int main(){
 }
 \end{lstlisting}
 
-The generic lambda (line 6) and the function template (line 8) produce the same results.
+泛型lambda(第6行)和函数模板(第8行)产生相同的结果。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/8.png}\\
-Use of a generic lambda and a function template
+使用泛型lambda和函数模板
 \end{center}
 
-Generic lambdas introduce a new way to define function templates. In my classes, I’m often asked: Can we use auto in functions to get function templates? Not with C++14, but you can with C++20.
+泛型lambda引入了一种定义函数模板的新方法。在课上，经常有人问我:我们可以在函数中使用auto获取函数模板吗?C++14不行，但C++20可以。
 
-In C++20, you can use unconstrained placeholders (auto) or constrained placeholders (concepts) in function declarations to automatically get function templates. The rule for applying is as simple as it could be. In each place where you can use an unconstrained placeholder auto, you can use a concept. I will detail this fully in the section on abbreviated function templates.
+C++20中，可以在函数声明中使用无约束占位符(auto)或有约束占位符(概念)来自动获取函数模板。规则非常简单，在每个可以使用无约束占位符auto的地方，都可以使用一个概念。我将在简写函数模板一节中详细说明这一点。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.5.2\hspace{0.2cm} Placeholders
+\textbf{4.1.5.2\hspace{0.2cm}占位符}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Use of constrained placeholders instead of unconstrained placeholders
+\textbf{使用约束占位符}
 \begin{lstlisting}[style=styleCXX]
 // placeholders.cpp
 
@@ -865,7 +869,7 @@ std::cout << std::boolalpha << '\n';
 }
 \end{lstlisting}
 
-The concept std::integral can be used as a return type (line 7), in a range-based for loop (line 16), or as a type for variable b (line 19), or variable integ (line 22). To see the symmetry between auto and concepts, line 25 uses auto alone instead of std::integral auto, which is used on line 22. Hence, integ1 can accept a value of any type.
+std::integral概念可以用作返回类型(第7行)、基于范围的for循环(第16行)，或者用作变量b(第19行)或变量integ(第22行)的类型。为了查看auto和概念之间的对称性，第25行单独使用auto，而不是在第22行使用的std::integral auto。因此，integ1可以接受任何类型的值。
 
 \begin{tcblisting}{commandshell={}}
 1 2 3 4 5
@@ -874,16 +878,13 @@ true
 10
 \end{tcblisting}
 
-\begin{center}
-Constrained placeholders instead of unconstrained placeholders in action
-\end{center}
+\subsubsubsection{4.1.6\hspace{0.2cm}简写函数模板}
 
-\subsubsubsection{4.1.6\hspace{0.2cm} Abbreviated Function Templates}
+C++20中，可以在函数声明中使用不受约束的占位符(auto)或受约束的占位符(concept)，这个函数声明自动成为一个函数模板。
 
-With C++20, you can use an unconstrained placeholder (auto) or a constrained placeholder (concept) in a function declaration and this function declaration automatically becomes a function template.
-
+\hspace*{\fill} \\ %插入空行
 \noindent
-Abbreviated function templates
+\textbf{简写函数模板}
 \begin{lstlisting}[style=styleCXX]
 // abbreviatedFunctionTemplates.cpp
 
@@ -934,7 +935,7 @@ int main() {
 }
 \end{lstlisting}
 
-The definitions of the function templates gcd (line 6), gcd1 (line 13), and gcd2 (line 19) are the ones I already presented in section Four ways to use a concept. gcd uses a requires clause, gcd1 a trailing requires clause and gcd2 a constrained template parameter. Now to something new. Function template gcd3 has the concept std::integral as a type parameter and becomes, therefore, a function template with restricted type parameters. In contrast, gcd4 is equivalent to function templates with no restriction on its type parameters. The syntax used in gcd3 and gcd4 to create a function template is called abbreviated function templates syntax.
+函数模板gcd(第6行)、gcd1(第13行)和gcd2(第19行)是我在使用概念的四种方式中已经介绍过的定义。gdc使用requires子句，gcd1使用尾部requires子句，gcd2使用约束模板参数。现在来点新东西，函数模板gcd3有std::integral的概念作为类型参数，因此是一个具有受限类型参数的函数模板。相比之下，gcd4相当于对其类型参数，对函数模板没有限制。gcd3和gcd4中用于创建函数模板的语法，称为缩写函数模板。
 
 \begin{tcblisting}{commandshell={}}
 gcd(100, 10)= 10
@@ -944,16 +945,13 @@ gcd3(100, 10)= 10
 gcd4(100, 10)= 10
 \end{tcblisting}
 
-\begin{center}
-Constrained
-\end{center}
+通过下面的例子来强调这种对称性。
 
-Let me stress this symmetry by demonstrying it in another example below.
+通过使用auto作为类型参数，函数add变成了一个函数模板，与同名的函数模板add等价。
 
-By using auto as a type parameter, the function add becomes a function template and is equivalent to the equally-named function template add.
-
+\hspace*{\fill} \\ %插入空行
 \noindent
-The equivalent function and function template add
+\textbf{add的等效函数和函数模板}
 \begin{lstlisting}[style=styleCXX]
 template<typename T, typename T2>
 auto add(T fir, T2 sec) {
@@ -965,10 +963,11 @@ auto add(auto fir, auto sec) {
 }
 \end{lstlisting}
 
-Accordingly, due to the usage of the concept std::integral, the function sub is equivalent to the function template sub.
+相应地，由于std::integral概念的使用，sub函数等价于函数模板sub函数。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-The equivalent function and function template sub
+\textbf{sub的等效函数和函数模板}
 \begin{lstlisting}[style=styleCXX]
 template<std::integral T, std::integral T2>
 std::integral auto sub(T fir, T2 sec) {
@@ -980,17 +979,19 @@ std::integral auto sub(std::integral auto fir, std::integral auto sec) {
 }
 \end{lstlisting}
 
-The function and the function template can have arbitrary types. This means both types can be different but must be integral. For example, a call sub(100, 10) and also sub(100, true) would be valid.
+函数和函数模板可以是任意类型。奥义这两种类型可以是不同的，但必须是整数。例如，使用sub(100, 10)和sub(100, true)都是可以的。
 
-There is one interesting feature still missing in the abbreviated function templates syntax: you can overload on auto or concepts.
+缩写函数模板语法中，仍然缺少一个有趣的特性:可以重载auto或概念。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.6.1\hspace{0.2cm} Overloading
+\textbf{4.1.6.1\hspace{0.2cm}重载}
 
-The following functions overload are overloaded on auto, on the concept std::integral, and on the type long.
+以下函数会在auto、std::integral概念和long类型上进行重载。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Abbreviated function templates and overloading
+\textbf{简化的函数模板和重载}
 \begin{lstlisting}[style=styleCXX]
 // conceptsOverloading.cpp
 
@@ -1022,7 +1023,7 @@ int main(){
 }
 \end{lstlisting}
 
-The compiler chooses the overload on auto (line 6) with a double, the overload on the concept std::integral (line 10) with an int, and the overload on long (line 14) with a long.
+编译器选择auto(第6行)上的重载使用double，std::integral(第10行)上的重载使用int，long(第14行)上的重载使用long。
 
 \begin{tcblisting}{commandshell={}}
 auto : 3.14
@@ -1030,17 +1031,15 @@ Integral : 2010
 long : 2020
 \end{tcblisting}
 
-\begin{center}
-Abbreviated function templates and overloading
-\end{center}
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={遗漏的特性:模板介绍}]
+也许在这一章的概念中遗漏了一个特性:模板介绍。模板引入是概念技术规范的一部分，\href{https://www.iso.org/standard/64031.html}{TS ISO/IEC TS 19217:2015}，是概念的实验性实现。\href{https://en.wikipedia.org/wiki/GNU_Compiler_Collection}{GCC 6}完全实现了概念TS。除了语法上与C++20中的概念不同之外，概念TS支持一种简洁的定义模板的方式。
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={What we don’t get: Template Introduction}]
-Maybe you are missing one feature in this chapter on concepts: template introduction. Template introduction was part of the technical specification on concepts, \href{https://www.iso.org/standard/64031.html}{TS ISO/IEC TS 19217:2015}, and was an experimental implementation of concepts. \href{https://en.wikipedia.org/wiki/GNU_Compiler_Collection}{GCC 6} fully implemented the concepts TS. Besides the syntactic differences from concepts in C++20, the concepts TS supported a concise way of defining templates.
+\hspace*{\fill} \\ %插入空行
+下面的例子中，假设Integral是一个概念。
 
-In the following example assume that Integral is a concept.
-
+\hspace*{\fill} \\ %插入空行
 \noindent
-Template introduction in the concepts TS
+\textbf{概念TS中的模板介绍}
 \begin{lstlisting}[style=styleCXX]
 Integral{T}
 Integral gcd(T a, T b){
@@ -1054,10 +1053,11 @@ Integral{T}
 class ConstrainedClass{};
 \end{lstlisting}
 
-This small code snippet above used template introduction in two ways. First, to define a function template with a constrained template parameter; second, to define a class template with a constrained template parameter. Template introduction had one limitation. You could only use it with a constrained template parameter (concept), but not with an unconstrained template parameter (auto). This asymmetry could easily be overcome by defining a concept that always returns true: 
+上面的这个小代码片段，以两种方式使用了模板引入。首先，定义一个带有约束模板参数的函数模板;其次，定义带有约束模板参数的类模板。模板的引入有一个限制。所以只能将它用于有约束的模板参数(concept)，而不能用于无约束的模板参数(auto)。这种不对称性可以通过定义一个总是返回true的概念轻松搞定: 
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-The concept Generic is always fulfilled
+\textbf{Generic概念的实现}
 \begin{lstlisting}[style=styleCXX]
 template<typename T>
 concept bool Generic(){
@@ -1065,21 +1065,22 @@ concept bool Generic(){
 }
 \end{lstlisting}
 
-Don’t be irritated, I used in the example the concepts TS syntax to define the Generic concept. The C++20 syntax is slightly more concise. Read more details of the C++20 syntax in section Defining Concepts.
+不要着急，我在示例中使用概念TS语法来定义泛型概念。C++20的语法会简洁一些。在定义概念一节中可以了解C++20语法的更多细节。
 \end{tcolorbox}
 
-\subsubsubsection{4.1.7\hspace{0.2cm} Predefined Concepts}
+\subsubsubsection{4.1.7\hspace{0.2cm}预定义的概念}
 
-The golden rule “Don’t reinvent the wheel” also applies to concepts. The \href{https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines}{C++ Core Guidelines} are very clear about this rule: T.11: Whenever possible, use standard concepts. Consequently, I want to give you an overview of the important predefined concepts. I intentionally ignore any special or auxiliary concepts.
+“不要白费力气”的黄金法则同样适用于概念。\href{https://isocpp.github. io/CppCoreGuidelines/CppCoreGuidelines}{C++核心指南}对这条规则的定义非常清楚:\textit{T.11:只要可能，就使用标准概念}。因此，我想给出一个重要的预定义概念的概述，这里会有意地忽略特殊或辅助类型的概念。
 
-All predefined concepts are detailed in the latest C++20 working draft, \href{https://isocpp.org/files/papers/N4860.pdf}{N4860}, and finding them all can be quite a challenge! Most of the concepts are in chapter 18 (concepts library) and chapter 24 (ranges library). Additionally, a few concepts are in chapter 17 (language support library), chapter 20 (general utilities library), chapter 23 (iterators library), and chapter 26 (numerics library). The C++20 draft N4860 also has an index to all library concepts and shows how the concepts are implemented.
+所有预定义的概念在最新的C++20工作草案中都有详细描述，\href{https://isocpp.org/files/papers/N4860.pdf}{N4860}，找到它们都是一个相当大的挑战!大部分概念都在第18章(概念库)和第24章(范围库)中。另外，第17章(语言支持库)、第20章(通用实用程序库)、第23章(迭代器库)和第26章(数字库)中有一些概念。C++20草案N4860还提供了所有库概念的索引，并展示了这些概念是如何实现的。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.1\hspace{0.2cm} Language Support Library
+\textbf{4.1.7.1\hspace{0.2cm}语言支持库}
 
-This section discusses an interesting concept, three\_way\_comparable. It is used to support the threeway comparison operator. It is specified in the header <compare>.
+本节讨论一个有趣的概念——three\_way\_comparable，用于支持三向比较运算符，在头文件<compare>中定义。
 
-More formally, let a and b be values of type T. This values are three\_way\_comparable only if:
+更正式地说，设a和b是类型为t的值。只有在以下情况下，这些值才有three\_way\_comparable性:
 
 \begin{tcblisting}{commandshell={}}
 • (a <=> b == 0) == bool(a == b) is true
@@ -1091,15 +1092,17 @@ More formally, let a and b be values of type T. This values are three\_way\_comp
 • (a <=> b >= 0) == bool(a >= b) is true
 \end{tcblisting}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.2\hspace{0.2cm} Concepts Library
+\textbf{4.1.7.2\hspace{0.2cm}概念库}
 
-The most frequently used concepts can be found in the concepts library. They are defined in the <concepts> header.
+最常用的概念可以在概念库中找到，在<concepts>头文件中定义。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.2.1\hspace{0.2cm} Language-related concepts
+\textbf{4.1.7.2.1\hspace{0.2cm}语言相关的概念}
 
-This section has about 15 concepts that should be self-explanatory. These concepts express relationships between types, type classifications, and fundamental type properties. Their implementation is often directly based on the corresponding function from the \href{https://en.cppreference.com/w/cpp/header/type_traits}{type-traits library}. Where deemed necessary, I provide additional explanation.
+本节有大约15个概念，这些概念表示类型、类型分类和基本类型属性之间的关系。它们的实现通常直接基于\href{https://en.cppreference.com/w/cpp/header/type_traits}{类型特性库}中的相应函数。若有必要，我会提供额外的解释。
 
 \begin{itemize}
 \item 
@@ -1112,10 +1115,10 @@ derived\_from
 convertible\_to
 
 \item 
-common\_reference\_with: common\_reference\_with<T, U> must be well-formed and T and U must be convertible to a reference type C, where C is the same as common\_reference\_t<T, U>
+common\_reference\_with: common\_reference\_with<T, U>必须是格式良好的，T和U必须可以转换为引用类型C，其中C与common\_reference\_t<T, U>相同
 
 \item 
-common\_with: similar to common\_reference\_with, but the common type C is the same as common\_type\_t<T, U> and may not be a reference type
+common\_with: 类似于common\_reference\_with，但是common类型C与common\_type\_t<T, U>相同，并且可能不是引用类型
 
 \item 
 assignable\_from
@@ -1124,8 +1127,9 @@ assignable\_from
 swappable
 \end{itemize}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.2.2\hspace{0.2cm} Arithmetic Concepts
+\textbf{4.1.7.2.2\hspace{0.2cm}算术的概念}
 
 \begin{itemize}
 \item 
@@ -1141,7 +1145,7 @@ unsigned\_integral
 floating\_point
 \end{itemize}
 
-The standard’s definition of the arithmetic concepts is straightforward:
+该标准对算术概念的定义很简单:
 
 \begin{lstlisting}[style=styleCXX]
 template<class T>
@@ -1157,8 +1161,9 @@ template<class T>
 concept floating_point = is_floating_point_v<T>;
 \end{lstlisting}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.2.3\hspace{0.2cm} Lifetime Concepts
+\textbf{4.1.7.2.3\hspace{0.2cm}生命周期的概念}
 
 \begin{itemize}
 \item 
@@ -1177,8 +1182,9 @@ move\_constructible
 copy\_constructible
 \end{itemize}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.2.4\hspace{0.2cm} Comparison Concepts
+\textbf{4.1.7.2.4\hspace{0.2cm}比较的概念}
 
 \begin{itemize}
 \item 
@@ -1188,14 +1194,14 @@ equality\_comparable
 totally\_ordered
 \end{itemize}
 
-Maybe you know it from your mathematics studies: For values a, b, and c of type T, T models totally\_ordered if and only if
+学习数学时会了解:对于类型T的值a、b和c，若以下描述成立，则T类型为totally\_ordered(全序关系)[\href{https://zhuanlan.zhihu.com/p/457918701}{翻译参考}]
 
 \begin{itemize}
 \item 
-Exactly one of bool(a < b), bool(a > b), or bool(a == b) is true
+bool(a < b)、bool(a > b)或bool(a == b)中的一个为真
 
 \item 
-If bool(a < b) and bool(b < c), then bool(a < c)
+若bool(a < b)和bool(b < c)，则bool(a < c)
 
 \item 
 bool(a > b) == bool(b < a)
@@ -1207,8 +1213,9 @@ bool(a <= b) == !bool(b < a)
 bool(a >= b) == !bool(a < b)
 \end{itemize}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.2.5\hspace{0.2cm} Object Concepts
+\textbf{4.1.7.2.5\hspace{0.2cm}对象的概念}
 
 \begin{itemize}
 \item 
@@ -1224,7 +1231,7 @@ semiregular
 regular
 \end{itemize}
 
-Here are the concise definitions of the four concepts:
+以下是这四个概念的定义:
 
 \begin{lstlisting}[style=styleCXX]
 template<class T>
@@ -1243,33 +1250,36 @@ template<class T>
 concept regular = semiregular<T> && equality_comparable<T>;
 \end{lstlisting}
 
-I have to add a few words. The concept movable requires for T that is\_object\_v<T> holds. From the definition of the type-trait is\_object<T> this means that T is either a scalar, an array, a union, or a class.
+我必须补充几点。可移动的概念要求T的is\_object\_v<T>条件成立。根据类型特性is\_object<T>的定义，T可以是标量、数组、联合体或者类。
 
-I implement the concept semiregular and regular in the section define concepts. Informally, a semiregular type behaves similar to an int, and a regular type behaves similarly to an int and can be compared using ==.
+在定义概念部分实现了半常规和常规的概念。不太正式地说，半常规类型的行为类似于int类型；而常规类型的行为也类似于int类型，并且可以使用==进行比较。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.2.6\hspace{0.2cm} Callable Concepts
+\textbf{4.1.7.2.6\hspace{0.2cm}可调用的概念}
 
 \begin{itemize}
 \item 
 invocable
 
 \item 
-regular\_invocable: a type models invocable and equality-preserving, and does not modify the function arguments; equality-preserving means the it produces the same output when given the same input
+regular\_invocable:类型建模为可调用且保持相等，并且不修改函数参数;保持相等，意味着在给定相同的输入时产生相同的输出
 
 \item 
-predicate: a type models a predicate if it models invocable and returns a boolean
+predicate:若类型对可调用对象建模并返回布尔值，则可对谓词建模
 \end{itemize}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.3\hspace{0.2cm} General Utilities Library
+\textbf{4.1.7.3\hspace{0.2cm}通用工具库}
 
-This chapter in the standard has only special memory concepts; therefore I don’t refer to them here.
+本章在标准中只有特殊的内存概念，因此在这里不提及它们。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.4\hspace{0.2cm} Iterators Library
+\textbf{4.1.7.4\hspace{0.2cm}迭代器库}
 
-The iterators library has many important concepts. They are defined in the <iterator> header. Here are the iterator categories:
+迭代器库有许多重要的概念，在<iterator>头文件中定义。下面是迭代器的类别:
 
 \begin{itemize}
 \item 
@@ -1291,16 +1301,12 @@ random\_access\_iterator
 contiguous\_iterator
 \end{itemize}
 
-The six categories of iterators correspond to the respective iterator concepts. The table below provides two interesting pieces of information. For the three most prominent iterator categories, the table shows their properties and the associated standard library containers.
-
-\begin{center}
-Properties and Containers of each iterator category
-\end{center}
+这六类迭代器对应于各自的迭代器概念。下表提供了两条有趣的信息。对于三个最突出的迭代器类别，该表显示了它们的属性和相关的标准库容器。
 
 \begin{table}[H]
 \centering
 \begin{tabular}{lll}
-\textbf{Iterator Category}   & \textbf{Properties} & \textbf{Containers}                                                                                     \\ \hline
+\textbf{迭代器类别}   & \textbf{属性} & \textbf{相应容器}                                                                                     \\ \hline
 std::forward\_iterator &
 \begin{tabular}[c]{@{}l@{}}++It,It++,*It\\ It==It2, It!=It2\end{tabular} &
 \begin{tabular}[c]{@{}l@{}}std::unordered\_set\\ std::unordered\_map\\ std::unordered\_multiset\\ std::unordered\_multimap\\ std::forward\_list\end{tabular} \\
@@ -1311,67 +1317,68 @@ std::random\_access\_iterator &
 \end{tabular}
 \end{table}
 
-The following relation holds: A random-access-iterator is a bidirectional iterator, and a bidirectional iterator is a forward iterator. A contiguous iterator is a random-access-iterator and requires that the elements of the container are stored contiguously in memory. This means std::array, std::vector, and std::string, but not std::deque, support contiguous iterators.
+以下关系成立:随机访问迭代器是双向迭代器，双向迭代器是前向迭代器。连续迭代器是一种随机访问迭代器，要求容器的元素连续存储在内存中。
 
+所以std::array，std::vector和std::string支持连续迭代器，但不包括std::deque。
+
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.4.1\hspace{0.2cm} Algorithm Concepts
+\textbf{4.1.7.4.1\hspace{0.2cm}算法的概念}
 
 \begin{itemize}
 \item 
-permutable: in-place reordering of elements is possible
+permutable:元素的就地重新排序是可能的
 
 \item 
-mergeable: merging sorted sequences into an output sequence is possible
+mergeable:可以将已排序的序列合并到输出序列中
 
 \item 
-sortable: permuting a sequence into an ordered sequence is possible
+sortable:将一个序列排列成有序序列是可能的
 \end{itemize}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.5\hspace{0.2cm} Ranges Library
+\textbf{4.1.7.5\hspace{0.2cm}范围库}
 
-The ranges library contains the concepts critical to the ranges and views features. They are similar to the concepts in the iterators library and are defined in the <ranges> header.
+范围库包含对范围和视图特性至关重要的概念，类似于迭代器库中的概念，定义在<ranges>头文件中。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.5.1\hspace{0.2cm} Ranges
+\textbf{4.1.7.5.1\hspace{0.2cm}范围}
 
 \begin{itemize}
 \item 
-range: A range specifies a group of items that you can iterate over. It provides a begin iterator and an end sentinel. Of course, the containers of the STL are ranges.
+range:范围指定可以遍历的一组项，提供了一个开始迭代器和一个结束哨兵。当然，STL容器也有范围。
 \end{itemize}
 
-There are further refinements for std::ranges::range.
+对于std::ranges::range还可以进一步的细化。
 
 \begin{itemize}
 \item 
-input\_range: specifies a range whose iterator type satisfies input\_iterator (e.g. can iterate from beginning to end at least once)
+input\_range:指定一个范围，其迭代器类型满足input\_iterator(例如，可以从开始迭代到结束至少一次)
 
 \item 
-output\_range: specifies a range whose iterator type satisfies output\_iterator
+output\_range:指定迭代器类型满足output\_iterator的范围
 
 \item 
-forward\_range: specifies a range whose iterator type satisfies forward\_iterator (can iterate from beginning to end more than once)
+forward\_range:指定一个范围，其迭代器类型满足forward\_iterator(可以从开始到结束迭代多次)
 
 \item 
-bidirectional\_range : specifies a range whose iterator type satisfies bidirectional\_iterator (can iterate forward and backward more than once)
+bidirectional\_range:指定迭代器类型满足bidirectional\_iterator的范围(可以向前和向后迭代不止一次)
 
 \item 
-random\_access\_range: specifies a range whose iterator type satisfies random\_access\_iterator (can jump in constant time to an arbitrary element with the index operator [])
+random\_access\_range:指定迭代器类型满足random\_access\_iterator的范围(可以在常量时间内使用索引操作符[]跳访问任意元素)
 
 \item 
-contiguous\_range: specifies a range whose iterator type satisfies contiguous\_iterator (elements are stored consecutively in memory)
+contiguous\_range:指定一个范围，其迭代器类型满足contiguous\_iterator(元素连续存储在内存中)
 \end{itemize}
 
-Each container of the Standard Template Library supports a specific range. The supported range specifies the capabilities of its iterators.
-
-\begin{center}
-Properties and containers of each range concept
-\end{center}
+标准模板库的每个容器都支持特定的范围，支持的范围指定了其迭代器的功能。
 
 \begin{table}[H]
 \centering
 \begin{tabular}{lll}
-\textbf{Iterator Category}        & \textbf{Properties} & \textbf{Containers}                                                                                     \\ \hline
+\textbf{迭代器类型}        & \textbf{属性} & \textbf{相应容器}                                                                                     \\ \hline
 std::ranges::input\_range &
 \begin{tabular}[c]{@{}l@{}}++It,It++,*It\\ It==It2, It!=It2\end{tabular} &
 \begin{tabular}[c]{@{}l@{}}std::unordered\_set\\ std::unordered\_map\\ std::unordered\_multiset\\ std::unordered\_multimap\\ std::forward\_list\end{tabular} \\
@@ -1385,87 +1392,96 @@ std::ranges::contiguous\_range &
 \end{tabular}
 \end{table}
 
-A container supporting the std::ranges::contiguous\_range concept, supports all revious mentioned concepts in the table such as std::ranges::random\_access\_range, std::ranges::bidirectional\_range, and std::ranges::input\_range. The same holds for all other ranges.
+若容器支持std::ranges::continuous\_range概念，则支持表中提到的所有概念，如std::ranges::random\_access\_range，std::ranges::bidirectional\_range和std::ranges::input\_range。对于所有其他范围同理。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.5.2\hspace{0.2cm} Views
+\textbf{4.1.7.5.2\hspace{0.2cm}视图}
 
-A std::ranges::view typically something that you apply on a range and performs some operation. A view does not own data and the time a view takes to copy, move, or assign is constant. Here is a quote from Eric Niebler’s range-v3 implementation, which is the basis for the C++20 ranges: “Views are composable adaptations of ranges where the adaptation happens lazily as the view is iterated.”
+std::ranges::view通常是应用在一个范围上，并用其执行一些操作。视图不拥有数据，视图用于复制、移动或赋值的时间是恒定的。下面引用Eric Niebler的range-v3实现，是C++20范围的基础:“视图是范围的组合适配，随着视图的迭代，这种适配的功能会慢慢地发挥其功效。”
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.7.6\hspace{0.2cm} Numeric Library
+\textbf{4.1.7.6\hspace{0.2cm}数值库}
 
-The numeric library provides the concept of a uniform\_random\_bit\_generator that is defined in the header <random>. A uniform\_random\_bit\_generator g of type G must return uniformly-distributed unsigned integers. Additionally, a uniform random-bit generator g of type G has to support the member functions G::min and G::max.
+数值库提供了uniform\_random\_bit\_generator的概念，该概念定义在头文件<random>中。类型G的uniform\_random\_bit\_generator g必须返回均分布的无符号整数。此外，类型为G的均匀随机位生成器g必须支持成员函数G::min和G::max。
 
-\subsubsubsection{4.1.8\hspace{0.2cm} Defining Concepts}
+\subsubsubsection{4.1.8\hspace{0.2cm}定义概念}
 
-When the concept you are looking for is not one of the predefined concepts in C++20, you must define your own concept. In this section I will define a few concepts which will be distinguishable from the predefined concepts through the use of CamelCase syntax. Consequently, my concept for a signed integral is named SignedIntegral, whereas the C++ standard concept goes by the name signed\_integral.
+当在C++20中没有合适的预定义的概念时，可以自定义概念。在本节中，我将定义几个概念，通过使用CamelCase语法将它们与预定义的概念区别开来。因此，我的带符号整型的概念命名为signeintegral，而C++标准的概念为signed\_integral。
 
-The syntax for defining a concept is straightforward:
+定义概念的语法很简单:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Concept definition
+\textbf{定义概念}
 \begin{lstlisting}[style=styleCXX]
 template <template-parameter-list>
 concept concept-name = constraint-expression;
 \end{lstlisting}
 
-A concept definition starts with the keyword template and has a template parameter list. The second line is more interesting. It uses the keyword concept followed by the concept name and the constraint expression.
+概念定义从关键字template开始，并有一个模板参数列表。第二行更有趣，使用关键字概念，后面跟着概念名称和约束表达式。
 
-A constraint-expression can either be:
-
-\begin{itemize}
-\item 
-A logical combination of other concepts or compile-time predicates
+约束表达式可以是:
 
 \begin{itemize}
 \item 
-Logical combination can be built out of conjunctions (\&\&), disjunctions (||), or negations (!)
+其他概念或编译时谓词的逻辑组合
 
-\item 
-Compile-time predicates are callables that return a boolean value at compile time
-\end{itemize}
-
-\item 
-A requires expression
 \begin{itemize}
 \item 
-Simple requirements
+逻辑组合可以由连接(\&\&)、析取(||)或否定(!)
 
 \item 
-Type requirements
+编译时谓词是在编译时返回布尔值的可调用对象
+\end{itemize}
 
 \item 
-Compound requirements
+一个需求表达式
+\begin{itemize}
+\item 
+简单的需求
 
 \item 
-Nested requirements
+类型的需求
+
+\item 
+复合的需求
+
+\item 
+嵌套的需求
 \end{itemize}
 \end{itemize}
 
-In the next two sections I will demonstrate various ways of defining concepts.
+接下来的两节中，将演示定义概念的各种方法。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.8.1\hspace{0.2cm} A Logical Combination of other Concepts and Compile-Time Predicates
+\textbf{4.1.8.1\hspace{0.2cm}其他概念和编译时谓词的组合}
 
-You can combine concepts and compile time predicates using conjunctions (\&\&) and disjunctions (||). When building your logical combination, you can negate components by using the exclamation mark (!). Thanks to the many compile-time predicates of the \href{https://en.cppreference.com/w/cpp/header/type_traits}{type-traits library}, you have at your disposal all tools required to build powerful concepts.
+您可以使用连接词(\&\&)和析取词(||)组合概念和编译时谓词。在构建逻辑组合时，可以使用感叹号(!)否定组件。多亏了\href{https://en.cppreference.com/w/cpp/header/type_traits}{类型特性库}的许多编译时谓词，可以随意使用构建强大概念所需的工具。
 
-\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title=Don’t define Concepts Recursively or try to Constrain them]
-A recursive definition of a concept is not valid:
+\hspace*{\fill} \\ %插入空行
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={不要递归地定义概念或尝试约束它们}]
 	
+概念的递归定义是无效的:
+	
+\hspace*{\fill} \\ %插入空行
 \noindent
-Recursively defining a concept
+\textbf{递归地定义概念}
 \begin{lstlisting}[style=styleCXX]
 template<typename T>
 concept Recursive = Recursive<T*>;
 \end{lstlisting}
 	
-The GCC compiler complains in this case that 'Recursive' was not declared in this scope.
+GCC编译器在这种情况下抱怨'Recursive'没有在此作用域中声明。
 
-When you try to constrain a concept such as in the following code snippet, the GCC compiler unambiguously complains that a concept cannot be constrained.
+\hspace*{\fill} \\ %插入空行
+当尝试约束一个概念(例如下面的代码片段)时，GCC编译器会明确地提示一个概念不能约束。
 	
+\hspace*{\fill} \\ %插入空行
 \noindent
-Constraining a concept
+\textbf{约束概念}
 \begin{lstlisting}[style=styleCXX]
 template<typename T>
 concept AlwaysTrue = true;
@@ -1477,10 +1493,11 @@ concept Error = true;
 
 \end{tcolorbox}
 
-Let’s start with the concepts Integral, SignedIntegral, and UnsignedIntegral.
+我们从Integral、signeintegral和unsigneintegral概念开始。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-The concepts Integral, SignedIntegral, and UnsignedIntegral
+\textbf{Integral、signeintegral和unsigneintegral概念}
 \begin{lstlisting}[style=styleCXX]
 template <typename T>
 concept Integral = std::is_integral<T>::value;
@@ -1492,12 +1509,13 @@ template <typename T>
 concept UnsignedIntegral = Integral<T> && !SignedIntegral<T>;
 \end{lstlisting}
 
-I used the type-traits function \href{https://en.cppreference.com/w/cpp/types/is_integral}{std::is\_integral} to define the concept Integral (line 2). Thanks to the function std::is\_signed, I refine the concepts Integral to the concept SignedIntegral (line 4). Finally, negating the concept SignedIntegral gives me the concept UnsignedIntegral (line 7).
+我使用类型特性函数\href{https://en.cppreference.com/w/cpp/types/is_integral}{std::is\_integral}来定义Integral概念(第2行)。由于函数std::is\_signed，我将Integral概念改进为SignedIntegral概念(第4行)。最后，对SignedIntegral概念进行否定，得到了UnsignedIntegral概念(第7行)。
 
-Okay, let’s try it out.
+Okay，我们来试试看。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Use of the concepts Integral, SignedIntegral, and UnsignedIntegral
+\textbf{使用Integral、signeintegral和unsigneintegral概念}
 \begin{lstlisting}[style=styleCXX]
 // SignedUnsignedIntegrals.cpp
 
@@ -1533,52 +1551,53 @@ int main() {
 }
 \end{lstlisting}
 
-I used the abbreviated function-template syntax to overload the function func on the concept SignedIntegral (line 15) and UnsignedIntegral (line 19). The compiler chooses the expected overload:
+使用简化的函数模板语法重载概念SignedIntegral(第15行)和UnsignedIntegral(第19行)上的函数func。编译器选择预期的重载:
 
 \begin{tcblisting}{commandshell={}}
 SignedIntegral: -5
 UnsignedIntegral: 5
 \end{tcblisting}
 
-\begin{center}
-Use of the concepts SignedIntegral, and UnsignedIntegral
-\end{center}
+出于完整性的原因，下面的算术概念使用析取。
 
-For completeness reasons, the following concept Arithmetic uses disjunction.
-
+\hspace*{\fill} \\ %插入空行
 \noindent
-The concept Arithmetic
+\textbf{算术概念}
 \begin{lstlisting}[style=styleCXX]
 template <typename T>
 concept Arithmetic = std::is_integral<T>::value || std::is_floating_point<T>::value;
 \end{lstlisting}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.8.2\hspace{0.2cm} Requires Expressions
+\textbf{4.1.8.2\hspace{0.2cm}需求表达式}
 
-Thanks to requires expressions, you can define powerful concepts. A requires expression has the following form:
+因为需求表达式，现在可以定义功能强大的概念。需求表达式有如下形式:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Requires expression
+\textbf{需求表达式}
 \begin{lstlisting}[style=styleCXX]
 requires (parameter-list(optional)) {requirement-seq}
 \end{lstlisting}
 
 \begin{itemize}
 \item 
-parameter-list: A comma-separated list of parameters, such as in a function declaration
+参数列表:以逗号分隔的参数列表，例如在函数声明中
 
 \item 
-requirement-seq: A sequence of requirements, consisting of simple, type, compound, or nested requirements
+需求序列:由简单需求、类型需求、复合需求或嵌套需求组成
 \end{itemize}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.8.2.1\hspace{0.2cm} Simple Requirements
+\textbf{4.1.8.2.1\hspace{0.2cm}简单的需求}
 
-The following concept Addable is a simple requirement:
+下面的概念Addable是一个简单的需求:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-The concept Addable
+\textbf{Addable的概念}
 \begin{lstlisting}[style=styleCXX]
 template<typename T>
 concept Addable = requires (T a, T b) {
@@ -1586,40 +1605,44 @@ concept Addable = requires (T a, T b) {
 };
 \end{lstlisting}
 
-The concept Addable requires that the addition a + b of two values of the same type T is possible.
+Addable的概念要求两个相同类型T的加法a + b是可能的。
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=Avoid Anonymous Concepts: requires requires]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={避免匿名概念}]
 	
-You can define an anonymous concept and directly use it. Avoid it. This makes your code hard to read and you cannot reuse your concepts.
+可以定义一个匿名概念并直接使用它，但请避免这样做。这会使得代码难以阅读，并且无法重用相应的概念。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-An anonymous concept for adding two concepts
+\textbf{一个匿名概念，用于添加两个概念}
 \begin{lstlisting}[style=styleCXX]
 template<typename T>
 	requires requires (T x) { x + x; }
 T add1(T a, T b) { return a + b; }
 \end{lstlisting}
 
-The function template defines its concept ad-hoc. add1 uses a requires expression inside a requires clause. The anonymous concept is equivalent to the previously defined concept Addable and so is the following function template add2 using the named concept Addable.
+函数模板自定义了概念。Add1在require子句中使用需求表达式。匿名概念等同于前面定义的概念Addable，下面使用命名概念Addable的函数模板add2也是如此。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Use of the concept Addable
+\textbf{使用Addable概念}
 \begin{lstlisting}[style=styleCXX]
 template<Addable T>
 T add2(T a, T b) { return a + b; }
 \end{lstlisting}
 
-Concepts should encapsulate general ideas and give them a self-explanatory name for reuse. They are invaluable for maintaining code. Anonymous concepts read more like syntactic constraints the template parameters.
+概念应该对一般情况进行封装，并为它们提供一个自明的名称以便重用。这对于维护代码非常重要。匿名概念读起来更像模板参数的语法约束。
 	
 \end{tcolorbox}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.8.2.2\hspace{0.2cm} Type Requirements
+\textbf{4.1.8.2.2\hspace{0.2cm}类型的需求}
 
-In a type requirement, you have to use the keyword typename together with a type name.
+类型的需求中，必须使用关键字typename和类型名。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-The concept TypeRequirement
+\textbf{TypeRequirement的概念}
 \begin{lstlisting}[style=styleCXX]
 template<typename T>
 concept TypeRequirement = requires {
@@ -1628,12 +1651,13 @@ concept TypeRequirement = requires {
 };
 \end{lstlisting}
 
-The concept TypeRequirement requires that type T has a nested member value\_type, and that the class template Other can be instantiated with T.
+TypeRequirement概念要求类型T有一个嵌套的成员value\_type，并且类模板Other可以用T实例化。
 
-Let’s try this out:
+让我们试试这个:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Use of the concepts TypeRequirement
+\textbf{使用TypeRequirement概念}
 \begin{lstlisting}[style=styleCXX]
 #include <iostream>
 #include <vector>
@@ -1657,25 +1681,28 @@ int main() {
 }
 \end{lstlisting}
 
-The expression TypeRequirement auto myVec = std::vector<int>{1, 2, 3} (line 18) is valid. A \href{https://en.cppreference.com/w/cpp/container/vector}{std::vector} has an inner member value\_type (line 12) and the class template Other can be instantiated with std::vector<int> (line 13).
+表达式TypeRequirement auto myVec = std::vector<int>{1,2,3}(第18行)有效。\href{https://en.cppreference.com/w/cpp/container/vector}{std::vector}有一个内部成员value\_type(第12行)，类模板Other可以实例化std::vector<int>(第13行)。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.8.2.3\hspace{0.2cm} Compound Requirements
+\textbf{4.1.8.2.3\hspace{0.2cm}复合需求}
 
-A compound requirement has the form
+复合需求有这样的形式
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Compound requirement
+\textbf{复合需求}
 \begin{lstlisting}[style=styleCXX]
 {expression} noexcept(optional) return-type-requirement(optional);
 \end{lstlisting}
 
-In addition to a simple requirement, a compound requirement can have a \href{https://en.cppreference.com/w/cpp/language/noexcept_spec}{noexcept specifier} and a requirement on its return type.
+除了简单的需求外，复合需求还可以有\href{https://en.cppreference.com/w/cpp/language/noexcept_spec}{noexcept说明符}和关于其返回类型的需求。
 
-The concept Equal, demonstrated in the following example, uses compound requirements.
+在下面的示例中演示的Equal概念使用复合需求。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Definition and use of the concept Equal
+\textbf{定义和使用Equal概念}
 \begin{lstlisting}[style=styleCXX]
 // conceptsDefinitionEqual.cpp
 
@@ -1717,30 +1744,33 @@ int main() {
 }
 \end{lstlisting}
 
-The concept Equal (line 6) requires that its type parameter T supports the equal and not-equal operator. Additionally, both operators have to return a value that is convertible to a boolean. Of course, int supports the concept Equal, but this does not hold for the types WithoutEqual (line 16) and WithoutUnequal (line 20). Consequently, when I use the type WithoutEqual (line 31), I get the following error message when using the GCC compiler.
+Equal概念(第6行)要求其类型参数T支持相等和不相等操作符。此外，两个操作符都必须返回一个可转换为布尔值的值。当然，int支持Equal的概念，但这并不适用于WithoutEqual(第16行)和without不等(第20行)类型。因此，当使用WithoutEqual类型时(第31行)，在使用GCC编译器时得到以下错误消息。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/1-4.png}\\
-WithoutEqual does not fulfill the concept Equal
+\includegraphics[width=1.0\textwidth]{content/3/chapter4/images/1-4.png}\\
+WithoutEqual不能匹配Equal的概念
 \end{center}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.8.2.4\hspace{0.2cm} Nested Requirements
+\textbf{4.1.8.2.4\hspace{0.2cm}嵌套需求}
 
-A nested requirement has the form
+嵌套需求的形式
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Nested requirement
+\textbf{嵌套需求}
 \begin{lstlisting}[style=styleCXX]
 requires constraint-expression;
 \end{lstlisting}
 
-Nested requirements are used to specify requirements on type parameters.
+嵌套需求用于指定类型参数上的需求。
 
-Here is another way to define the concept UnsignedIntegral (see logical combinations of concepts and predicates):
+下面是定义概念unsigneintegral的另一种方法(参见概念和谓词的逻辑组合):
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-The concepts Integral, SignedIntegral, and UnsignedIntegral
+\textbf{Integral、SignedIntegral和UnsignedIntegral的概念}
 \begin{lstlisting}[style=styleCXX]
 // nestedRequirements.cpp
 
@@ -1769,26 +1799,30 @@ int main() {
 }
 \end{lstlisting}
 
-Line 14 uses with the concept SignedIntegral a nested requirement to refine the concept Integral. Honestly, the commented-out concept UnsignedIntegral in line 11 is more convenient to read.
+第14行使用signeintegral概念，嵌套需求来细化Integral概念。老实说，第11行中注释掉的概念unsigneintegral阅读起来更方便。
 
-The concept Ordering in the following section demonstrates the use of nested requirements.
+下一节中的有序概念演示了嵌套需求的使用。
 
-\subsubsubsection{4.1.9\hspace{0.2cm} Application}
+\subsubsubsection{4.1.9\hspace{0.2cm}应用}
 
-In the previous sections I answered two essential questions about concepts: “How can a concept be used?” and “How can you define your concepts?”. In this section, I want to apply the theoretical knowledge provided in those sections to define more advanced concepts such as Ordering, SemiRegular, and Regular.
+在前面的章节中，我回答了关于概念的两个基本问题:“如何使用概念?“和“你如何定义你的概念?”
 
+在本节中，将应用这些理论知识来定义更高级的概念，如Ordering、SemiRegular和Regular。
+
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.1.9.1\hspace{0.2cm} The Concepts Equal and Ordering
+\textbf{4.1.9.1\hspace{0.2cm}Equal和Ordering的概念}
 
-I presented already in the short detour to the long, long history of concepts a part of Haskell’s type classes hierarchy:
+我已经在Haskell的类型的层次结构中介绍了概念的漫长历史:
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter4/images/9.png}\\
-Haskell Type Classes Hierarchy
+Haskell类型的层次结构
 \end{center}
 
 The class hierarchy shows that the type class Ord is a refinement of the type class Eq. Haskell expresses this elegantly.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 A part of Haskell’s type classes hierarchy
 \begin{lstlisting}[style=styleCXX]
@@ -1809,11 +1843,13 @@ Each type a supporting the type class Eq (line 1), has to support equality (line
 
 Here is my challenge. Can we express Haskell’s relationship between the type classes Eq and Ord with concepts in C++20? For simplicity, I ignore Haskell’s functions compare and max.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.1.9.1.1\hspace{0.2cm} The Concept Ordering
 
 Thanks to the requires expression, the definition of the concept Ordering looks quite similar to the definition of the type class ord in Haskell.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 The concept Ordering
 \begin{lstlisting}[style=styleCXX]
@@ -1830,6 +1866,7 @@ concept Ordering =
 
 The Ordering concept uses nested requirements under the hood. A type T supports the concept Ordering if it supports the concept Equal and, additionally, the four comparison operators. Let’s try it out.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Definition and usage of the concept Ordering
 \begin{lstlisting}[style=styleCXX]
@@ -1904,7 +1941,7 @@ Use of the concept Ordering
 Let’s look at the more interesting case now. What happens, when we compile line 48: auto smallerSet = getSmaller(firSet, secSet);? The GCC compiler complains unambiguously that a std::unordered\_set is not a valid argument for the function template getSmaller.
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/1-5.png}\\
+\includegraphics[width=1.0\textwidth]{content/3/chapter4/images/1-5.png}\\
 Erroneous usage of the function template getSmaller
 \end{center}
 
@@ -1920,6 +1957,7 @@ std::three\_way\_comparable\_with: allows the comparison of values of different 
 
 With C++20, we get the three-way comparison operator, also known as the spaceship operator <=>. I present it in full depth in the three-way comparison operator chapter.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.1.9.2\hspace{0.2cm} The Concepts SemiRegular and Regular
 
@@ -1935,7 +1973,7 @@ A regular type “behaves like an int.” It can be copied and the result of the
 Okay, let me be more formal. A regular type is also a semiregular type, so let’s begin.
 
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=Regular Types]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title=Regular Types]
 
 \href{https://en.wikipedia.org/wiki/Alexander_Stepanov}{Alexander Stepanov}, the designer of the Standard Template Library, defined the terms regular type and semiregular type. A type, according to him, is regular if it supports these functions
 
@@ -1960,6 +1998,7 @@ Copy construction implies default construction and Equality implies Inequality. 
 
 \end{tcolorbox}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.1.9.2.1\hspace{0.2cm} The Concept SemiRegular
 
@@ -1967,22 +2006,40 @@ A semiregular type X has to support the Big Six and has to be swappable. The Big
 
 \begin{itemize}
 \item 
-Default constructor: X()
+默认构造函数: 
+\begin{lstlisting}[style=styleCXX]
+X()
+\end{lstlisting}
 
 \item 
-Copy constructor: X(const X\&)
+复制构造函数:
+\begin{lstlisting}[style=styleCXX]
+X(const X&)
+\end{lstlisting}
 
 \item 
-Copy assignment: X\& operator = (const X\&)
+复制赋值操作符: 
+\begin{lstlisting}[style=styleCXX]
+X& operator = (const X&)
+\end{lstlisting}
 
 \item 
-Move constructor: X(X\&\&)
+移动构造函数: 
+\begin{lstlisting}[style=styleCXX]
+X(X&&)
+\end{lstlisting}
 
 \item 
-Move assignment: X\& operator = (X\&\&)
+移动赋值操作符: 
+\begin{lstlisting}[style=styleCXX]
+X& operator = (X&&)
+\end{lstlisting}
 
 \item 
-Destructor: ∼X()
+析构函数: 
+\begin{lstlisting}[style=styleCXX]
+~X()
+\end{lstlisting}
 \end{itemize}
 
 Additionally, X has to be swappable: swap(X\&, X\&)
@@ -2009,11 +2066,13 @@ The type trait isSemiRegular (line 1) is fulfilled when all type traits to the B
 
 Let’s continue with the concept Regular.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.1.9.2.2\hspace{0.2cm} The Concept Regular
 
 There is only one step and we are done with defining the concept Regular. In addition to the requirements of the concept SemiRegular, the concept Regular requires that the type is equally comparable. I already defined the Equal concept in the section on requires expressions. Consequently, you are already done. You only have to conjunct the concepts Equal and SemiRegular.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Definition of the concept Regular
 \begin{lstlisting}[style=styleCXX]
@@ -2024,11 +2083,13 @@ concept Regular = Equal<T> &&
 
 Now, I’m curious. How can we define the corresponding concepts std::semiregular and std::regular in C++20?
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.1.9.2.3\hspace{0.2cm} std::semiregular and std::regular
 
 C++20 combines the concepts std::semiregular and std::regular using of existing type traits and concepts.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Definition of the concept std::semiregular and std::regular
 \begin{lstlisting}[style=styleCXX]
@@ -2050,6 +2111,7 @@ concept regular = semiregular<T> && equality_comparable<T>;
 
 Interestingly, the std::regular concept is defined similarly to concept Regular. On the other hand, the std::semiregular concept is combined with more elementary concepts, such as std::copyable and std::moveable. The concept std::movable is based on the type-traits function \href{https://en.cppreference.com/w/cpp/types/is_object}{std::is\_object}. cppreference.com also provides a possible implementation of the compile-time predicate.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 A possible implementation of the type trait std::is\_object
 \begin{lstlisting}[style=styleCXX]
@@ -2065,6 +2127,7 @@ A type is an object if it is either a scalar, an array, a union, or a class.
 
 To conclude this section, I want to apply the user-defined concept Regular and the C++20 concept std::regular. The program regularSemiRegular.cpp does this job.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Application of the concepts Regular and SemiRegular
 \begin{lstlisting}[style=styleCXX]
@@ -2174,7 +2237,7 @@ Error message when using the concepts Regular and std::regular
 
 As you can see from the screenshot, I applied version 19.27.29112 for x64 with the command line /EHSC /std:c++latest.
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=Regular Types]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title=Regular Types]
 
 This small detour expresses my opinion. First, I present the facts, then I draw my conclusion. The facts are based on what has been presented in this chapter. So which arguments speak for evolution or for revolution?
 
@@ -2212,13 +2275,14 @@ Thanks to the abbreviated function-templates syntax, defining templates has been
 Concepts represent semantic categories, but not syntactic constraints. Instead of a concept such as Addable, which requires that a type supports the + operator, we should think in terms of a concept Number, where Number is a semantic category such as Equal or Ordering.
 \end{itemize}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{My Conclusion}
 
 There are many arguments whether concepts are an evolutionary step or a revolutionary jump. Mainly because of the semantic categories, I’m on the revolution side. Concepts such as Number, Equality, or Ordering remind me of \href{https://en.wikipedia.org/wiki/Plato}{Plato’s} world of ideas. It is revolutionary that we can now reason about programming in such categories.
 \end{tcolorbox}
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title=Distilled Information]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title=Distilled Information]
 \begin{itemize}
 \item 
 Functions or classes defined on a specific type or a type parameter have their set of problems. Concepts overcome these problems by putting semantic constraints on type parameters.
