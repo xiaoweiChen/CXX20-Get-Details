@@ -2,18 +2,18 @@
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/11.png}\\
-Cippi prepares the packages
+Cippi在准备包裹
 \end{center}
 
-Modules are one of the four big features of C++20: concepts, modules, ranges, and coroutines. Modules promise a lot: shorter compile times, macro isolation, abolishing header files, and avoiding ugly workarounds. Before I present the advantages of modules, I want to step back and explain their benefits.
+模块是C++20的四大特性之一，模块的功能有很多:更短的编译时间，隔离宏，取消头文件，避免丑陋的工作区。在介绍模块的优点之前，先来一起了解一下模块。
 
-\subsubsubsection{4.2.1\hspace{0.2cm} Why do we need Modules?}
+\subsubsubsection{4.2.1\hspace{0.2cm}为什么需要模块?}
 
-Let me start with a simple executable. For obvious reasons, I create a helloWorld.cpp program.
+从一个简单的可执行文件开始，我创建了一个helloWorld.cpp程序。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-A simple hello world program
+\textbf{一个简单的hello world程序}
 \begin{lstlisting}[style=styleCXX]
 // helloWorld.cpp
 
@@ -24,49 +24,49 @@ int main() {
 }
 \end{lstlisting}
 
-Making an executable helloWorld out of the program helloWorld.cpp with \href{http://gcc.gnu.org/}{GCC} increases its size by factor 130.
+使用\href{http://gcc.gnu.org/}{GCC}可将helloWorld.cpp编译成一个可执行的helloWorld，可执行文件的大小是文本文件的130倍。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter4/images/12.png}\\
-Size of an object file
+目标文件的大小
 \end{center}
 
-The numbers 100 and 12928 in the screenshot stand for the number of bytes. Okay. We should have a basic understanding of what’s happening under the hood.
+截图中的数字100和12928代表字节数。现在，我们再对底层发生的事情进行一下了解。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.1.1\hspace{0.2cm} The Classical Build Process
+\textbf{4.2.1.1\hspace{0.2cm}传统的构建过程}
 
-The build process consists of three steps: preprocessing, compilation, and linking.
+构建过程包括三个步骤:预处理、编译和链接。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.1.1.1\hspace{0.2cm} Preprocessing
+\textbf{4.2.1.1.1\hspace{0.2cm}预处理}
 
-The preprocessor handles the directives as \#include and \#define. The preprocessor substitutes \#include directives with the corresponding header files, and it substitutes the macros (\#define). Thanks to directives such as \#if, \#else, \#elif, \#ifdef, \#ifndef, and \#endif parts of the source code can be included or excluded.
+预处理器以\#include和\#define的方式处理指令。预处理器用相应的头文件替换\#include指令，并替换宏(\#define)。因为诸如\#if，\#else，\#elif，\#ifdef，\#ifndef和\#endif等指令，源代码的一部分可以包含或排除。
 
-This straightforward text substitution process can be observed by using the compiler flag -E on GCC/Clang, or /E on Windows.
+这个简单的文本替换过程(宏展开)可以通过在GCC/Clang上使用编译器标志-E，或在Windows上使用/E，就可以进行查看了。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter4/images/13.png}\\
-Preprocessors output
+预处理器的输出
 \end{center}
 
-WOW!!! The output of the preprocessing step has more than half a million bytes. I don’t want to blame GCC, the other compilers are similarly verbose. The output of the preprocessor is the input for the compiler.
+哇! !预处理步骤的输出超过50万个字节。我不想责怪GCC，其他编译器也同样啰嗦。预处理器的输出则是编译器的输入。
 
-The result of this preprocessing step is the translation unit.
+这个预处理步骤的结果就是翻译单元。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.1.1.2\hspace{0.2cm} Compilation
+\textbf{4.2.1.1.2\hspace{0.2cm}编译}
 
 The compilation is performed separately on each output of the preprocessor. The compiler parses the C++ source code and converts it into assembly code. The generated file is called an object file and it contains the compiled code in binary form. The object file can refer to symbols that don’t have a definition. The object files can be put in archives for later reuse. These archives are called static libraries.
 
-The objects files that the compiler produces are the inputs for the linker.
+编译器生成的对象文件则是链接器的输入。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.1.1.3\hspace{0.2cm} Linking
+\textbf{4.2.1.1.3\hspace{0.2cm}连接}
 
 The output of the linker can be an executable or a static or shared library. It’s the job of the linker to resolve the references to undefined symbols. Symbols are defined in object files or in libraries. The typical error in this phase is that symbols aren’t defined or are defined more than once.
 
