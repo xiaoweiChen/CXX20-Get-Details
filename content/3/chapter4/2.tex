@@ -60,7 +60,7 @@ int main() {
 \noindent
 \textbf{4.2.1.1.2\hspace{0.2cm}编译}
 
-The compilation is performed separately on each output of the preprocessor. The compiler parses the C++ source code and converts it into assembly code. The generated file is called an object file and it contains the compiled code in binary form. The object file can refer to symbols that don’t have a definition. The object files can be put in archives for later reuse. These archives are called static libraries.
+在预处理器的输出上分别执行编译，编译器解析C++源代码，并将其转换为汇编代码。生成的文件称为目标文件，包含二进制形式的编译代码。目标文件可以引用没有定义的符号，也可以放在存档文件中以供以后重用。这些存档文件称为静态库。
 
 编译器生成的对象文件则是链接器的输入。
 
@@ -68,30 +68,30 @@ The compilation is performed separately on each output of the preprocessor. The 
 \noindent
 \textbf{4.2.1.1.3\hspace{0.2cm}连接}
 
-The output of the linker can be an executable or a static or shared library. It’s the job of the linker to resolve the references to undefined symbols. Symbols are defined in object files or in libraries. The typical error in this phase is that symbols aren’t defined or are defined more than once.
+链接器的输出可以是可执行库、静态库或动态库。链接器的工作是解析对未定义符号的引用，符号在目标文件或库中定义。这个阶段常见的错误是符号没有定义或者定义了不止一次。
 
-This build process that consists of the three steps is inherited from C. It works sufficiently well if you have only one translation unit. But when you have more than one, many issues can occur.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-4.2.1.2\hspace{0.2cm} Issues of the Build Process
-
-Here’s an incomplete list of the flaws in a classical build process, which can be overcome with modules.
+这个由三个步骤组成的构建过程继承自C。若只有一个翻译单元，就能很好地工作。但若有不止一个翻译单元，就会出现很多问题。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.1.2.1\hspace{0.2cm} Repeated Substitution
+\textbf{4.2.1.2\hspace{0.2cm}构建中的问题}
 
-The preprocessor substitutes \#include directives with the corresponding header files. Let me change my initial helloWorld.cpp program to make the repetition visible. I refactored the program and added two source files hello.cpp and world.cpp. The source file hello.cpp provides the function hello and the source file world.cpp provides the function world.
+下面是经典构建过程中缺陷的不完整列表，这些缺陷可以通过模块来解决。
 
-Both source files include the corresponding headers. Refactoring means that the program has the same external behavior such as the previous program helloWorld.cpp, but the internal structure is improved. Here are the new files:
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{4.2.1.2.1\hspace{0.2cm}重复替换}
+
+预处理器用相应的头文件替换\#include指令。修改一下helloWorld.cpp程序，使重复可见。我重构了程序并添加了两个源文件hello.cpp和world.cpp。源文件hello.cpp提供了hello函数，源文件world.cpp提供了world函数。
+
+两个源文件都包含相应的头文件。重构意味着具有与前面的程序helloWorld.cpp相同的外部行为，但内部结构进行了改进。以下是新文件:
 
 \begin{itemize}
 \item 
-hello.cpp and hello.h
+hello.cpp和hello.h
 
 \noindent
-Implementation of hello
+hello的实现
 \begin{lstlisting}[style=styleCXX]
 // hello.cpp
 
@@ -103,7 +103,7 @@ void hello() {
 \end{lstlisting}
 
 \noindent
-Header of hello
+hello的头文件
 \begin{lstlisting}[style=styleCXX]
 // hello.h
 
@@ -113,10 +113,10 @@ void hello();
 \end{lstlisting}
 
 \item 
-world.cpp and world.h
+world.cpp和world.h
 
 \noindent
-Implementation of world
+world的实现
 \begin{lstlisting}[style=styleCXX]
 // world.cpp
 
@@ -128,7 +128,7 @@ void world() {
 \end{lstlisting}
 
 \noindent
-Header of world
+world的头文件
 \begin{lstlisting}[style=styleCXX]
 // world.h
 
@@ -141,7 +141,7 @@ void world();
 helloWorld2.cpp
 
 \noindent
-Use of hello and world
+使用hello和world
 \begin{lstlisting}[style=styleCXX]
 // helloWorld2.cpp
 
@@ -161,89 +161,86 @@ int main() {
 
 \end{itemize}
 
-Building and executing the program works as expected:
+构建和执行如预期的一样:
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter4/images/14.png}\\
-Compilation of a simple program
+编译的一个简单程序
 \end{center}
 
-Here is the issue. The preprocessor runs on each source file. This means that the header file <iostream> is included a total of three times. Consequently, each source file is blown up to more than half a million lines.
+问题是这样的。预处理器运行在每个源文件上，所以头文件<iostream>总共包含了三次。因此，每个源文件均多了50多万行代码。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter4/images/15.png}\\
-Size of the preprocessed source file
+预处理源文件的大小
 \end{center}
 
-This is a waste of compile time.
+这是对编译时间的浪费。
 
-Unlike header files, a module is only imported once and is literally for free.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-4.2.1.2.2\hspace{0.2cm} Isolation from Preprocessor Macros
-
-If there is one consensus in the C++ community, it’s the following one: we should get rid of the preprocessor macros. Why? Using a macro is simply text substitution, excluding any C++ semantics. Of course, this has many negative consequences: for example, it may depend on which sequence you include macros, or macros can clash with already defined macros or names in your application.
-
-Imagine you have two header files webcolors.h and productinfo.h.
+与头文件不同，模块只导入一次，而且不会有什么开销。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-First definition of macro RED
+\textbf{4.2.1.2.2\hspace{0.2cm}隔离预处理宏}
+
+若C++社区有一个共识的话，那就是:应该去掉预处理器宏。为什么?使用宏只是简单的文本替换，不包括任何C++语义。当然，这有许多负面后果:例如，这可能取决于包含宏的顺序，或者宏可能与应用程序中已经定义的宏或名称冲突。
+
+假设有两个头文件webcolors.h和productininfo.h。
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{先定义一个宏RED}
 \begin{lstlisting}[style=styleCXX]
 // webcolors.h
 #define RED 0xFF0000
 \end{lstlisting}
 
-\hspace*{\fill} \\ %插入空行
 \noindent
-Second definition of macro RED
+\textbf{再定义一个宏RED}
 \begin{lstlisting}[style=styleCXX]
 // productinfo.h
 #define RED 0
 \end{lstlisting}
 
-When a source file client.cpp includes both headers, the value of macro RED depends on the order of the included header. This dependency is very error-prone.
+当源文件client.cpp包含两个头文件时，宏RED的值取决于所包含头文件的顺序。这种依赖关系非常容易出错。
 
-With modules, import order makes no difference.
+模块则没有导入顺序的问题。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.1.2.3\hspace{0.2cm} Isolation from Preprocessor Macros
+\textbf{4.2.1.2.3\hspace{0.2cm}隔离宏}
 
-ODR stands for the One Definition Rule and says in the case of a function:
+ODR代表单一定义规则，对于函数:
 
 \begin{itemize}
 \item 
-A function can have not more than one definition in any translation unit.
+函数在任何翻译单元中不能有一个以上的定义。
 
 \item 
-A function can not have more than one definition in the program.
+函数在程序中不能有多个定义。
 \end{itemize}
 
-Inline functions with external linkage can be defined in more than one translation unit. The definitions have to satisfy the requirement that each definition has to be the same.
+可以在多个翻译单元中定义具有外部链接的内联函数，而宏必须满足每个定义的要求。
 
-Let’s see what my linker has to say when I try to link a program breaking the one-definition rule. The following code example has two header files, header.h and header2.h. The main program includes the header files header.h twice and, therefore, breaks the one-definition rule because two definitions of func are included.
+当链接一个违背单一定义规则的程序时，链接器会怎么样。下面的代码示例有两个头文件，header.h和header2.h。主程序包含头文件header.h两次，因此，由于包含了func的两个定义，因此违背了单一定义规则。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Definition of the function func
+\textbf{函数func的定义}
 \begin{lstlisting}[style=styleCXX]
 // header.h
 void func() {}
 \end{lstlisting}
 
-\hspace*{\fill} \\ %插入空行
 \noindent
-Indirect inclusion of the function definition to func
+\textbf{将函数定义间接包含到func中}
 \begin{lstlisting}[style=styleCXX]
 // header2.h
 #include "header.h"
 \end{lstlisting}
 
-\hspace*{\fill} \\ %插入空行
 \noindent
-Double definitions of the function func
+\textbf{双重定义的函数func}
 \begin{lstlisting}[style=styleCXX]
 // main.cpp
 
@@ -253,18 +250,18 @@ Double definitions of the function func
 int main() {}
 \end{lstlisting}
 
-The linker complains about the multiple definitions of func:
+链接器会说，func有多个定义:
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter4/images/16.png}\\
-Breakion the one definition rule
+违背了单一定义规则
 \end{center}
 
-We are used to ugly workarounds, such as putting an include guard around your header. Adding the include guard FUNC\_H to the header file header.h solves the issue.
+我们已经习惯了一些丑陋的方法，比如在头文件周围加一个包含守卫。在头文件header.h中添加包含守卫FUNC\_H可以解决这个问题。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Using include guards to solve ODR
+\textbf{使用包含守卫来解决ODR问题}
 \begin{lstlisting}[style=styleCXX]
 // header.h
 
@@ -276,44 +273,45 @@ void func(){}
 #endif
 \end{lstlisting}
 
-With modules, duplicate symbols are very unlikely.
+对于模块，不太可能出现重复符号。
 
-I will now summarize the advantages of modules.
+那么，现在我将来说说模块的优势。
 
-\subsubsubsection{4.2.2\hspace{0.2cm} Advantages}
+\subsubsubsection{4.2.2\hspace{0.2cm}优势}
 
-Here are the advantages of modules in a concise form:
+下面以简洁的形式介绍模块的优势:
 
 \begin{itemize}
 \item 
-Modules are imported only once and are literally for free.
+模块只导入一次，而且实际上编译开销很小。
 
 \item 
-It makes no difference in which order you import a module.
+导入模块没有顺序之分。
 
 \item 
-Duplicate symbols with modules are very unlikely.
+模块不可能重复符号。
 
 \item 
-Modules enable you to express the logical structure of your code. You can explicitly specify names that should be exported or not. Additionally, you can bundle a few modules into a bigger module and provide them to your customer as a logical package.
+模块能够表达代码的逻辑结构。可以显式地指定应导出或不应导出的名称，还可以将几个模块捆绑到一个更大的模块中，并将它们作为逻辑包提供出去。
 
 \item 
-Thanks to modules, there is no need to separate your source code into an interface and an implementation part.
+由于模块，不需要再将源代码分离为接口和实现部分。
 \end{itemize}
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=Regular Types]
-Modules in C++ may be older than you think. My short historic detour should give an idea how long it takes to get something so valuable into the C++ standard.
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title=常规类型]
+C++中的模块可能比你想象的要更加古老。简短的历史回顾应该能让你了解，把如此有价值的东西纳入C++标准需要多长时间。
 
-In 2004, Daveed Vandevoorde wrote proposal \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2004/n1736.pdf}{N1736.pdf}, which described for the first time the idea of modules. It took until 2012 to get a dedicated Study Group (SG2, Modules). In 2017, Clang 5.0 and MSVC 19.1 provided the first implementations. One year later, the Modules TS (technical specification) was finalized. Around the same time, Google proposed the so-called ATOM (Another Take On Modules) proposal (\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0947r1.html}{P0947}) for modules. In 2019, the Modules TS and the ATOM proposal were merged into the C++20 committee draft (\href{https://github.com/cplusplus/draft/releases/tag/n4842}{N4842}).
+\hspace*{\fill} \\ %插入空行
+2004年，Daveed Vandevoorde写了一份提案\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2004/n1736.pdf}{N1736.pdf}，第一次描述了模块的思想。不过，直到2012年才成立了专门的研究小组(SG2，模块)。2017年，Clang 5.0和MSVC 19.1提供了第一个实现。一年后，模块TS(技术规范)确定。大约在同一时间，Google针对模块提出了所谓的ATOM(Another Take On Modules)提案(\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0947r1.html}{P0947})。2019年，Modules TS和ATOM提案合并到C++20委员会草案中(\href{https://github.com/cplusplus/draft/releases/tag/n4842}{N4842})。
 \end{tcolorbox}
 
-\subsubsubsection{4.2.3\hspace{0.2cm} A First Example}
+\subsubsubsection{4.2.3\hspace{0.2cm}一个例子}
 
-The purpose of this section is straightforward: I will give you an introduction to modules. More advanced features of modules are in the following sections. Let’s start with a simple math module.
+本节的目的很简单:向您介绍模块。模块的更高级特性将在后面几节中介绍。让我们从一个简单的数学模块开始吧。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-A simple math module
+\textbf{简单的math模块}
 \begin{lstlisting}[style=styleCXX]
 // math.ixx
 
@@ -324,11 +322,11 @@ export int add(int fir, int sec){
 }
 \end{lstlisting}
 
-The expression export module math is the module declaration. By putting export before function add’s definition, add is exported and can, therefore, be used by a consumer of the module.
+表达式导出模块math是模块声明。通过将export放在函数add的定义之前，add导出，因此模块的使用者可以使用。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Use of the simple math module
+\textbf{使用math模块}
 \begin{lstlisting}[style=styleCXX]
 // client.cpp
 
@@ -339,34 +337,34 @@ int main() {
 }
 \end{lstlisting}
 
-import math imports module math and makes the exported names in the module visible to client.cpp.
+import math导入math模块，并使模块中导出的名称对client.cpp可见。
 
-Let me start with the module declaration file.
+让我们从模块声明文件开始。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.3.1\hspace{0.2cm} Module Declaration File
+\textbf{4.2.3.1\hspace{0.2cm}模块的声明文件}
 
-Did you notice the strange name of the module: math.ixx.
+是否注意到模块的奇怪名称:math.ixx。
 
 \begin{itemize}
 \item 
-The Microsoft compiler uses the extension ixx. The suffix ixx stands for a module interface source.
+Microsoft编译器使用扩展名ixx。后缀ixx代表模块接口源。
 
 \item 
-The Clang compiler originally used the extension cppm. The m in the suffix probably stands for module. This convention changes in newer versions of Clang to the cpp extension.
+Clang编译器最初使用扩展cppm，后缀中的m可能代表模块。这个约定在Clang的新版本中更改为cpp扩展。
 
 \item 
-The GCC compiler uses no special extension.
+GCC编译器则不使用特殊的扩展。
 \end{itemize}
 
-The global module fragment is meant to compose module interfaces. It starts with the keyword module and ends with the module declaration. The global module fragment is the place to use preprocessor directives such as \#include so that the module interface can compile. The code in the global module fragment is not exported by the module interface.
+全局模块用于组合模块接口，以关键字module开始，以模块声明结束。全局模块可以出现在使用预处理器指令(如\#include)的地方，以便模块接口可以编译。全局模块片段中的代码，不会由模块接口导出。
 
-The second version of the module math supports the two functions add and getProduct.
+math模块的第二个版本支持add和getProduct两个函数。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-A module definition with a global module fragment
+\textbf{全局模块的定义}
 \begin{lstlisting}[style=styleCXX]
 // math1.ixx
 
@@ -386,11 +384,11 @@ export int getProduct(const std::vector<int>& vec) {
 }
 \end{lstlisting}
 
-I included the necessary headers between the global module fragment (line 3) and the module declaration (line 8).
+我在全局模块(第3行)和模块声明(第8行)之间包含了必要的头文件。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Use of the improved module math
+\textbf{使用改进的math模块}
 \begin{lstlisting}[style=styleCXX]
 // client1.cpp
 
@@ -413,37 +411,37 @@ int main() {
 }
 \end{lstlisting}
 
-The client imports module math and uses its functionality:
+客户端导入math模块，并使用它的功能:
 
 \begin{center}
 \includegraphics[width=0.5\textwidth]{content/3/chapter4/images/17.png}\\
-Execution of the program client1.exe
+执行程序client1.exe
 \end{center}
 
-Now, let’s dive into the details.
+现在，让我们深入的了解一下细节。
 
-\subsubsubsection{4.2.4\hspace{0.2cm} Compilation and Use}
+\subsubsubsection{4.2.4\hspace{0.2cm}编译和使用}
 
-To compile the module math.ixx used by the client program client.cpp, you have to use a very recent Clang, GCC, or Microsoft compiler.
+编译math模块。若客户端程序client.cpp使用ixx，则必须使用最新的Clang、GCC或Microsoft编译器。
 
-The compilation of a module is challenging. For that reason, I show as an example the compilation of the module with the Microsoft compiler and the Clang compiler.
+模块的编译还是具有挑战性。因此，我将用Microsoft编译器和Clang编译器作为示例来演示模块的编译。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.4.1\hspace{0.2cm} Microsoft Visual Compiler
+\textbf{4.2.4.1\hspace{0.2cm} Microsoft Visual编译器}
 
-First, I use the cl.exe 19.25.28614 for x64 compiler.
+首先，我使用cl.exe 19.25.28614(x64)编译器。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter4/images/18.png}\\
-Microsoft compiler for modules
+Microsoft的编译器
 \end{center}
 
-These are the steps to compile and use the module with the Microsoft compiler. I only show the minimal command line. As promised, more details follow. Additionally, with an older Microsoft compiler, you have to use the flag /std:cpplatest.
+这些是使用Microsoft编译器编译和使用模块的步骤，我只展示了最短的命令行示例。如承诺的，更多细节将随之而来。此外，对于旧的微软编译器，必须使用/std:cpplatest编译标志。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Building the executable with the Microsoft compiler
+\textbf{使用Microsoft编译器构建可执行文件}
 \begin{tcblisting}{commandshell={}}
 cl.exe /experimental:module /c math.ixx
 cl.exe /experimental:module client.cpp math.obj
@@ -451,30 +449,27 @@ cl.exe /experimental:module client.cpp math.obj
 
 \begin{itemize}
 \item 
-Line 1 creates an obj file math.obj and an IFC file math.ifc. The IFC file contains the metadata description of the module interface. The binary format of the IFC is modeled after the \href{https://www.stroustrup.com/gdr-bs-macis09.pdf}{Internal Program Representation} by Gabriel Dos Reis and Bjarne Stroustrup (2004/2005).
+第1行创建一个目标文件math.obj和一个IFC文件math.ifc。IFC文件包含模块接口的元数据描述。IFC的二进制格式是模仿Gabriel Dos Reis和Bjarne Stroustrup(2004/2005)的\href{https://www.stroustrup.com/gdr-bs-macis09.pdf}{内部程序表示}。
 
 \item 
-Line 2 creates the executable client.exe. Without the implicitly used math.ifc file from the first step, the linker cannot find the module.
+第2行创建可执行文件client.exe。若第一步没有隐式使用math.ifc文件，则链接器无法找到模块。
 \end{itemize}
 
-For obvious reasons, I do not show the output of the program execution.
+由于一些原因，就不展示程序执行的输出了。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.4.2\hspace{0.2cm} Clang Compiler
+\textbf{4.2.4.2\hspace{0.2cm}Clang编译器}
 
-On Linux, I use the Clang 10.0.0 compiler.
+在Linux上，我使用Clang 10.0.0编译器。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter4/images/19.png}\\
-Clang compiler for modules
+Clang 10.0.0编译器
 \end{center}
 
-With the clang compiler, the module declaration file is simply a cpp file. Consequently, I have to rename the math.ixx file to math.cpp.
+使用clang编译器，模块声明文件就是一个cpp文件。因此，我必须重新命名math.ixx文件为math.cpp。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-A simple math module
 \begin{lstlisting}[style=styleCXX]
 // math.cpp
 
@@ -485,11 +480,11 @@ export int add(int fir, int sec){
 }
 \end{lstlisting}
 
-The client file client.cpp is unchanged. These are the necessary steps to create the executable.
+客户端文件client.cpp没有改变，这是创建可执行文件的必要步骤。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Building the executable with the Clang compiler
+\textbf{使用Clang编译器构建可执行文件}
 \begin{tcblisting}{commandshell={}}
 clang++ -std=c++2a -stdlib=libc++ -c math.cpp -Xclang -emit-module-interface \
    -o math.pcm
@@ -500,32 +495,28 @@ clang++ -std=c++2a -stdlib=libc++ -fprebuilt-module-path=. client.cpp math.pcm \
 
 \begin{itemize}
 \item 
-Line 1 creates the module math.pcm. The suffix pcm stands for precompiled module. The flags -std=c++2a specifies the working draft of the C++20 standard and the -stdlib=libc++ the used C++ standard library. The flag combination -Xclang -emit-module-interface is necessary for creating the precompiled module.
+第1行创建模块math.pcm。后缀pcm代表预编译模块。标志-std=c++2a指定C++20标准的工作草案，-stdlib=libc++指定使用的C++标准库。标记组合-Xclang -emit-module-interface是创建预编译模块所必需的标志。
 
 \item 
-Line 4 creates the executable client, which uses the module math.pcm. You specify the path to the module with the -fprebuilt-module-path flag.
+第4行创建可执行程序，使用模块math.pcm，并用-fprebuilt-module-path标志指定模块的路径。
 \end{itemize}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.4.3\hspace{0.2cm} Used Compiler
+\textbf{4.2.4.3\hspace{0.2cm}使用过的编译器}
 
-I use the cl.exe from Microsoft in this book. Microsoft currently has (end 2020) the \href{https://en.cppreference.com/w/cpp/compiler_support}{best support for modules}. The Microsoft blog provides two excellent introductions to modules: \href{https://docs.microsoft.com/en-us/cpp/cpp/modules-cpp?view=msvc-160&viewFallbackFrom=vs-2019}{Overview of modules in C++} and \href{https://devblogs.microsoft.com/cppblog/c-modules-conformance-improvements-with-msvc-in-visual-studio-2019-16-5/}{C++ Modules conformance improvements with MSVC in Visual Studio 2019 16.5}. Neither Clang nor GCC provide similar introductions, making it quite difficult to use modules with those compilers.
+我在这本书中使用的是Microsoft的cl.exe。Microsoft目前(2020年底)\href{https://en.cppreference.com/w/cpp/compiler_support}{对模块的最佳支持}的情况。Microsoft博客提供了两个很好的模块介绍:\href{https://docs.microsoft.com/en-us/cpp/cpp/modules-cpp?view=msvc-160&viewFallbackFrom=vs-2019}{概述C++模块}和\href{https://devblogs.microsoft.com/cppblog/c-modules-conformance-improvements-with-msvc-in-visual-studio-2019-16-5/}{C++模块的一致性改进与MSVC在Visual Studio 2019 16.5}。Clang和GCC都没有提供类似的介绍，因此在这些编译器中使用模块也非常困难。
 
+\subsubsubsection{4.2.5\hspace{0.2cm}导出}
 
-\subsubsubsection{4.2.5\hspace{0.2cm} Export}
-
-There are three ways to export names in a module interface unit.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-4.2.5.1\hspace{0.2cm} Export Specifier
-
-You can export each name explicitly.
+有三种方法可以导出模块接口单元中的名称。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Export specifier
+\textbf{4.2.5.1\hspace{0.2cm}导出说明符}
+
+可以显式地导出每个名称。
+
 \begin{lstlisting}[style=styleCXX]
 export module math;
 export int mult(int fir, int sec);
@@ -534,13 +525,10 @@ export void doTheMath();
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.5.2\hspace{0.2cm} Export Group
+\textbf{4.2.5.2\hspace{0.2cm}导出组}
 
-An export group exports all of its names.
+导出组会导出所有名称。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Export group
 \begin{lstlisting}[style=styleCXX]
 export module math;
 export {
@@ -551,13 +539,10 @@ export {
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.5.3\hspace{0.2cm} Export Namespace
+\textbf{4.2.5.3\hspace{0.2cm}导出命名空间}
 
-Instead of an exported group, you can use an exported namespace.
+可以使用导出的命名空间，代替导出组。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Export namespace
 \begin{lstlisting}[style=styleCXX]
 export module math;
 export namespace math {
@@ -566,17 +551,14 @@ export namespace math {
 }
 \end{lstlisting}
 
-When a client uses names from an export namespace, they have to qualify those names.
+当客户端使用来自导出命名空间的名称时，必须限定这些名称。
 
-Only names that don’t have an internal linkage can be exported.
+只有没有内部链接的名称才可以导出。
 
-\subsubsubsection{4.2.6\hspace{0.2cm} Guidelines for a Module Structure}
+\subsubsubsection{4.2.6\hspace{0.2cm}构造模块结构的指南}
 
-Let’s examine guidelines for how to structure a module.
+来研究一下如何构造模块的指导方针。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Guidelines for the structure of a module
 \begin{lstlisting}[style=styleCXX]
 module; // global module fragment
 #include <headers for libraries not modularized so far>
@@ -588,36 +570,33 @@ export namespace math {
 }
 \end{lstlisting}
 
-This guideline serves one purpose: give you a simplified structure of a module and also an idea of what I’m going to write about. So, what’s new in this module structure?
+这个指导原则有一个目的:提供一个简化的模块结构，以及将要书写的内容。那么，这个模块结构有什么新东西呢?
 
 \begin{itemize}
 \item 
-The global module fragment starting with the keyword module is optional. After it and preceding the module declaration is the right place to include headers.
+可选以关键字module开头的全局模块，之后和模块声明之前的位置，是包含头文件的正确位置。
 
 \item 
-The module declaration export module math starts the so-called module purview, which ends at the end of the translation unit.
+模块声明导出模块math启动模块权限，该权限在翻译单元的末尾结束。
 
 \item 
-You can import modules at the beginning of the module purview. The imported modules have module linkage and are not visible outside the module. This observation also applies to the non-exported declarations.
+可以在模块权限的开始导入模块。导入的模块具有模块链接，在模块外部不可见。这一点也适用于非导出声明。
 
 \item 
-I put the exported names in namespace math, which has the same name as the module.
+我将导出的名称放在命名空间math中，该名称与模块名称相同。
 
 \item 
-The module has only declared names. Let’s write about the separation of the interface and the implementation of a module.
+模块只有声明的名称。现在，一起来了解一下接口和模块的实现分离。
 \end{itemize}
 
-\subsubsubsection{4.2.7\hspace{0.2cm} Module Interface Unit and Module Implementation Unit}
+\subsubsubsection{4.2.7\hspace{0.2cm}模块接口单元和模块实现单元}
 
-When the module becomes bigger, you should structure it into a module interface unit and one or more module implementation units. Following the previously mentioned guidelines to structure a module, I will refactor the previous version of the math module.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-4.2.7.1\hspace{0.2cm} Module Interface Unit
+当模块变大时，应该将其组织成一个模块接口单元和一个或多个模块实现单元。按照前面提到的构造模块的指导原则，我将重构math模块。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-The module interface unit
+\textbf{4.2.7.1\hspace{0.2cm}模块接口单元}
+
 \begin{lstlisting}[style=styleCXX]
 // mathInterfaceUnit.ixx
 
@@ -638,22 +617,19 @@ export namespace math {
 
 \begin{itemize}
 \item 
-The module interface unit contains the exporting module declaration: export module math (line 7).
+模块接口单元包含导出模块声明:export module math(第7行)。
 
 \item 
-The names add and getProduct are exported (lines 11 and 13).
+导出add和getProduct(第11和13行)。
 
 \item 
-A module can have only one module interface unit.
+一个模块只能有一个模块接口单元。
 \end{itemize}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.7.2\hspace{0.2cm} Module Implementation Unit
+\textbf{4.2.7.2\hspace{0.2cm}模块的实现单元}
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-The module implementation unit
 \begin{lstlisting}[style=styleCXX]
 // mathImplementationUnit.cpp
 
@@ -675,19 +651,16 @@ namespace math {
 
 \begin{itemize}
 \item 
-The module implementation unit contains non-exporting module declarations: module math; (line 3).
+模块实现单元包含非导出模块声明:module math;(第3行)。
 
 \item 
-A module can have more than one module implementation unit.
+一个模块可以有多个模块实现单元。
 \end{itemize}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.7.3\hspace{0.2cm} Main Program
+\textbf{4.2.7.3\hspace{0.2cm}主程序}
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-The client uses module math
 \begin{lstlisting}[style=styleCXX]
 // client3.cpp
 
@@ -711,18 +684,18 @@ int main() {
 }
 \end{lstlisting}
 
-From the user’s perspective, the module math (line 6) is included and the namespace math was added.
+从用户的角度来看，除了导入模块math(第6行)，还需要添加命名空间math。
 
-When my explanations become compiler dependent, I put them in a separate tip box. This information is, in general, highly valuable if you want to try it out.
+解释依赖于编译器，我把它们放在一个单独的提示框中。若各位想尝试一下，这些信息还是有参考意义的。
 
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=Building the Executable with the Microsoft Compiler]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={使用Microsoft编译器构建可执行文件}]
 	
-Manually building the executable includes a few steps.
+手动构建可执行文件包括以下几个步骤。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Building a module with a module interface unit and a module implementation unit
+\textbf{用模块接口单元和模块实现单元构建模块}
 \begin{tcblisting}{commandshell={}}
 cl.exe /c /experimental:module mathInterfaceUnit.ixx /EHsc
 cl.exe /c /experimental:module mathImplementationUnit.cpp /EHsc
@@ -732,43 +705,40 @@ cl.exe client3.obj mathInterfaceUnit.obj mathImplementationUnit.obj
 
 \begin{itemize}
 \item 
-Line 1 creates the object file mathInterfaceUnit.obj and the module interface file math.ifc.
+第1行：创建了对象文件mathInterfaceUnit.obj和模块接口文件math.ifc。
 
 \item 
-Line 2 creates the object file mathImplementationUnit.obj.
+第2行：创建了对象文件mathImplementationUnit.obj。
 
 \item 
-Line 3 creates the object file client3.obj.
+第3行：创建对象文件client3.obj。
 
 \item 
-Line 4 creates the executable client3.exe.
+第4行：创建可执行文件client3.exe。
 \end{itemize}
 
-For the Microsoft compiler, you have to specify the exception handling model (/EHsc), and enable modules: /experimental:module.
+对于Microsoft编译器，必须指定异常处理模型(/EHsc)，并启用模块支持:/experimental:module。
 
-Finally, here is the output of the program:
+最后，是程序的输出:
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/20.png}\\
-Execution of the program client2.exe
+执行程序client2.exe
 \end{center}
 \end{tcolorbox}
 
-\subsubsubsection{4.2.8\hspace{0.2cm} Submodules and Module Partitions}
+\subsubsubsection{4.2.8\hspace{0.2cm}子模块和模块分区}
 
-When your module becomes bigger, you want to divide its functionality into manageable components. C++20 modules offer two approaches: submodules and partitions.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-4.2.8.1\hspace{0.2cm} Submodules
-
-A module can import modules and then re-export them.
-
-In the following example, module math imports the submodules math.math1 and math.math2.
+当模块变大时，希望将其功能划分为可管理的组件。C++20模块提供了两种方法:子模块和分区。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-The module math
+\textbf{4.2.8.1\hspace{0.2cm}子模块}
+
+模块可以导入模块，然后重新导出它们。
+
+下面的例子中，math模块导入了子模块math.math1和math.math2。
+
 \begin{lstlisting}[style=styleCXX]
 // mathModule.ixx
 export module math;
@@ -776,13 +746,13 @@ export import math.math1;
 export import math.math2;
 \end{lstlisting}
 
-The expression export import math.math1 imports module math.math1 and re-exports it as part of the module math.
+表达式export import math.math1将math.math1导入math模块。并将其作为math模块的一部分重新导出。
 
-For completeness, here are the modules math.math1 and math.math2. I used a period to separate the module math from its submodules. This period is not necessary.
+完整起见，下面是完整的math.math1和math.math2。我使用单独的代码段，将math模块与其子模块分开。实际开发中，代码没必要分开。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-The submodule math.math1
+\textbf{子模块math.math1}
 \begin{lstlisting}[style=styleCXX]
 // mathModule1.ixx
 export module math.math1;
@@ -791,9 +761,8 @@ export int add(int fir, int sec) {
 }
 \end{lstlisting}
 
-\hspace*{\fill} \\ %插入空行
 \noindent
-The submodule math.math2
+\textbf{子模块math.math2}
 \begin{lstlisting}[style=styleCXX]
 // mathModule2.ixx
 export module math.math2;
@@ -804,13 +773,13 @@ export {
 }
 \end{lstlisting}
 
-If you look carefully, you recognize a small difference in the export statements in the modules math. While math.math1uses an export specifier, math.math2 uses an export group or export block.
+仔细观察，会发现math模块中的export语句相较之前有所不同。math.math1使用导出说明符，而math.math2则使用导出组或导出块。
 
-From the client’s perspective, using the math module is straightforward.
+从使用者的角度来看，使用math模块非常简单。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-The main program
+\textbf{主程序}
 \begin{lstlisting}[style=styleCXX]
 // mathModuleClient.cpp
 #include <iostream>
@@ -822,18 +791,17 @@ int main() {
 }
 \end{lstlisting}
 
-Compiling and executing the program gives the expected behavior.
+编译和执行程序可以得到预期输出。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/21.png}\\
-The usage of function modules and submodules
+模块和子模块的用法
 \end{center}
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=Building the Executable with the Microsoft Compiler]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={使用Microsoft编译器构建可执行文件}]
 	
-\hspace*{\fill} \\ %插入空行
-\noindent
-Building the executable out of the modules and its submodules
+模块和其子模块如何一同构建可执行文件
+
 \begin{tcblisting}{commandshell={}}
 cl.exe /c /experimental:module mathModule1.ixx /EHsc
 cl.exe /c /experimental:module mathModule2.ixx /EHsc
@@ -842,15 +810,15 @@ cl.exe /EHsc /experimental:module mathModuleClient.cpp \
   mathModule1.obj mathModule2.obj mathModule.obj
 \end{tcblisting}
 
-Each compilation process of the three modules creates two artifacts: The IFC file (interface file) *.ifc, which is implicitly used in the last line, and the *.obj file, which is explicitly used in the last line.
+这三个模块的每个编译过程都会创建两个工件:IFC文件(接口文件)*.ifc在最后一行隐式使用，*.obj文件在最后一行显式使用。
 
 \end{tcolorbox}
 
-I already mentioned that a submodule is also a module. Each submodule has a module declaration. Consequently, I can create a second client that is only interested in the math.math1 module.
+子模块其实也是模块，每个子模块都有一个模块声明。因此，用户可以只使用其中之一，所以创建一个只使用math.math1模块的主程序。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-The main program uses only submodule math.math1
+主程序只使用子模块math.math1
 \begin{lstlisting}[style=styleCXX]
 // mathModuleClient1.cpp
 #include <iostream>
@@ -863,14 +831,14 @@ int main() {
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/22.png}\\
-The usage of function modules and submodules
+子模块和模块的用法
 \end{center}
 
-The division of modules into modules and submodules is a means for the module designer to give the user of the module the possibility to import fine-grained parts of the module. This observation does not apply to module partitions.
+将模块划分为模块和子模块，是模块设计者让模块的用户可以导入模块的细粒度部分的一种方法。不过，这个观察结果不适用于模块分区。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-4.2.8.2\hspace{0.2cm} Module Partitions
+\textbf{4.2.8.2\hspace{0.2cm}模块分区}
 
 A module can be divided into partitions. Each partition consists of a module interface unit (partition interface file) and zero or more module implementation units (see Module Interface Unit and Module Implementation Unit). The names that the partitions export are imported and re-exported by the primary module interface unit (primary interface file). The names of a partition must begin with the name of the module. The partitions cannot exist on their own.
 
