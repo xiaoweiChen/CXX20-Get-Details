@@ -1,36 +1,36 @@
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/31.png}\\
-Cippi receives the divine touch
+Cippi接受了神圣的触摸
 \end{center}
 
-Designated initialization is a special case of aggregate initialization. Writing about designated initialization therefore means writing about aggregate initialization.
+指定初始化是聚合初始化的一种特殊情况。
 
-\subsubsubsection{4.4.1\hspace{0.2cm} Aggregate Initialization}
+\subsubsubsection{4.4.1\hspace{0.2cm}聚合初始化}
 
-First: what is an aggregate? Aggregates are arrays and class types. A class type is a class, a struct, or a union.
+首先:什么是聚合?聚合是数组和类型。类型可以是一个类、一个结构体或一个联合体。
 
-With C++20, the following condition must hold for class types supporting aggregate initialization:
+C++20中，支持聚合初始化的类型必须满足以下条件:
 
 \begin{itemize}
 \item 
-No private or protected non-static data members
+没有private或protected的非静态数据成员
 
 \item 
-No user-declared or inherited constructors
+没有用户声明的或继承的构造函数
 
 \item 
-No virtual, private, or protected base classes
+没有虚基类、private基类或protected基类
 
 \item 
-No virtual member functions
+没有虚成员函数
 \end{itemize}
 
-The next program exemplifies aggregate initialization.
+下面的程序演示了聚合初始化。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Aggregate initialization
+\textbf{聚合初始化}
 \begin{lstlisting}[style=styleCXX]
 // aggregateInitialization.cpp
 
@@ -64,22 +64,21 @@ std::cout << '\n';
 }
 \end{lstlisting}
 
-Lines 21 and 22 directly initialize the aggregates using curly braces. The sequence of the initializers in the curly braces has to match the declaration order of the members. In the section covering the three-way comparison operator is a more sophisticated example of aggregate initialization.
+第21和22行使用大括号直接初始化聚合，大括号中的初始化式的顺序必须与成员的声明顺序匹配。在介绍三向比较操作符的部分中，有挺复杂的聚合初始化示例。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/32.png}\\
-Aggregate initialization
+\includegraphics[width=0.6\textwidth]{content/3/chapter4/images/32.png}\\
 \end{center}
 
-Based on aggregate initialization in C++11, we get designed initializers in C++20. At the end of 2020, only the Microsoft compiler supports designated initialization completely.
+基于C++11中的聚合初始化，C++20出现了设计好的初始化器。到2020年底，只有Microsoft编译器完全支持指定初始化。
 
-\subsubsubsection{4.4.2\hspace{0.2cm} Named Initialization of Class Members}
+\subsubsubsection{4.4.2\hspace{0.2cm}类成员的命名初始化}
 
-Designated initialization enables the direct initialization of members of a class type using their names. For a union, only one initializer can be provided. As for aggregate initialization, the sequence of initializers in the curly braces has to match the declaration order of the members.
+指定初始化允许使用类型成员的名称直接初始化。对于联合体，只能提供一个初始化式。对于聚合初始化，大括号中的初始化式的顺序必须与成员的声明顺序匹配。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Designated initialization
+\textbf{指定初始化}
 \begin{lstlisting}[style=styleCXX]
 // designatedInitializer.cpp
 
@@ -113,18 +112,17 @@ int main(){
 }
 \end{lstlisting}
 
-Lines 21 and 22 use designated initializers to initialize the aggregates. The initializers such as .x or .y are often called designators.
+第21和22行使用指定的初始化器来初始化聚合。像.x或.y这样的初始化式称为指示符。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/33.png}\\
-Designated Initializers
+\includegraphics[width=0.6\textwidth]{content/3/chapter4/images/33.png}\\
 \end{center}
 
-The members of the aggregate can already have a default value. This default value is used when the initializer is missing. This does not hold for a union.
+聚合成员可以已经有默认值，当缺少初始化式时使用此默认值。但这并不适用于一个联合体。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Designated initializers with defaults
+\textbf{带有默认值的指定初始化器}
 \begin{lstlisting}[style=styleCXX]
 // designatedInitializersDefaults.cpp
 
@@ -167,18 +165,17 @@ int main(){
 }
 \end{lstlisting}
 
-Line 20 initializes all members, but line 24 does not provide a value for the member x. Consequently, x is not initialized. It is fine if you only initialize the members that don’t have a default value, such as in line 28 or line 34. The expression in line 32 would not compile because z and y are in the wrong order.
+第20行初始化了所有成员，但第24行没有为成员x提供值。因此，x没有初始化。若只初始化没有默认值的成员，比如在第28行或第34行中，没什么问题。因为z和y的顺序是错误的，第32行中的表达式则无法编译。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter4/images/34.png}\\
-Designated initializers with defaults
 \end{center}
 
-Designated initializers detect narrowing conversions. Narrowing conversion results in the loos of precision.
+指定初始化器检测缩窄转换，导致了精度降低。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Designated initializers detect narrowing conversion
+\textbf{指定的初始化式检测缩窄转换}
 \begin{lstlisting}[style=styleCXX]
 // designatedInitializerNarrowingConversion.cpp
 
@@ -212,37 +209,33 @@ int main(){
 }
 \end{lstlisting}
 
-Line 21 and line 22 produce compile-time errors, because the initialization .y = 2.5 and .z = 3.5f would cause narrowing conversion to int.
+因为初始化.y = 2.5和.z = 3.5f会缩窄转换为int，所以第21行和第22行会产生编译时错误。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/35.png}\\
-Designated initializers detect narrowing conversion
+\includegraphics[width=1.0\textwidth]{content/3/chapter4/images/35.png}\\
 \end{center}
 
-Interestingly, designated initializers in C behave differently from designated initializers in C++.
+有趣的是，指定初始化式在C和C++的行为不太一样。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={Similarity to Python}]
-C designated initializers support use cases that are not supported in C++. C allows
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={C和C++的区别}]
+C指定的初始化器支持C++中不支持的用例。C允许
 
 \begin{itemize}
 \item 
-initializing the members of the aggregate out-of-order
+乱序初始化聚合的成员
 
 \item 
-initializing the members of a nested aggregate
+初始化嵌套聚合的成员
 
 \item 
-mixing designated initializers and regular initializers
+混合指定初始化式和常规初始化式
 
 \item 
-designated initialization of arrays
+数组的指定初始化
 \end{itemize}
 
-The proposal \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0329r4.pdf}{P0329R4} provides self-explanatory examples for these use cases:
+提案\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0329r4.pdf}{P0329R4}为这些用例提供了不言自明的示例:
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Difference between C and C++
 \begin{lstlisting}[style=styleCXX]
 struct A { int x, y; };
 struct B { struct A a; };
@@ -252,12 +245,12 @@ struct B b = {.a.x = 0}; // valid C, invalid C++ (nested)
 struct A a = {.x = 1, 2}; // valid C, invalid C++ (mixed)
 \end{lstlisting}
 
-The rationale for this difference between C and C++ is also part of the proposal: “In C++, members are destroyed in reverse construction order and the elements of an initializer list are evaluated in lexical order, so field initializers must be specified in order. Array designators conflict with lambda-expression syntax. Nested designators are seldom used.” The paper continues to argue that only out-of-order initialization of an aggregate is commonly used.
+C和C++这种差异的基本原理，也是提案的一部分:“在C++中，成员以反向构造顺序销毁，初始化式列表的元素以词法顺序求值，因此字段初始化式必须按顺序指定。数组指示符与lambda表达式语法冲突。嵌套的指示符则很少使用。”提案继续认为，只有乱序初始化聚合会经常使用。
 
 \end{tcolorbox}	
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Distilled Information}]
-Designated initialization is a special case of aggregate initialization and enables it to initialize the class members using their name. The initialization order must match the declaration order.
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
+指定初始化是聚合初始化的一种特殊情况，使其能够使用类成员的名称初始化类成员。初始化顺序必须与声明顺序匹配。
 \end{tcolorbox}	
 
 
