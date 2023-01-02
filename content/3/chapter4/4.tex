@@ -28,6 +28,7 @@ No virtual member functions
 
 The next program exemplifies aggregate initialization.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Aggregate initialization
 \begin{lstlisting}[style=styleCXX]
@@ -76,6 +77,7 @@ Based on aggregate initialization in C++11, we get designed initializers in C++2
 
 Designated initialization enables the direct initialization of members of a class type using their names. For a union, only one initializer can be provided. As for aggregate initialization, the sequence of initializers in the curly braces has to match the declaration order of the members.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Designated initialization
 \begin{lstlisting}[style=styleCXX]
@@ -120,6 +122,7 @@ Designated Initializers
 
 The members of the aggregate can already have a default value. This default value is used when the initializer is missing. This does not hold for a union.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Designated initializers with defaults
 \begin{lstlisting}[style=styleCXX]
@@ -173,6 +176,7 @@ Designated initializers with defaults
 
 Designated initializers detect narrowing conversions. Narrowing conversion results in the loos of precision.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Designated initializers detect narrowing conversion
 \begin{lstlisting}[style=styleCXX]
@@ -217,7 +221,7 @@ Designated initializers detect narrowing conversion
 
 Interestingly, designated initializers in C behave differently from designated initializers in C++.
 
-\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title={Similarity to Python}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={Similarity to Python}]
 C designated initializers support use cases that are not supported in C++. C allows
 
 \begin{itemize}
@@ -236,6 +240,7 @@ designated initialization of arrays
 
 The proposal \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0329r4.pdf}{P0329R4} provides self-explanatory examples for these use cases:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Difference between C and C++
 \begin{lstlisting}[style=styleCXX]
@@ -251,7 +256,7 @@ The rationale for this difference between C and C++ is also part of the proposal
 
 \end{tcolorbox}	
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Distilled Information}]
 Designated initialization is a special case of aggregate initialization and enables it to initialize the class members using their name. The initialization order must match the declaration order.
 \end{tcolorbox}	
 

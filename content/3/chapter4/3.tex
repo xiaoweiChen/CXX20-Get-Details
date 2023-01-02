@@ -1,19 +1,20 @@
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/26.png}\\
-Cippi measures how big she is
+Cippi量身高
 \end{center}
 
-The three-way comparison operator <=> is often called the spaceship operator. The spaceship operator determines for two values A and B whether A < B, A == B, or A > B. You can define the spaceship operator or the compiler can autogenerates it for you.
+三向比较操作符<=>通常称为宇宙飞船操作符。飞船操作符确定两个值A和B是A < B, A == B，还是A > B。开发者可以定义飞船操作符，或者使用编译器自动生成的。
 
-To appreciate the advantages of the three-way comparison operator, let me start with the classical way of doing it.
+为了理解三向比较运算符的优点，先从经典的运算方法开始。
 
-\subsubsubsection{4.3.1\hspace{0.2cm} Ordering before C++20}
+\subsubsubsection{4.3.1\hspace{0.2cm}C++20前比较排序}
 
-I implemented a simple int wrapper MyInt. Of course, I want to compare MyInt. Here is my solution using the function template isLessThan.
+我使用MyInt简单的包装了int。这里，我想比较MyInt。下面是我使用的解决方案——函数模板isLessThan。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-MyInt supports less than comparisons
+\textbf{MyInt支持的比较操作较少}
 \begin{lstlisting}[style=styleCXX]
 // comparisonOperator.cpp
 #include <iostream>
@@ -40,17 +41,15 @@ int main() {
 }
 \end{lstlisting}
 
-The program works as expected:
+该程序按预期工作:
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/27.png}\\
-Use of the less than operator
+使用小于运算符
 \end{center}
 
-Honestly, MyInt is an unintuitive type. When you define one of the six ordering relations, you should define all of them. Intuitive types should be at least semiregular. Now, I have to write a lot of boilerplate code. Here are the missing five operators.
+老实说，MyInt是一个不直观的类型。当定义六个排序关系中的一个时，就应该定义所有的顺序关系。直观类型至少应该是半常规的。现在，我必须编写大量的样板代码。这是缺失的5个运算符。
 
-\noindent
-The five missing comparison operators
 \begin{lstlisting}[style=styleCXX]
 bool operator == (const MyInt& rhs) const {
 	return value == rhs.value;
@@ -69,14 +68,15 @@ bool operator >= (const MyInt& rhs) const {
 }
 \end{lstlisting}
 
-Now, let’s jump to C++20 and the three-way comparison operator.
+现在，来看看C++20和三向比较运算符。
 
-\subsubsubsection{4.3.2\hspace{0.2cm} Ordering since C++20}
+\subsubsubsection{4.3.2\hspace{0.2cm}C++20的顺序关系}
 
-You can define the three-way comparison operator or request it from the compiler with = default. In both cases you automatically get all six comparison operators: ==, !=, <, <=, >, and >=.
+可以定义三向比较操作符，或者使用=default从编译器生成它。这两种情况下，可以自动得到所有六个比较运算符:==、!=、<、<=、>和>=。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Implement or request the three-way comparison operator
+\textbf{实现或生成的三向比较运算符}
 \begin{lstlisting}[style=styleCXX]
 // threeWayComparison.cpp
 
@@ -123,21 +123,18 @@ int main() {
 }
 \end{lstlisting}
 
-The user-defined (line 9) and the compiler-generated (line 17) three-way comparison operators work as expected.
+用户定义的(第9行)和编译器生成的(第17行)三向比较操作符如期工作。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/28.png}\\
-Use of the user-defined and compiler-generated spaceship operator
 \end{center}
 
-In this case, there are a few subtle differences between the user-defined and the compiler-generated three-way comparison operator. The compiler-deduced return type for MyInt (line 9) supports strong ordering, and the compiler-deduced return type of MyDouble (line 17) supports partial ordering.
+在这种情况下，用户定义的和编译器生成的三向比较操作符之间有一些细微的区别。MyInt的编译器推导的返回类型(第9行)支持强排序，MyDouble的编译器推导的返回类型(第17行)支持部分排序。
 
-\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title=Automatic Comparision of Pointers]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={指针比较}]
 
-The compiler-generated three-way comparison operator compares the pointers but not the referenced objects.
+编译器生成的三向比较运算符比较指针，但不比较引用的对象。
 
-\noindent
-Automatic Comparison of Pointers
 \begin{lstlisting}[style=styleCXX]
 // spaceshipPoiner.cpp
 
@@ -164,67 +161,56 @@ int main() {
 }
 \end{lstlisting}
 
-Astonighly, the result of a1 == a2 (line 21) is false and not true, because the adresses of std::vector<int>* are compared.
+令人惊讶的是，a1 == a2(第21行)的结果是false，而不是true，因为其比较了std::vector<int>*的地址。
 
 \begin{tcblisting}{commandshell={}}
 (a1 == a2): false
 \end{tcblisting}
 
-\begin{center}
-Comparison of pointers
-\end{center}
-
 \end{tcolorbox}
 
-There are three comparison categories.
+并且，比较类别有三个。
 
-\subsubsubsection{4.3.3\hspace{0.2cm} Comparision Categories}
+\subsubsubsection{4.3.3\hspace{0.2cm}比较类别}
 
-The names of the three comparison categories are strong ordering, weak ordering, and partial ordering. For a type T, the three following properties distinguish the three comparison categories.
+这三种比较类别的名称分别是强排序、弱排序和偏排序。对于T类型，以下三个属性区分三个比较类别。
 
 \begin{enumerate}
 \item 
-T supports all six relational operators: ==, !=, <, <=, >, and >= (short: Relational Operator)
+T支持全部6种关系运算符:==、!=、<、<=、>和>=(简称:关系运算符)
 
 \item 
-All equivalent values are indistinguishable: (short: Equivalence)
+所有相等的值都是一样的:(简称:等价)
 
 \item 
-All values of T are comparable: For arbitrary values a and b of T, one of the three relations a < b, a == b , and a > b must be true (short: Comparable)
+T的所有值都具有可比性:对于T的任意值a和b, a < b、a == b和a > b三个关系中的一个必须为真(简称:可比性)
 \end{enumerate}
 
-When you use as a sorting criterion the case-insensitive representation of a string, equivalent values need not be different. Additionally, two arbitrary floating-point values need not to be comparable: for a = 5.5, and b = NaN (Not a Number) neither of the following expressions returns true: a < Nan, a == Nan , or a > Nan.
+当使用字符串的大小写不敏感表示作为排序标准时，等价值不必不同。此外，两个任意浮点值不需要具有可比性:对于a = 5.5, b = NaN(不是一个数字)，以下表达式都不返回true: a < NaN, a == NaN，或a > NaN。
 
-Based on the three properties, distinguishing the three comparison strategies is straightforward:
-
-\begin{center}
-Strong, weak, and partial ordering
-\end{center}
+根据这三种性质，区分三种比较策略是很简单的:
 
 \begin{table}[H]
 \centering
 \begin{tabular}{llll}
-Comparison Category & Relational Operator & Equivalence & Comparable \\ \hline
-Strong Ordering     & yes                 & yes         & yes        \\
-Weak Ordering       & yes                 &             & yes        \\
-Partial Ordering    & yes                 &             &           
+比较类别 & 关系操作符 & 等价 & 可比较 \\ \hline
+强排序     & yes                 & yes         & yes        \\
+弱排序       & yes                 &             & yes        \\
+偏排序    & yes                 &             &           
 \end{tabular}
 \end{table}
 
-
-A type supporting strong ordering supports implicitly weak and partial ordering. The same holds for weak ordering. A type supporting weak ordering also supports partial ordering. The other directions do not apply.
+支持强排序的类型支持隐式弱排序和部分排序，这同样适用于弱排序。支持弱排序的类型也支持部分排序。其他方向则不适用。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter4/images/29.png}\\
-Strong, weak, and partial ordering
+\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/29.png}\\
+强、弱、偏排序
 \end{center}
 
-If the declared return type is auto, then the actual return type is the common comparison category of the base and member subobject and the member array elements to be compared.
+若声明的返回类型是auto，则实际返回类型是基对象和成员子对象，以及要比较的成员数组元素的公共比较类别。
 
-Let me give you an example for this rule:
+关于这条规则，先来看个例子:
 
-\noindent
-Implement or request the three-way comparison operator
 \begin{lstlisting}[style=styleCXX]
 // strongWeakPartial.cpp
 
@@ -271,23 +257,22 @@ int main() {
 }
 \end{lstlisting}
 
-he type StrongWeakPartial has subtypes supporting strong (line 6), weak (line 10), and partial ordering (line 14). The common comparison category for the type StrongWeakPartial (line 17) is, therefore, std::partial\_ordering. Using a more powerful comparison category, such as strong ordering (line 29) or weak ordering (line 30), would result in a compile-time error.
+类型StrongWeakPartial具有支持强(第6行)、弱(第10行)和偏排序(第14行)的子类型。因此，StrongWeakPartial类型(第17行)的常见比较类别是std::partial\_ordered。使用更强比较类别，例如强排序(第29行)或弱排序(第30行)，将导致编译时错误。
 
-Now, I want to focus on the compiler-generated spaceship operator.
+现在，我想把重点放在编译器生成的宇宙飞船操作符上。
 
-\subsubsubsection{4.3.4\hspace{0.2cm} The Compiler-Generated Spaceship Operator}
+\subsubsubsection{4.3.4\hspace{0.2cm}编译器生成的宇宙飞船操作符}
 
-The compiler-generated three-way comparison operator needs the header <compare>, is implicitly constexpr and \href{https://www.modernescpp.com/index.php/c-core-guidelines-the-noexcept-specifier-and-operator}{noexcept}, and performs a lexicographical comparison.
+编译器生成的三向比较运算符需要头文件<compare>，隐式地是constexpr和\href{https://www.modernescpp.com/index.php/c-core-guidelines-the-noexcept-specifier-and-operator}{noexcept}，并执行字典顺序比较。
 
-You can even directly use the three-way comparison operator.
+可以直接使用三向比较运算符。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.3.4.1\hspace{0.2cm} Direct Use of the Three-Way Comparison Operator
+\textbf{4.3.4.1\hspace{0.2cm}直接使用三向比较运算符}
 
-The program spaceship.cpp directly uses the spaceship operator.
+spaceship.cpp直接使用太空船操作符。
 
-\noindent
-Implement or request the three-way comparison operator
 \begin{lstlisting}[style=styleCXX]
 // spaceship.cpp
 
@@ -326,7 +311,7 @@ int main() {
 }
 \end{lstlisting}
 
-The program uses the spaceship operator for int (line 14), string (line 21), and vector (line 28). Here is the output of the program.
+程序对int(第14行)、string(第21行)和vector(第28行)使用了太空船操作符。下面是程序的输出。
 
 \begin{tcblisting}{commandshell={}}
 a < b
@@ -334,19 +319,14 @@ str1 > str2
 vec1 == vec2
 \end{tcblisting}
 
-\begin{center}
-Direct use of the spaceship operator
-\end{center}
+如前所述，这些比较是constexpr，可以在编译时完成。
 
-As already mentioned, these comparisons are constexpr and could be done at compile time.
-
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.3.4.2\hspace{0.2cm} Comparison at Compile Time
+\textbf{4.3.4.2\hspace{0.2cm}编译时的比较}
 
-The three-way comparison operator is implicitly constexpr. Consequently, I can simplify the previous program threeWayComparison.cpp and compare MyDouble in the following program at compile time.
+三向比较操作符是隐式的constexpr。因此，可以简化前面的程序threewaycompare.cpp，并在编译时比较下面程序中的MyDouble。
 
-\noindent
-A compiler-generated constexpr three-way comparison operator
 \begin{lstlisting}[style=styleCXX]
 // threeWayComparisonAtCompileTime.cpp
 
@@ -381,24 +361,24 @@ struct MyDouble {
 }
 \end{lstlisting}
 
-I ask for the result of the comparison at compile time (line 24), and I get it.
+在编译时进行比较(第24行)，并得到了比较结果。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/30.png}\\
-Use of the constexpr compiler-generated spaceship operator
+使用constexpr编译器生成的太空船操作符
 \end{center}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.3.4.3\hspace{0.2cm} Direct Use of the Three-Way Comparison Operator
+\textbf{4.3.4.3\hspace{0.2cm}直接使用三向比较运算符}
 
+编译器生成的三向比较运算符执行字典顺序比较。本例中，字典比较意味着从左到右比较所有基类，以及类的所有非静态成员的声明顺序。所以，必须加以限定:出于性能原因，编译器生成的==和!=运算符在C++20中的表现不同。我将在优化的==和!=操作符一节中再来详谈。
 
+来自Microsoft C++团队博客的帖子\href{https://devblogs.microsoft.com/cppblog/simplify-your-code-with-rocket-science-c20s-spaceship-operator/}{“用火箭科学简化代码:C++20的宇宙飞船操作符”}提供了一个令人印象深刻的字典比较例子。为了可读性，我添加了一些注释。
 
-The compiler-generated three-way comparison operator performs a lexicographical comparison. Lexicographical comparison, in this case, means that all base classes are compared left to right and all non-static members of the class in their declaration order. I have to qualify: for performance reasons, the compiler-generated == and != operator behave differently in C++20. I will write about this exception in the section for the optimized == and != operators.
-
-The post \href{https://devblogs.microsoft.com/cppblog/simplify-your-code-with-rocket-science-c20s-spaceship-operator/}{“Simplify Your Code With Rocket Science: C++20’s Spaceship Operator”} from the Microsoft C++ Team Blog provides an impressive example of lexicographical comparison. For readability, I added a few comments.
-
+\hspace*{\fill} \\ %插入空行
 \noindent
-Lexicographical comparison
+\textbf{字典序的比较}
 \begin{lstlisting}[style=styleCXX]
 struct Basics {
 	 int i;
@@ -436,28 +416,29 @@ int main() {
 }
 \end{lstlisting}
 
-I assume the most challenging aspect of the program is not the spaceship operator, but the initialization of Bases via aggregate initialization (lines 22 and 25). Aggregate initialization enables us to directly initialize the members of a class type (class, struct, union) when the members are all public. In this case, you can use brace initialization. Aggregate initialization is discussed in more detail in the section on designated initializers in C++20.
+我认为这个程序最具挑战性的方面不是宇宙飞船操作符，而是通过聚合初始化来初始化Bases(第22和25行)。当成员都是public时，聚合初始化使我们能够直接初始化类类型(class、struct、union)的成员，所以可以使用大括号初始化。聚合初始化将在C++20中指定初始化器一节中更详细地讨论。
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Optimized == and != Operators}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={优化的==和!=操作符}]
 
-There is an optimization potential for a string-like or vector-like types. In this case, a == and != may be faster than the compiler-generated three-way comparison operator. The == and != operators can stop if the two values compared have different lengths. Otherwise, if one value were a prefix of the other, lexicographical comparison would compare all elements until the end of the shorter value. The standardization committee was aware of this performance issue and fixed it with the paper \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1185r2.html}{P1185R2}. Consequently, the compiler-generated == and != operators compare, in the case of a string-like or a vector-like type, first their lengths and then their content if necessary.
+对于类似字符串或类vector类型，存在优化潜力。这种情况下，==和!=可能比编译器生成的三向比较运算符更快。若比较的两个值的长度不同，==和!=操作符可以停止。否则，若一个值是另一个值的前缀，则将比较所有元素，直到较短的值结束为止。标准化委员会意识到了这个性能问题，并通过论文\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1185r2.html}{P1185R2}解决了这个问题。因此，编译器生成的==和!=操作符(对于类字符串或类vector类型)首先会比较其长度，必要时再比较其内容。
 
 \end{tcolorbox}
 
-Now, it’s time for something new in C++. C++20 introduces the concept of rewriting expressions.
+现在，是时候介绍C++中的一些新东西了。C++20引入了重写表达式的概念。
 
-\subsubsubsection{4.3.5\hspace{0.2cm} Rewriting Expressions}
+\subsubsubsection{4.3.5\hspace{0.2cm}重写表达式}
 
-When the compiler sees something such as a < b, it rewrites it to (a <=> b) < 0 using the spaceship operator.
+当编译器看到诸如a < b之类的东西时，会使用太空船操作符将其重写为(a <=> b) < 0。
 
-Of course, the rule applies to all six comparison operators: a OP b becomes (a <=> b) OP 0. It’s even better. If there is no conversion of the type(a) to type(b), the compiler generates the new expression 0 OP (b <=> a).
+当然，该规则适用于所有六个比较运算符:a OP b变成(a <=> b) OP 0。这就更好了。若没有类型(a)到类型(b)的转换，编译器生成新的表达式为0 OP (b <=> a)。
 
-For example, this means for the less-than operator, if (a <=> b) < 0 does not work, the compiler generates 0 < (b <=> a). In essence, the compiler takes care of the symmetry of the comparison operators.
+例如，对于小于操作符，若(a <=> b) < 0不起作用，编译器会生成0 < (b <=> a)。本质上，编译器负责比较操作符的对称性。
 
-Here are a few examples of rewriting expressions:
+下面是一些重写表达式的例子:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Rewriting expressions with MyInt
+\textbf{使用重写表达式的MyInt}
 \begin{lstlisting}[style=styleCXX]
 // rewritingExpressions.cpp
 
@@ -500,7 +481,7 @@ int main() {
 }
 \end{lstlisting}
 
-I used in line 24, line 29, and line 34 the less-than operator and the corresponding spaceship expression. Line 35 is the most interesting one. It exemplifies how the comparison (int2011 < myInt2014) triggers the generation of the spaceship expression (0 < (myInt2014 <=> int2011).
+第24行、第29行和第34行中使用了小于操作符和相应的太空船表达式。第35行是最有趣的。它举例说明了比较(int2011 < myInt2014)如何触发飞船表达式(0 < (myInt2014 <=> int2011)的生成。
 
 \begin{tcblisting}{commandshell={}}
 myInt2011 < myInt2014
@@ -513,16 +494,13 @@ int2011 < myInt2014
 int2011 < myInt2014
 \end{tcblisting}
 
-\begin{center}
-Rewriting expressions
-\end{center}
+老实说，MyInt有一个问题:构造函数接受一个参数应该声明为explicit。接受一个参数的构造函数，如MyInt(int val)(第8行)是转换构造函数。所以MyInt的实例可以由任意整数或浮点值生成，因为每个整数或浮点值都可以隐式地转换为int。
 
-Honestly, MyInt has an issue: its constructor taking one argument should be declared explicit. Constructors taking one argument such as MyInt(int val) (line 8) are conversion constructors. This means that an instance from MyInt can be generated from any integral or floating-point value because each integral or floating-point value can implicitly be converted to an int.
+来修复这个问题，并使构造函数MyInt(int val)为显式。为了支持MyInt和int的比较，MyInt需要用于int的三向比较操作符。
 
-Let me fix this issue and make the constructor MyInt(int val) explicit. To support the comparison of MyInt and int, MyInt needs an additional three-way comparison operator for int.
-
+\hspace*{\fill} \\ %插入空行
 \noindent
-An additional three-way comparison operator for int
+\textbf{int的另一个三向比较运算符}
 \begin{lstlisting}[style=styleCXX]
 // threeWayComparisonForInt.cpp
 
@@ -573,7 +551,7 @@ int main() {
 }
 \end{lstlisting}
 
-I defined in (line 10) the three-way comparison operator and declared it constexpr. The user-defined three-way comparison operator is not implicitly constexpr, unlike the compiler-generated threeway comparison operator. The comparison of MyInt and int is possible in each combination (lines 34, 37, and 40).
+我在(第10行)中定义了三向比较运算符，并将其声明为constexpr。用户定义的三向比较操作符不是隐式的constexpr，这与编译器生成的三向比较操作符不同。在每个组合中都可以比较MyInt和int(第34、37和40行)。
 
 \begin{tcblisting}{commandshell={}}
 isLessThan(MyInt2011, myInt2014): true
@@ -581,20 +559,17 @@ isLessThan(int2011, myInt2014): true
 isLessThan(MyInt2011, int2014): true
 \end{tcblisting}
 
-\begin{center}
-Three-way comparison operator for int
-\end{center}
+老实说，各种三向比较运算符的实现非常优雅。编译器自动生成MyInt的比较，并且用户显式地定义了与int的比较。此外，由于重新排序，需定义2个操作符就可以得到18 = 3 * 6个比较操作符的组合。3代表int OP MyInt, MyInt OP MyInt和MyInt OP int的组合，6代表六个比较运算符。
 
-Honestly, the implementation of the various three-way comparison operators is very elegant. The compiler auto-generates the comparison of MyInt, and the user defines the comparison with int explicitly. Additionally, thanks to reordering, you have to define only 2 operators to get 18 = 3 * 6 combinations of comparison operators. The 3 stands for the combinations int OP MyInt, MyInt OP MyInt, and MyInt OP int and the 6 for six comparison operators.
+\subsubsubsection{4.3.6\hspace{0.2cm}用户定义和自动生成的比较操作符}
 
-\subsubsubsection{4.3.6\hspace{0.2cm} User-Defined and Auto-Generated Comparison Operators}
+可以定义六个比较操作符中的一个，并使用太空船操作符自动生成所有比较操作符时，有一个问题:哪个具有更高的优先级?例如，MyInt有一个用户定义的小于等于运算符，还有编译器生成的6个比较运算符。
 
-When you can define one of the six comparison operators and also auto-generate all of them using the spaceship operator, there is one question: Which one has the higher priority? For example, this implementation MyInt has a user-defined less-than-and-equal-to operator and also the compilergenerated six comparison operators.
+看看会发生什么。
 
-Let’s see what happens.
-
+\hspace*{\fill} \\ %插入空行
 \noindent
-The interplay of user-defined and auto-generated operators
+\textbf{用户定义的操作符和自动生成的操作符间的互动}
 \begin{lstlisting}[style=styleCXX]
 // userDefinedAutoGeneratedOperators.cpp
 
@@ -634,9 +609,9 @@ int main() {
 }
 \end{lstlisting}
 
-To see the user-defined == and < operator in action, I write a corresponding message to std::cout. Neither operator can be constexpr, because std::cout is a run-time operation.
+为了查看用户定义的==和<操作符的作用，我将相应的消息写入std::cout。因为std::cout是一个运行时操作，所以这两个操作符都不能是constexpr。
 
-Let’s see what happens:
+看看会发生什么：
 
 \begin{tcblisting}{commandshell={}}
 ==
@@ -644,26 +619,22 @@ Let’s see what happens:
 <
 \end{tcblisting}
 
-\begin{center}
-User-defined and auto-generated operators
-\end{center}
+编译器使用用户定义的==(第29和30行)和<操作符(第31行)。此外，编译器使用==运算符生成了!=运算符(第30行)。另一方面，编译器不会使用!=操作符生成==操作符。
 
-In this case, the compiler uses the user-defined == (lines 29 and 30) and < operators (line 31). Additionally, the compiler synthesizes the != operator (line 30) out of the == operator. On the other hand, the compiler does not synthesize the == operator out of the != operator.
-
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Similarity to Python}]
-In Python 3, the compiler generates != out of == if necessary but not the other way around. In Python 2, the so-called rich comparison (the user-defined six comparison operators) has higher priority than Python’s three-way comparison operator \_\_cmp\_\_. I have to say Python 2 because the three-way comparison operator \_\_cmp\_\_ was removed in Python 3.	
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={与Python的相似性}]
+Python 3中，编译器在必要时从==中生成!=，而不是反过来。在Python 2中，所谓的富比较(用户自定义的六个比较操作符)的优先级高于Python的三向比较操作符\_\_cmp\_\_。相似度高的那个，我看得是Python 2，因为三向比较运算符\_\_cmp\_\_在Python 3中删除了。
 \end{tcolorbox}	
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 \begin{itemize}
 \item 
-By defaulting the operator <=>, the compiler autogenerates the six comparison operators. The compiler-generated comparison operators apply lexicographical comparison: all base classes are compared left to right and all non-static members of the class in their declaration order.
+通过默认操作符<=>，编译器自动生成6个比较操作符。编译器生成的比较运算符应用字典顺序的比较:所有基类从左到右比较，类的所有非静态成员按声明顺序比较。
 
 \item 
-When auto-generated comparison operators and user-defined comparison operators are both present, the user-defined comparison operators have a higher priority.
+当自动生成的比较操作符和用户定义的比较操作符同时存在时，用户定义的比较操作符具有更高的优先级。
 
 \item 
-The compiler rewrites expressions to take care of the symmetry of the comparison operators. For example if (a <=> b) < 0 does not work, the compiler generates 0 < (b <=> a).
+编译器重写表达式以保证比较操作符的对称性。例如，若(a <=> b) < 0不起作用，则编译器会生成0 < (b <=> a)。
 \end{itemize}
 \end{tcolorbox}	
 

@@ -10,6 +10,7 @@ With C++20, we get two new keywords: consteval and constinit. Keyword consteval 
 
 consteval creates a so-called immediate function.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 A consteval function
 \begin{lstlisting}[style=styleCXX]
@@ -59,6 +60,7 @@ To make it short: all dependencies of a consteval function must be resolved at c
 
 The program constevalSqr.cpp applies the consteval function sqr.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 A consteval function
 \begin{lstlisting}[style=styleCXX]
@@ -110,6 +112,7 @@ thread\_local variables have thread storage duration. Thread-local data is creat
 
 constinit ensures for this kind of variable (static storage duration or thread storage duration) that it is initialized at compile time. constinit does not imply constness.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Initialization with constinit
 \begin{lstlisting}[style=styleCXX]
@@ -148,6 +151,7 @@ First, I discuss function execution and then variable initialization.
 
 The following program consteval.cpp has three versions of a square function.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Three versions of a square function
 \begin{lstlisting}[style=styleCXX]
@@ -206,6 +210,7 @@ The lines 1 - 3 require compile-time evaluation. Line 6 can only be evaluated at
 
 The program constexprConstinit.cpp compares const, constexpr, and constinit.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Comparison of const, constexpr, and constinit
 \begin{lstlisting}[style=styleCXX]
@@ -253,6 +258,7 @@ According to the \href{https://isocpp.org/wiki/faq/ctors#static-init-order}{FAQ 
 
 Before I continue, I want to make a short disclaimer. Dependencies on variables with static storage duration (short statics) in different translation units are, in general, a code smell and should be a reason for refactoring. Consequently, if you follow my advice to refactor, you can skip this section.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.5.5.1\hspace{0.2cm} Static Initialization Order Fiasco
 
@@ -262,6 +268,7 @@ In contrast, the initialization of static variables between translation units ha
 
 Before I write about the solution, let me show you the static initialization order fiasco in action.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.5.5.1.1\hspace{0.2cm} A 50:50 Chance to get it Right
 
@@ -269,6 +276,7 @@ What is unique about the initialization of statics? The initialization-order of 
 
 When a static cannot be const-initialized during compile time, it is zero-initialized. At run time, the dynamic initialization happens for these statics that were zero-initialized.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 The static initialization order fiasco
 \begin{lstlisting}[style=styleCXX]
@@ -279,6 +287,7 @@ int square(int n) {
 auto staticA = square(5);
 \end{lstlisting}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 The static initialization order fiasco
 \begin{lstlisting}[style=styleCXX]
@@ -311,6 +320,7 @@ The static initializaion order fiasco caught in action
 
 What a fiasco! The result of the executable depends on the link order of the object files. What can we do when we don’t have C++20 at our disposal?
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.5.5.1.2\hspace{0.2cm} Lazy initialization of a static with a Local Scope
 
@@ -318,6 +328,7 @@ Static variables with local scope are created when they are used the first time.
 
 The lazy initialization can also be used to overcome the static initialization order fiasco.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Lazy initialization of a static with local scope
 \begin{lstlisting}[style=styleCXX]
@@ -335,6 +346,7 @@ int& staticA() {
 }
 \end{lstlisting}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Lazy initialization of a static with local scope
 \begin{lstlisting}[style=styleCXX]
@@ -366,11 +378,13 @@ Solving the static initialization order fiasco with local statics
 
 In the last step, I solve the static initialization order fiasco using C++20.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 4.5.5.1.3\hspace{0.2cm} Compile-Time Initialization of a static
 
 Let me apply constinit to staticA. The constinit guarantees that staticA is initialized during compile time.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Compile-time initialization of a static
 \begin{lstlisting}[style=styleCXX]
@@ -383,7 +397,7 @@ constexpr int square(int n) {
 constinit auto staticA = square(5);
 \end{lstlisting}
 
-
+\hspace*{\fill} \\ %插入空行
 \noindent
 Compile-time initialization of a static
 \begin{lstlisting}[style=styleCXX]
