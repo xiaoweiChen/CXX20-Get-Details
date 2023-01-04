@@ -7,22 +7,24 @@ C++20的改进使模板更加一致，因此在编写泛型程序时更不容易
 
 \subsubsubsection{4.6.1\hspace{0.2cm}条件显式构造函数}
 
-Sometimes you need a class that should have constructors accepting different types. For example, you have a class VariantWrapper that holds a std::variant accepting various types.
+有时需要一个类，需要有接受不同类型的构造函数。例如，一个VariantWrapper类，包含接受各种类型的std::variant。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-A class VariantWrapper holding an attribute std::variant
+\textbf{包含std::variant的VariantWrapper类}
 \begin{lstlisting}[style=styleCXX]
 class VariantWrapper {
 	std::variant<bool, char, int, double, float, std::string> myVariant;
 };
 \end{lstlisting}
 
-To initialize a VariantWrapper with bool, char, int, double, float, or std::string, the class VariantWrapper needs constructors for each listed type. Laziness is a virtue – at least for programmers – , therefore, you decide to make the constructor generic.
+可以使用bool、char、int、double、float或std::string初始化VariantWrapper，VariantWrapper类需要为每个列出的类型提供相应构造函数。懒惰是一种美德——至少对程序员来说是这样——因此，可以使用泛型构造函数。
 
-The class Implicit shows a generic constructor.
+Implicit类展示了一个泛型构造函数。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-A generic constructor
+\textbf{泛型构造函数}
 \begin{lstlisting}[style=styleCXX]
 // implicitExplicitGenericConstructor.cpp
 
@@ -64,7 +66,7 @@ int main() {
 }
 \end{lstlisting}
 
-Now, you have an issue. A generic constructor (line 7) is a catch-all constructor because you can invoke it with any type. The constructor is way too greedy. By putting an explicit in front of the constructor (line 14), implicit conversions (lines 31 and 33) are not valid anymore. Only the explicit calls (lines 32 and 34) are valid.
+现在，问题来了。泛型构造函数(第7行)是一个全能构造函数，可以接受任何类型。但构造函数太贪婪了，可以通过在构造函数(第14行)前面放置explicit关键字，避免隐式转换(第31和33行)，只有显式调用(第32和34行)的方式是有效的。
 
 \begin{tcblisting}{commandshell={}}
 implicit
@@ -77,13 +79,14 @@ explicit
 \end{tcblisting}
 
 \begin{center}
-Implicit and explicit generic constructors
+隐式和现实泛型构造函数
 \end{center}
 
-In C++20, explicit is even more useful. Imagine you have a type MyBool that should only support the implicit conversion from bool, but no other implicit conversion. In this case, explicit can be used conditionally.
+C++20中，explicit更有用。假设有一个MyBool类型，只支持从bool类型的隐式转换，而不支持其他隐式转换。这种情况下，explicit可以有条件地使用。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-A generic constructor that allows implicit conversions from bool
+\textbf{允许从bool类型进行隐式转换的泛型构造函数}
 \begin{lstlisting}[style=styleCXX]
 // conditionallyConstructor.cpp
 
@@ -113,55 +116,59 @@ int main() {
 }
 \end{lstlisting}
 
-The explicit(!std::is\_same<T, bool>::value) expression guarantees that MyBool can only be implicitly created from a bool value. The function std::is\_same is a compile-time predicate from the \href{https://en.cppreference.com/w/cpp/header/type_traits}{type\_traits library}. A compile-time predicate, such as std::is\_same is evaluated at compile time and returns a boolean. Consequently, the implicit conversions from bool (lines 19 and 22) are possible, but not the commented-out conversions from int and C-string (lines 23 and 24).
+显式(!std::is\_same<T, bool>::value)表达式保证MyBool只能由bool值隐式创建。函数std::is\_same是来自\href{https://en.cppreference.com/w/cpp/header/type_traits}{类型特性库}的编译时谓词。因为是编译时谓词，所以std::is\_same可在编译时进行计算，并返回一个布尔值。因此，可以对bool类型进行隐式转换(第19和22行)，但不能从int和C-string类型进行转换(第23和24行，注释行)。
 
-\subsubsubsection{4.6.2\hspace{0.2cm} Non-Type Template Parameters}
+\subsubsubsection{4.6.2\hspace{0.2cm}非类型模板参数}
 
-C++ supports non-types as template parameters. Essentially non-types could be
+C++支持非类型作为模板参数。本质上非类型可能是
 
 \begin{itemize}
 \item 
-integers and enumerators
+整数和枚举数
 
 \item 
-pointers or references to objects, to functions and to attributes of a class
+指向对象、函数和类属性的指针或引用
 
 \item 
 std::nullptr\_t
 \end{itemize}
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Typical Non-Type Template Parameter}]
-When I ask the students in my class if they ever used a non-type as template parameter they say: No! Of course, I answer my tricky question and show an often-used example for non-type template parameters:
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={典型的非类型模板参数}]
+	
+当我问我班上的学生是否使用过非类型作为模板形参时，他们说:没有!
+
+当然，只能由我回答这个棘手的问题了，并展示一个使用的非类型模板参数示例:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Defining a std::array
+\textbf{定义std::array}
 \begin{lstlisting}[style=styleCXX]
 std::array<int, 5> myVec;
 \end{lstlisting}
 
-Constant 5 is a non-type used as a template argument.
+常量5是一个非类型的模板参数。
 \end{tcolorbox}	
 
-Since the first C++-standard, C++98, there has been an ongoing discussion in the C++ community about supporting floating-point template parameters. Now, we have them and more: C++20 supports floating-points, literal types, and string literals as non-types.
+从第一个C++标准C++98开始，C++社区就一直在讨论支持浮点模板形参。现在，C++20支持浮点数、文字类型和字符串文字作为非类型。
 
 \noindent
-4.6.2.1\hspace{0.2cm} Floating-Points and Literal Types
+\textbf{4.6.2.1\hspace{0.2cm}浮点和文字类型}
 
-Literal Types have the following two properties:
+文字类型有以下两个属性:
 
 \begin{itemize}
 \item 
-all base classes and non-static data members are public and non-mutable
+所有基类和非静态数据成员都是公共且不可变
 
 \item 
-the types of all base classes and non-static data members are structural types or arrays of these
+所有基类和非静态数据成员的类型都是结构类型或数组
 \end{itemize}
 
-A literal type must have a constexpr constructor. The following program uses floating-point types and literal types as non-type template parameters.
+文字类型必须具有constexpr构造函数。下面的程序使用浮点类型和文字类型作为非类型模板参数.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Floating-points and literal types as non-type template parameters
+\textbf{使用浮点和文字类型作为非类型模板参数}
 \begin{lstlisting}[style=styleCXX]
 // nonTypeTemplateParameter.cpp
 
@@ -189,17 +196,19 @@ int main() {
 }
 \end{lstlisting}
 
-ClassType has a constexpr constructor (line 4) and can, therefore, be used as a template argument (line 19). The same holds for the function template getDouble (line 13), which accepts only double. I want to emphasize that each call of the function template getDouble (lines 21 and 22) creates a new function getDouble. This function is a full specialization for the given double value.
+ClassType有一个constexpr构造函数(第4行)，可以用作模板参数(第19行)。函数模板getDouble(第13行)也是如此，它只接受double类型。我想强调的是，每次调用函数模板getDouble(第21和22行)都会创建一个新函数getDouble。这个函数是给定double值的完全特化版本。
 
-Since C++20, strings can be used as non-type template parameters.
+C++20起，字符串可以用作非类型模板形参。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.6.2.2\hspace{0.2cm} String Literals
+\textbf{4.6.2.2\hspace{0.2cm}字符串字面值}
 
-The class StringLiteral has a constexpr constructor.
+StringLiteral类有一个constexpr构造函数。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-String literals as non-type template parameters
+\textbf{字符串字面值作为非类型模板参数}
 \begin{lstlisting}[style=styleCXX]
 // nonTypeTemplateParameterString.cpp
 
@@ -235,32 +244,28 @@ void FunctionTemplate() {
 }
 \end{lstlisting}
 
-StringLiteral is a literal type and, therefore, can be used as non-type template parameter for ClassTemplate (line 15) and FunctionTemplate (line 18). The constexpr constructor (line 9) takes a C-string as an argument.
+StringLiteral是一个文字类型，因此可以用作ClassTemplate(第15行)和FunctionTemplate(第18行)的非类型模板参数。constexpr构造函数(第9行)接受C-string作为参数。
 
 \begin{tcblisting}{commandshell={}}
 string literal
 \end{tcblisting}
 
-\begin{center}
-String literals as non-type template parameters
-\end{center}
+读者们可能想知道，为什么需要字符串字面量作为非类型模板参数呢?
 
-You may wonder why we need string literals as non-type template parameter?
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={编译时的正则表达式}]
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Compile-Time Regular Expressions}]
+字符串字面量的一个经典用例就是\href{https://github.com/hanickadot/compile-time-regular-expressions}{编译时正则表达式解析}。C++23已经有了一个提案:\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1433r0.pdf}{P1433R0:编译时正则表达式}。Hana Dusíková作为提案的作者，希望C++在编译时可以使用正则表达式:“当前的std::regex设计和实现[\href{https://en.cppreference.com/w/cpp/regex}{正则表达式库}]太慢了，主要是因为RE[正则表达式]模式是在运行时解析和编译的。用户通常不需要运行时RE[正则表达式]解析器引擎。因为在许多常见的用例中，模式是在编译时就已知了。我认为这违背了C++的承诺:『不使用就不支付』”。
 
-A very impressive use-case for string literals is \href{https://github.com/hanickadot/compile-time-regular-expressions}{compile-time parsing of regular expressions}. There is already a proposal for C++23 in the pipeline: \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1433r0.pdf}{P1433R0: Compile-Time Regular Expressions}. Hana Dusíková as the author of the proposal motivates compile-time regular expressions in C++: “The current std::regex design and implementation [\href{https://en.cppreference.com/w/cpp/regex}{regular expression library}] are slow, mostly because the RE [regular expression] pattern is parsed and compiled at run time. Users often don’t need a runtime RE [regular expression] parser engine as the pattern is known during compilation in many common use cases. I think this breaks C++’s promise of ’don’t pay for what you don’t use’.
-
-If the RE [regular expression] is known at compile time, the pattern should be checked during the compilation. The design of std::regex doesn’t allow for this[compile-time evaluation,] as the RE input is a run-time string and syntax errors are reported as exceptions.”.
+若RE[正则表达式]在编译时已知，则应该在编译期间检查。但std::regex的设计不允许这种[编译时求值]的方式，因为RE输入是一个运行时字符串，语法错误会作为异常抛出。
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 \begin{itemize}
 \item 
-A conditionally explicit constructor allows it to control explicitly for a generic constructor which types can be used in a constructor.
+有条件显式构造函数允许显式控制泛型构造函数中可以使用的类型。
 
 \item 
-C++20 supports further types as non-type template parameters: floating-points and string literals.
+C++20支持更多类型作为非类型模板参数:浮点数和字符串字面值。
 \end{itemize}
 \end{tcolorbox}
