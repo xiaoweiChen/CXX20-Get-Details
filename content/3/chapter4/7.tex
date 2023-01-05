@@ -3,17 +3,17 @@
 Cippi滑下滑梯
 \end{center}
 
-With C++20, lambda expressions support template parameters and hence concepts, can be defaultconstructed and support copy assignment when they have no state. Additionally, lambda expressions can be used in unevaluated contexts. With C++20, they detect when you implicitly copy the this pointer. This means a significant cause of undefined behavior with lambdas is gone.
+C++20中，Lambda表达式支持模板参数和概念，可以默认构造，并在没有状态时支持复制赋值。此外，Lambda表达式可以在未计算的上下文中使用。C++20中，Lambda表达式会检测何时隐式复制this指针，从而使Lambda表达式出现未定义行为的一个重要原因消失了。
 
-Let’s start with template parameters for lambdas.
+先从lambda的模板参数开始。
 
+\subsubsubsection{4.7.1\hspace{0.2cm}Lambda的模板参数}
 
-\subsubsubsection{4.7.1\hspace{0.2cm} Template Parameter for Lambdas}
+不可否认，C++20中类型化Lambda(C++11)、泛型Lambda(C++14)和模板Lambda(Lambda的模板形参)之间的差异很小。
 
-Admittedly, the differences between typed lambdas (C++11), generic lambdas (C++14), and template lambdas (template parameter for lambdas) in C++20 are subtle.
-
+\hspace*{\fill} \\ %插入空行
 \noindent
-Typed lambdas, generic lambdas, and template lambdas
+\textbf{类型化Lambda、泛型Lambda和模板Lambda}
 \begin{lstlisting}[style=styleCXX]
 // templateLambda.cpp
 
@@ -57,7 +57,7 @@ auto sumTem = []<typename T>(T fir, T sec) { return fir + sec; };
 }
 \end{lstlisting}
 
-Before I show the presumably astonishing output of the program, I want to compare the four lambdas.
+在展示这个程序的输出之前，我想比较一下这四个Lambda表达式。
 
 \begin{itemize}
 \item 
@@ -67,10 +67,10 @@ sumInt
 C++11
 
 \item 
-Typed lambda
+类型化Lambda
 
 \item 
-Accepts only types convertible to int
+只接受能转换为int的类型
 \end{itemize}
 
 \item 
@@ -80,10 +80,10 @@ sumGen
 C++14
 
 \item 
-Generic lambda
+泛型Lambda
 
 \item 
-Accepts all types
+可接受所有类型
 \end{itemize}
 
 \item 
@@ -93,10 +93,10 @@ sumDec
 C++14
 
 \item 
-Generic lambda
+泛型Lambda
 
 \item 
-The second type must be convertible to the first type
+第二个参数的类型必须可以转换为第一个参数的类型
 \end{itemize}
 
 \item 
@@ -106,29 +106,29 @@ sumTem
 C++20
 
 \item 
-Template lambda
+模板Lambda
 
 \item 
-The first type and the second type must be identical
+两个参数类型必须相同
 \end{itemize}
 \end{itemize}
 
-What does this mean for template arguments with different types? Of course, each lambda accepts int (lines 16 - 19), and the typed lambda sumInt does not accept strings (line 25).
+这对于不同类型的模板参数意味着什么?当然，每个Lambda传入的都是int型变量(第16-19行)，而类型化的Lambda sumInt不接受字符串(第25行)。
 
-Invoking the lambdas with the bool true and the int 2010 may be surprising (lines 33 - 36).
+将bool true和int 2010传递给Lambda可能会有令人惊讶(第33-36行)结果。
 
 \begin{itemize}
 \item 
-sumInt returns 2011 because true is an integral, promoted to int.
+sumInt返回2011，true可以是一个整型值，可升格为int。
 
 \item 
-sumGen returns 2011 because true is an integral, promoted to int. There is a subtle difference between sumInt and sumGen, which I will present in a few lines.
+sumGen返回2011，true可以是一个整型值，可升格为int。sumInt和sumGen之间有一个细微的区别。
 
 \item 
-sumDec returns 2. Why? The type of the second parameter sec becomes the type of the first parameter fir: thanks to decltype(fir) sec, the compiler deduces the type of fir and makes it the type of sec. Consequently, 2010 is converted to true. In the expression fir + sec, fir is integral promoted to 1. Finally, the result is 2.
+sumDec返回2。为什么?第二个形参sec的类型变成了第一个形参fir的类型:因为decltype(fir) sec，编译器推导出了fir的类型，其类型与sec类型相同。因此，2010转换为true。在表达式fir + sec中，fir提升为1。最后，结果是2。
 
 \item 
-sumTem is not valid.
+sumTem是无效的。
 \end{itemize}
 
 \begin{tcblisting}{commandshell={}}
@@ -146,14 +146,11 @@ sumGen(true, 2010): 2011
 sumDec(true, 2010): 2
 \end{tcblisting}
 
-\begin{center}
-The subtle differences between typed lambdas, generic lambdas, and template lambdas
-\end{center}
+模板Lambda的典型的用例是在Lambda中使用容器。下面的代码给出了三个接受容器的Lambda表达式。每个Lambda表达式都会返回容器的大小。
 
-A more typical use case for template lambdas is the use of containers in lambdas. The following program presents three lambdas accepting a container. Each lambda returns the size of the container.
-
+\hspace*{\fill} \\ %插入空行
 \noindent
-Three lambdas accepting a container
+\textbf{三个Lambda表达式都可以接受容器}
 \begin{lstlisting}[style=styleCXX]
 // templateLambdaVector.cpp
 
@@ -202,7 +199,7 @@ auto lambdaVectorIntegral = []<std::integral T>(const std::vector<T>& vec) {
 	}
 \end{lstlisting}
 
-Function lambdaGeneric (line 9) can be invoked with any data type that has a member function size(). Function lambdaVector (line 10) is more specific: it only accepts a std::vector. Function lambdaVectorIntegral (line 11) uses the C++20 concept std::integral. Consequently, it only accepts a std::vector using integral types such as int. To use the concept std::integral, I have to include the header <concepts>. I assume the small program is self-explanatory.
+函数lambdaGeneric(第9行)可以接受有成员函数size()的数据类型。函数lambdaVector(第10行)更具体:只接受std::vector。函数lambdaVectorIntegral(第11行)使用C++20概念std::integral。因此，它只接受使用整型(如int)的std::vector。为了使用std::integral概念，必须包含头文件<concepts>。
 
 \begin{tcblisting}{commandshell={}}
 lambdaGeneric(deq): 3
@@ -215,20 +212,17 @@ lambdaVector(vecInt): 5
 lambdaVectorIntegral(vecInt): 5
 \end{tcblisting}
 
-\begin{center}
-Lambdas, accepting a container and a std::vector
-\end{center}
-
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Class Template Argument Deduction}]
-There is one feature in the program templateLambdaVector.cpp that you have probably missed. Since C++17, the compiler can deduce the type of a class template from its arguments (lines 20 - 22). Consequently, instead of the verbose std::vector<int> myVec{1, 2, 3} you can simply write std::vector myVec{1, 2, 3}.
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={类模板参数的推导}]
+templateLambdaVector.cpp中有个可能会错过的特性。从C++17开始，编译器就可以从类模板的实参推断类模板的类型(第20-22行)。因此，初始化vector时，可以这样写std::vector myVec{1,2,3}，而非冗长的std::vector<int> myVec{1,2,3}。
 \end{tcolorbox}
 
-\subsubsubsection{4.7.2\hspace{0.2cm} Detection of the Implicit Copy of the this Pointer}
+\subsubsubsection{4.7.2\hspace{0.2cm}检测并隐式复制this指针}
 
-The C++20 compiler detects when you implicitly copy the this pointer. Implicitly capturing the this pointer by copy can cause undefined behavior. Undefined behavior essentially means that there are no guarantees for the behavior of the program, such as for the following:
+C++20编译器会检测何时隐式复制this指针。复制隐式捕获的this指针会导致未定义的行为，例如以下行为:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Implicitly capturing the this pointer by copy
+\textbf{复制隐式捕获的this指针}
 \begin{lstlisting}[style=styleCXX]
 // lambdaCaptureThis.cpp
 
@@ -246,7 +240,7 @@ struct LambdaFactory {
 };
 
 auto makeLambda() {
-	LambdaFactory lambdaFactory; \
+	LambdaFactory lambdaFactory; 
 	
 	return lambdaFactory.foo();
 }
@@ -264,44 +258,44 @@ int main() {
 }
 \end{lstlisting}
 
-The compilation of the program works as expected, but this does not hold for the execution of the program.
+程序的编译没问题，但这并不说明程序执行起来没问题。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter4/images/42.png}\\
-Segmentation fault due to undefined behavior
+\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/42.png}\\
+由于未定义的行为造成的段错误
 \end{center}
 
-Do you spot the issue in the program lambdaCaptureThis.cpp? The member function foo (line 7) returns the lambda [=] { std::cout << s << '\verb|\|n'; } having an implicit copy of the this pointer. This implicit copy is no issue in (line 17), but it becomes an issue with the end of the scope. The end of the scope means the end of the lifetime of the local lambda (line 19). Consequently, the call lam() (line 28) triggers undefined behavior.
+发现lambdaCaptureThis.cpp中的问题了吗?成员函数foo(第7行)返回lambda [=] {std::cout <{}< s <{}< '\verb|\|n';}具有this指针的隐式副本。这个隐式复制在(第17行)中没有问题，但是在作用域的末尾就成了问题。作用域的结束意味着局部Lambda生命周期的结束(第19行)。因此，使用lam()(第28行)会触发未定义的行为。
 
-A C++20 compiler must, in this case, issue a warning.
+这种情况下，C++20编译器必须发出警告。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter4/images/1-8.png}\\
-C++20 diagnoses a warning
+\includegraphics[width=1.0\textwidth]{content/3/chapter4/images/1-8.png}\\
+C++20会报出警告
 \end{center}
 
-The last two lambdas features of C++20 are quite handy when you combine them: Lambdas in C++20 can be default-constructed and support copy-assignment when they have no state. Additionally, lambdas can be used in unevaluated contexts.
+C++20的最后两个Lambda特性结合起来非常好用:C++20中的Lambda可以使用默认构造，并且在没有状态时支持复制赋值。此外，Lambda表达式可以在未计算的上下文中使用。
 
-\subsubsubsection{4.7.3\hspace{0.2cm} Lambdas in an Unevaluated Context and Stateless Lambdas can be Default-Constructed and Copy-Assigned}
+\subsubsubsection{4.7.3\hspace{0.2cm}未计算上下文中的Lambda和无状态的Lambda可以是默认构造的和复制分配的}
 
-Admittedly, the title of this section contains two terms that may be new to you: unevaluated context and stateless lambda. Let me start with unevaluated context.
+本节的标题包含两个术语:未计算的上下文和无状态的Lambda。先从未计算的上下文开始。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.7.3.1\hspace{0.2cm} Unevaluated Context
+\textbf{4.7.3.1\hspace{0.2cm}未计算的上下文}
 
-The following code snippet has a function declaration and a function definition.
+下面的代码段具有函数声明和函数定义。
 
-\noindent
-Declaration and definition of a function
 \begin{lstlisting}[style=styleCXX]
 int add1(int, int); // declaration
 int add2(int a, int b) { return a + b; } // definition
 \end{lstlisting}
 
-Function add1 is declared, while add2 is defined. This means, if you use add1 in an evaluated context, for example, by invoking it, you get a link-time error. The key observation is that you can use add1 in unevaluated contexts, such as \href{https://en.cppreference.com/w/cpp/language/typeid}{typeid} or \href{https://en.cppreference.com/w/cpp/language/decltype}{decltype}. Both operators accept unevaluated operands.
+函数add1是声明的，而add2是定义。若在已计算的上下文中使用add1，例如：通过调用将得到一个链接时错误。关键是可以在未计算的上下文中使用add1，例如\href{https://en.cppreference.com/w/cpp/language/typeid}{typeid}或\href{https://en.cppreference.com/w/cpp/language/decltype}{decltype}。两个操作符都接受未计算的操作数。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Unevaluated context
+\textbf{未计算的上下文}
 \begin{lstlisting}[style=styleCXX]
 // unevaluatedContext.cpp
 
@@ -326,26 +320,28 @@ int main() {
 }
 \end{lstlisting}
 
-typeid(add1).name() (line 13) returns a string representation of the type and decltype (line 15) deduces the type of its argument.
-
+typeid(add1).name()(第13行)返回类型的字符串表示形式，decltype(第15行)可以推导其参数的类型。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/43.png}\\
-Use of an unevaluated context
+使用未计算的上下文
 \end{center}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.7.3.2\hspace{0.2cm} Stateless Lambda
+\textbf{4.7.3.2\hspace{0.2cm}无状态的Lambda}
 
-A stateless lambda is a lambda that captures nothing from its environment. Or, to put it another way, a stateless lambda is a lambda where the initial brackets [] in the lambda definition are empty. For example, the lambda expression auto add = [ ](int a, int b) { return a + b; }; is stateless.
+无状态是指从环境中不捕获任何内容的Lambda。换句话说，无状态的Lambda是定义中初始中括号[]为空的Lambda。例如，Lambda表达式auto add = [](int a, int b) {return a + b;};就是无状态的。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-4.7.3.3\hspace{0.2cm} Adapting Associative Containers of the Standard Template Library
+\textbf{4.7.3.3\hspace{0.2cm}适配标准模板库中的关联容器}
 
-Before I show you the example, I have to add a few remarks. Container std::set and all other ordered associative containers from the Standard Template Library (std::map, std::multiset, and std::multimap) by default use the function object std::less to sort the keys. std::less sorts all keys lexicographically in ascending order. The declaration of \href{https://en.cppreference.com/w/cpp/container/set}{std::set} shows the implicit usage of std::less
+在展示示例之前，必须先添加一些注释。容器std::set和其他来自标准模板库的有序关联容器(std::map, std::multiset和std::multimap)默认使用函数对象std::less对键进行排序。std::less按字典升序对所有键进行排序。\href{https://en.cppreference.com/w/cpp/container/set}{std::set}的声明，隐式使用了std::less
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Declaration of std::set
+\textbf{std::set的声明}
 \begin{lstlisting}[style=styleCXX]
 template<
 	class Key,
@@ -354,10 +350,11 @@ template<
 > class set;
 \end{lstlisting}
 
-Now, let me play with the ordering.
+现在，我们来看看排序。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Lambdas used in an unevaluated context
+\textbf{Lambda用于未计算的上下文中}
 \begin{lstlisting}[style=styleCXX]
 // lambdaUnevaluatedContext.cpp
 
@@ -410,9 +407,9 @@ void printContainer(const Cont& cont) {
 }
 \end{lstlisting}
 
-set1 (line 19) and set4 (line 38) sort their keys in ascending order. Each of set2 (line 26), set3 (line 33), and set5 (line 44) sorts its keys in an unique manner, using a lambda in an unevaluated context. The using keyword (line 22) declares a type alias, which is used in the following line (line 26) to define the sets. Creating the std::set causes the call of the default constructor of the stateless lambda.
+set1(第19行)和set4(第38行)按升序排序键。set2(第26行)、set3(第33行)和set5(第44行)都以相同的方式对其键进行排序，在未计算的上下文中使用Lambda。using关键字(第22行)声明了一个类型别名，下一行(第26行)中使用它来定义set。创建std::set会使用无状态Lambda表达式的默认构造函数。
 
-Here is the output of the program.
+下面是程序的输出。
 
 \begin{tcblisting}{commandshell={}}
 Bjarne Dave Herb michael scott
@@ -423,17 +420,13 @@ Herb scott Bjarne michael
 0 3 5 -10 -25 100
 \end{tcblisting}
 
-\begin{center}
-Use of a lambda in an unevaluated context
-\end{center}
+在研究该程序的输出时，可能会感到惊讶。set3有些特殊，使用[](const auto\& l, const auto\& r)\{return l.size() < r.size();\}作为谓词，并且忽略了Dave。原因很简单。Dave和Herb字符串的长度一样，而Herb是先添加的，所以忽略Dave。std::set支持唯一键，所以使用特殊谓词的键相同。若使用std::multiset，这就不会发生这种情况。
 
-When you study the output of the program, you may be surprised. The special set3, which uses the lambda [](const auto\& l, const auto\& r){ return l.size() < r.size(); } as a predicate, ignores the name Dave. The reason is simple. Dave has the same size as Herb, that was added first. std::set supports unique keys, and the keys are in this case identical using the special predicate. If I had used std::multiset, this wouldn’t have happened.
-
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
-With C++20, lambdas can have template parameters. In addition, lambdas detect when the this pointer is implicitly referenced.
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
+C++20中，Lambda表达式可以有模板参数。此外，Lambda会检测this指针何时隐式引用。
 \end{tcolorbox}
 
-
+\newpage
 
 
 

@@ -1,14 +1,15 @@
 \begin{center}
 \includegraphics[width=0.4\textwidth]{content/3/chapter4/images/44.png}\\
-Cippi is ready for the race
+Cippi已经为比赛做好了准备
 \end{center}
 
 With C++20, we get new and improved attributes such as [[nodiscard("reason")]], [[likely]], [[unlikely]], and [[no\_unique\_address]]. In particular, [[nodiscard("reason")]] can be used to explicitly express the intent of our interface.
 
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Attributes}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Attributes}]
 Attributes allow the programmer to express additional constraints on the source code or give the compiler additional optimization possibilities. You can use attributes for types, variables, functions, names, and code blocks. When you use more than one attribute, you can apply each one after the other (func1) or all together in one attribute, separated by commas (func2):
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Use of attributes
 \begin{lstlisting}[style=styleCXX]
@@ -44,6 +45,7 @@ Attributes can be implementation-defined language extensions or standard attribu
 
 C++17 introduced the new attribute [[nodiscard]] without a reason. C++20 added the possibility to add a message to the attribute.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Discarding objects and error codes
 \begin{lstlisting}[style=styleCXX]
@@ -93,6 +95,7 @@ The program has many issues. First, line 30 has a memory leak, because the int c
 
 Let us see what this means. In the following example, I use the C++17 syntax of the attribute [[nodiscard]].
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Use of the attribute [[nodiscard]] in C++17
 \begin{lstlisting}[style=styleCXX]
@@ -147,6 +150,7 @@ Way better, but the program still has a few issues. [[nodiscard]] cannot be used
 
 Both issues can be solved with C++20. Constructors can be declared as [[nodiscard]], and the warning can have additional information.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Use of the attribute [[nodiscard]] in C++20
 \begin{lstlisting}[style=styleCXX]
@@ -196,11 +200,12 @@ Now, the user of the functions gets specific messages. Here is the output of the
 A C++20 compiler complains about discarded objects and error codes
 \end{center}
 
-\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title={The issue with std::async}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={The issue with std::async}]
 Many existing functions in C++ could benefit from the [[nodiscard]] attribute. An ideal candidate is the function std::async. When you don’t use the return value of std::asnyc, what you intended as an asynchronous std::async call implicitly becomes synchronous. What should have run in a separate thread behaves instead as a blocking function call. Read more about the counterintuitive behavior of std::async in my post \href{https://www.modernescpp.com/index.php/the-special-futures}{“The Special Futures”}.
 
 While studying the [[nodiscard]] syntax on \href{https://en.cppreference.com/w/cpp/language/attributes/nodiscard}{cppreference.com/nodiscard}, I noticed that the declarations of \href{https://en.cppreference.com/w/cpp/thread/async}{std::async} changed with C++20. Here is one:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 std::async uses in C++20 the attribute [[nodiscard]]
 \begin{lstlisting}[style=styleCXX]
@@ -221,6 +226,7 @@ The next two attributes [[likely]] and [[unlikely]] are about optimization.
 
 Proposal \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0479r5.html}{P0479R5} for the attributes [[likely]] and [[unlikely]] is the shortest proposal I know of. To give you an idea, this is the interesting note to the proposal. “The use of the likely attribute is intended to allow implementations to optimize for the case where paths of execution including it are arbitrarily more likely than any alternative path of execution that does not include such an attribute on a statement or label. The use of the unlikely attribute is intended to allow implementations to optimize for the case where paths of execution including it are arbitrarily more unlikely than any alternative path of execution that does not include such an attribute on a statement or label. A path of execution includes a label if and only if it contains a jump to that label. Excessive usage of either of these attributes is liable to result in performance degradation.” In summary, both attributes allow for giving the optimizer a hint regarding the path of execution expected to be more or less likely.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Give the optimizer a hint with [[likely]]
 \begin{lstlisting}[style=styleCXX]
@@ -238,6 +244,7 @@ The story of optimization goes on with the new attribute [[no\_unique\_address]]
 
 The following program exemplifies the usage of the new attribute.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Use of the attribute [[no\_unique\_address]]
 \begin{lstlisting}[style=styleCXX]
@@ -306,7 +313,7 @@ Use of the class NoUniqueAddress and UniqueAddress
 \end{center}
 
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
 \begin{itemize}
 \item 
 C++20 supports a few new attributes. [[nodiscard("reason")]] can be used in various contexts to check if the return value of a function is ignored.
@@ -318,7 +325,7 @@ Thanks to the attribute [[no\_unique\_address]], data members of a class can hav
 \end{itemize}
 \end{tcolorbox}
 
-
+\newpage
 
 
 

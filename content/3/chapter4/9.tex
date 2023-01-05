@@ -26,6 +26,7 @@ Deprecate volatile qualifiers in a structured binding declaration
 
 If you want to know all the sophisticated details, I strongly suggest you watch the CppCon 2019 talk \href{https://www.youtube.com/watch?v=KJW_DLaVXIY}{“Deprecating volatile”} from JF Bastien. Here are a few examples from his talk. Additionally, I fixed a few typos in the source code. The numbers in the following code snippets refer to the three deprecations listed earlier.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Deprecated use case for volatile
 \begin{lstlisting}[style=styleCXX]
@@ -74,6 +75,7 @@ volatile is typically used to denote objects that can change independently of th
 
 With C++20, you can directly use a range-based for loop with an initializer.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Range-based for loop with initializer
 \begin{lstlisting}[style=styleCXX]
@@ -128,6 +130,7 @@ A constexpr function has the potential to run at compile time but can also be ex
 
 Program virtualConstexpr.cpp shows both combinations:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Virtual constexpr functions
 \begin{lstlisting}[style=styleCXX]
@@ -178,9 +181,10 @@ Use of virtual constexpr functions
 
 In addition to the character types char16\_t and char32\_t from C++11, C++20 gets the new character type char8\_t. Type char8\_t is large enough to represent any UTF-8 code unit (8 bits). It has the same size, signedness, and alignment as an unsigned char, but is a distinct type.
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={char versus char8\_t}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={char versus char8\_t}]
 A char has one byte. In contrast to a char8\_t, the number of bits of a byte and hence of a char is not defined. Nearly all implementations use 8 bits for a byte. The std::string is an alias for a std::basic\_string of chars.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 std::string and a std::string literal
 \begin{lstlisting}[style=styleCXX]
@@ -191,6 +195,7 @@ std::string std::basic_string<char>
 
 Consequently, C++20 has a new typedef for the character type char8\_t (line 1) and a new UTF-8 string literal (line 2).
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 A new char8\_t character type and an UTF-8 string literal
 \begin{lstlisting}[style=styleCXX]
@@ -200,6 +205,7 @@ u8"Hello World"
 
 The program char8Str.cpp shows the straightforward usage of the new character type char8\_t.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Intuitive usage for the new character type char8\_t
 \begin{lstlisting}[style=styleCXX]
@@ -242,6 +248,7 @@ Use of the new character type char8\_t
 
 A using enum declaration introduces the enumerators of the named enumeration in the local scope.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Introducing enumerators in the local scope
 \begin{lstlisting}[style=styleCXX]
@@ -294,6 +301,7 @@ First of all, what is a bit field? Here is the definition from \href{https://en.
 
 With C++20, we can default-initialize the members of a bit field:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Default initializers for the members of a bit field
 \begin{lstlisting}[style=styleCXX]
@@ -338,7 +346,7 @@ According to the members of a class (lines 6 - 11) with C++11, the members of bi
 Size information to a bit field
 \end{center}
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
 \begin{itemize}
 \item 
 The meaning of volatile is clarified in C++20. volatile has no multithreading semantics and should only be used to avoid aggressive optimization because an object may be changed independently of the regular program flow.
@@ -359,7 +367,6 @@ The members of a bit field can be default-initialized.
 A constexpr function can be virtual.
 \end{itemize}
 \end{tcolorbox}
-
 
 
 
