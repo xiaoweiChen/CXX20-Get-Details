@@ -3,13 +3,13 @@
 Cippi开启了流水作业
 \end{center}
 
-Thanks to the ranges library in C++20, working with the Standard Template Library (STL) is much more comfortable and powerful. The algorithms of the ranges library are lazy, can work directly on containers and can easily be composed. To make it short: The comfort and the power of the ranges library is due to its functional ideas.
+由于C++20中的范围库，使用标准模板库(STL)变得更加好用和强大。范围库使用惰性算法，可以直接在容器上工作，并且可以很容易地组合。简而言之:范围库的简单和强大基于其功能的思想。
 
-Before I dive into the details, here is a first example of the ranges library:
+在深入讨论细节之前，先来看一个范围库的例子:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Combining the transform and filter functions
+\textbf{结合transform和filter函数}
 \begin{lstlisting}[style=styleCXX]
 // rangesFilterTransform.cpp
 #include <iostream>
@@ -23,75 +23,74 @@ int main() {
 }
 \end{lstlisting}
 
-You have to read the expression from left to right. The pipe symbol stands for function composition: First, all numbers which are even can pass (std::views::filter([](int n){ return n \% 2 == 0; })). After that, each remaining number is mapped to its double (std::views::transform([](int n){ return n * 2; })). The small example shows two new features of the ranges library: function composition being applied on the entire container.
+必须从左到右读这个表达式。管道符号代表函数组合:首先，所有偶数都可以通过(std::views::filter([](int n)\{return n \% 2 == 0;\}))。在此之后，每个剩余的数字会映射到双倍功能上(std::views::transform([](int n)\{return n * 2;\}))。这个示例展示了范围库的两个新特性:可以将函数组合，应用于单个容器。
 
-Now you should be prepared for the details. Let’s go back to square one: ranges and views are concepts.
+现在各位应该为细节做好准备了。让我们一起来了解一下:范围(range)和视图(view)。
 
-\subsubsubsection{5.1.1\hspace{0.2cm} The Concepts Ranges and Views}
+\subsubsubsection{5.1.1\hspace{0.2cm}概念范围和视图}
 
-I already presented the concepts ranges and views in the chapter on concepts. Consequently, here’s a brief refresher.
+在关于概念的章节中，我已经介绍了概念范围和视图。因此，这里有一个简短的复习。
 
 \begin{itemize}
 \item 
-range: A range is a group of items that you can iterate over. It provides a begin iterator and an end sentinel. Of course, the containers of the STL are ranges.
+范围(range):范围是一组可以迭代的项，提供了一个开始迭代器和一个结束哨兵。当然，STL的容器也属于范围。
 \end{itemize}
 
-A view is something that you apply on a range and performs some operation. A view does not own data, and its time complexity to copy, move, or assign is constant.
+视图是在范围上执行的一些操作。视图不拥有数据，其复制、移动或赋值的时间复杂度恒定。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Views operating on a range
+\textbf{在范围上操作的视图}
 \begin{lstlisting}[style=styleCXX]
 std::vector<int> numbers = {1, 2, 3, 4, 5, 6};
 auto results = numbers | std::views::filter([](int n){ return n % 2 == 0; })
                        | std::views::transform([](int n){ return n * 2; });
 \end{lstlisting}
 
-In this code snippet, numbers is the range and std::views::filter and std::views::transform are the views.
+这个代码片段中，numbers是范围，std::views::filter和std::views::transform是视图。
 
-Thanks to views, C++20 allows programming in a functional style. Views can be combined and are lazy. I already presented two views, but C++20 offers more.
+由于视图，C++20可以进行函数式编程。视图可以组合，并且是惰性的。我已经介绍了两种视图，但C++20提供了更多的视图。
 
 
 \begin{center}
-Views in C++20
+C++20中的视图
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-View                                                                                         & Description                                              \\ \hline
-\begin{tabular}[c]{@{}l@{}}std::views::all\_t\\ std::views::all\end{tabular}                 & Converts a range into a view.                            \\
-std::ranges::ref\_view                                                                       & Takes all elements of another range.                     \\
-\begin{tabular}[c]{@{}l@{}}std::ranges::filter\_view\\ std::views::filter\end{tabular}       & Takes the elements that satisfy the predicate.           \\
-\begin{tabular}[c]{@{}l@{}}std::ranges::transform\_view\\ std::views::transform\end{tabular} & Transforms each elements.                                \\
-\begin{tabular}[c]{@{}l@{}}std::ranges::take\_view\\ std::views::take\end{tabular}           & Takes the first n elements of another view.              \\
+视图                                                                                         & 描述                                              \\ \hline
+\begin{tabular}[c]{@{}l@{}}std::views::all\_t\\ std::views::all\end{tabular}                 & 将范围转换为视图。                            \\
+std::ranges::ref\_view                                                                       & 获取另一个范围中的所有元素。                     \\
+\begin{tabular}[c]{@{}l@{}}std::ranges::filter\_view\\ std::views::filter\end{tabular}       & 获取满足谓词的元素。           \\
+\begin{tabular}[c]{@{}l@{}}std::ranges::transform\_view\\ std::views::transform\end{tabular} & 变换每个元素。                                \\
+\begin{tabular}[c]{@{}l@{}}std::ranges::take\_view\\ std::views::take\end{tabular}           & 获取另一个视图的前n个元素。              \\
 \begin{tabular}[c]{@{}l@{}}std::ranges::take\_while\_view\\ std::views::take\_view\end{tabular} &
-Takes the elements of another view as long as the preficate returns true. \\
-\begin{tabular}[c]{@{}l@{}}std::ranges.drop\_view\\ std::views::drop\end{tabular}            & Skips the first n elements of another view.              \\
+若谓词返回true，就获取另一个视图的元素。 \\
+\begin{tabular}[c]{@{}l@{}}std::ranges.drop\_view\\ std::views::drop\end{tabular}            & 跳过另一个视图的前n个元素。              \\
 \begin{tabular}[c]{@{}l@{}}std::ranges::drop\_while\_view\\ std::views::drop\_while\end{tabular} &
-Skips the initial elements of another view until the predicate returns false. \\
-\begin{tabular}[c]{@{}l@{}}std::ranges::split\_view\\ std::views::split\end{tabular}         & Splits a view by using a delimiter.                      \\
-\begin{tabular}[c]{@{}l@{}}std::ranges::common\_view\\ std::views::common\end{tabular}       & Converts a view into a std::ranges::common\_range.       \\
-\begin{tabular}[c]{@{}l@{}}std::ranges::reverse\_view\\ std::views::reverse\end{tabular}     & Iterates in reverse order.                               \\
+跳过另一个视图的初始元素，直到谓词返回false。 \\
+\begin{tabular}[c]{@{}l@{}}std::ranges::split\_view\\ std::views::split\end{tabular}         & 使用分隔符拆分视图。                      \\
+\begin{tabular}[c]{@{}l@{}}std::ranges::common\_view\\ std::views::common\end{tabular}       & 将一个视图转换为std::ranges::common\_range。       \\
+\begin{tabular}[c]{@{}l@{}}std::ranges::reverse\_view\\ std::views::reverse\end{tabular}     & 倒序迭代视图。                               \\
 \begin{tabular}[c]{@{}l@{}}std::ranges::basic\_istream\_view\\ std::ranges::istream\_view\end{tabular} &
-Applies operator \textgreater{}\textgreater on the input stream. \\
-\begin{tabular}[c]{@{}l@{}}std::ranges::elements\_view\\ std::veiws::elements\end{tabular}   & Creates a view on the n-th element of tuples.            \\
-\begin{tabular}[c]{@{}l@{}}std::ranges::keys\_view\\ std::views::keys\end{tabular}           & Creates a view on the first element of pair-like values. \\
+输入流上应用操作符>{}>。 \\
+\begin{tabular}[c]{@{}l@{}}std::ranges::elements\_view\\ std::veiws::elements\end{tabular}   & 对元组的第n个元素创建视图。            \\
+\begin{tabular}[c]{@{}l@{}}std::ranges::keys\_view\\ std::views::keys\end{tabular}           & 对类似pair的第一个元素创建视图。 \\
 \begin{tabular}[c]{@{}l@{}}std::ranges::values\_view\\ std::views::values\end{tabular} &
-Creates a view on the second element of pair-like values.
+对类似pair的第二个元素创建视图。
 \end{tabular}
 \end{table}
 
+通常，可以直接使用std::views::transform这样的视图，并将其命名为std::ranges:: transform\_view。
 
-In general, you can use a view such as std::views::transform with the alternative name std::ranges:: transform\_view.
+\subsubsubsection{5.1.2\hspace{0.2cm}直接在容器上使用}
 
-\subsubsubsection{5.1.2\hspace{0.2cm} Direct on the Container}
-
-The algorithms of the Standard Template Library (STL) are sometimes a little inconvenient. They need both begin and end iterators. This is often more than you want to write.
+标准模板库(STL)的算法有时有点不方便，同时需要开始和结束迭代器。有时，你并不想写这么多代码。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Algorithms of the STL need both begin and end iterators
+\textbf{STL的算法同时需要开始和结束迭代器}
 \begin{lstlisting}[style=styleCXX]
 // sortClassical.cpp
 
@@ -106,11 +105,11 @@ int main() {
 }
 \end{lstlisting}
 
-Wouldn’t it be nice if std::sort could be executed on the entire container? Thanks to the ranges library, this is possible in C++20.
+若std::sort可以在整个容器上执行，这不是很好吗?因为范围库，这在C++20中是可能的。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Algorithms of the ranges library operate directly on the container
+\textbf{范围库的算法直接对容器进行操作}
 \begin{lstlisting}[style=styleCXX]
 // sortRanges.cpp
 
@@ -125,19 +124,19 @@ int main() {
 }
 \end{lstlisting}
 
-Those algorithms of the \href{https://en.cppreference.com/w/cpp/algorithm}{algorithm library}, which are included in the \href{https://en.cppreference.com/w/cpp/header/algorithm}{<algorithm>} header such as std::sort have a ranges pendant std::ranges::sort.
+\href{https://en.cppreference.com/w/cpp/algorithm}{算法库}的算法包含在\href{https://en.cppreference.com/w/cpp/header/algorithm}{<algorithm>}头文件中，例如std::sort，其有一个范围版本std::ranges::sort。
 
-When you study the overloads of std::ranges::sort, you notice that they support a projection.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-5.1.2.1\hspace{0.2cm} Projection
-
-std::ranges::sort has two overloads:
+当了解std::ranges::sort的重载时，会注意到它们支持投影。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Overload of ‘std::ranges::sort
+5.1.2.1\hspace{0.2cm}投影
+
+std::ranges::sort有两个重载:
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{std::ranges::sort的重载}
 \begin{lstlisting}[style=styleCXX]
 template< std::random_access_iterator I, std::sentinel_for<I> S,
          class Comp = ranges::less, class Proj = std::identity >
@@ -151,11 +150,11 @@ constexpr ranges::borrowed_iterator_t<R> sort( R&& r, Comp comp = {}, Proj proj 
  );
 \end{lstlisting}
 
-When you study the second overload, you notice that it takes a sortable range R, a predicate Comp, and a projection Proj. The predicate Comp uses for default less, and the projection Proj the identity. A projection is a mapping of a set into a subset. Let me show you what that means:
+当看到第二个重载时，会注意到它需要一个可排序范围R、一个谓词Comp和一个投影Proj。谓词Comp用于默认ranges::less，投影Proj用于恒等式。投影是集合到子集的映射，来说明一下这代表了什么:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Applying projections on data types
+\textbf{数据类型——应用投影}
 \begin{lstlisting}[style=styleCXX]
 // rangeProjection.cpp
 
@@ -202,7 +201,7 @@ int main() {
 phoneBook (line 23) has structs of type PhoneBookEntry (line 8). A PhoneBookEntry consists of a name and a number. Thanks to projections, the phoneBook can be sorted in ascending order by name (line 26), descending order by name (line 29), ascending order by number (line 33), and descending order by number (line 36).
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter5/images/1-1.png}\\
+\includegraphics[width=1.0\textwidth]{content/3/chapter5/images/1-1.png}\\
 Applying projections on data types
 \end{center}
 
