@@ -1,34 +1,34 @@
 \begin{center}
 \includegraphics[width=0.5\textwidth]{content/3/chapter4/images/47.png}\\
-Cippi goes up
+Cippi在上楼梯
 \end{center}
 
-This section presents the remaining small improvements in the C++20 core language.
+本节介绍C++20核心语言中其余的改进。
 
-\subsubsubsection{4.9.1\hspace{0.2cm} volatile}
+\subsubsubsection{4.9.1\hspace{0.2cm}volatile}
 
-The abstract in the proposal \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1152r0.html}{P1152R0} gives a short description of the changes that volatile undergoes: “The proposed deprecation preserves the useful parts of volatile, and removes the dubious / already broken ones. This paper aims at breaking at compile-time code which is today subtly broken at run time or through a compiler update.” Before I dive into volatile, I want to answer the crucial question: When should you use volatile?
+\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1152r0.html}{P1152R0}提案摘要概述了volatile所经历的变化:“建议弃用volatile的部分用法，并删除不明确的部分的用法”\href{https://www.zhihu.com/question/366070396}{知乎上的讨论}。这篇文章的目的在于，在运行时或编译器更新时已经出现了微妙损坏的代码，使用volatile的不明确行为时，会使编译时代码遭到破坏。”深入讨论volatile之前，我想回答一个关键问题:什么时候应该使用volatile?
 
-A note from the C++ standard says that “volatile is a hint to the implementation to avoid aggressive optimization involving the object because the value of the object might be changed by means undetectable by an implementation.” This means that for a single thread of execution, the compiler must perform load or store operations in the executable as often as they occur in the source code. volatile operations, therefore, cannot be eliminated or reordered. Consequently, you can use volatile objects for communication with a signal handler but not for communication with another thread of execution.
+C++标准的某个注释:“volatile是对实现的一个提示，以避免进行激进地优化，因为对象的值可会通过实现无法检测到的方式改变。”所以对于单线程，编译器必须在可执行文件中执行加载或存储操作，就像源码中一样频繁。因此，volatile不能消除或重新排序。因此，可以使用volatile对象与处理程序通信，但不能用于与另一个执行线程通信。
 
-Before I show you what semantics of volatile are preserved, I want to start with the deprecated features:
+在展示volatile保留了哪些语义之前，我想先从已弃用的特性开始说起:
 
 \begin{enumerate}
 \item 
-Deprecate volatile compound assignment, and pre/post increment/decrement
+弃用volatile的复合赋值，以及前后递增/递减
 
 \item 
-Deprecate volatile qualification of function parameters or return types
+弃用函数参数或返回类型的volatile限定
 
 \item 
-Deprecate volatile qualifiers in a structured binding declaration
+结构化绑定声明中弃用volatile限定符
 \end{enumerate}
 
-If you want to know all the sophisticated details, I strongly suggest you watch the CppCon 2019 talk \href{https://www.youtube.com/watch?v=KJW_DLaVXIY}{“Deprecating volatile”} from JF Bastien. Here are a few examples from his talk. Additionally, I fixed a few typos in the source code. The numbers in the following code snippets refer to the three deprecations listed earlier.
+若想知道背后复杂的细节，我建议你观看一下CppCon 2019的演讲\href{https://www.youtube.com/watch?v=KJW_DLaVXIY}{“废除volatile”}。下面是他演讲中的几个例子。此外，我修复了源码中的一些拼写错误。下面代码片段中的数字代表前面列出的三个弃用语义。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Deprecated use case for volatile
+\textbf{已弃用的volatile用例}
 \begin{lstlisting}[style=styleCXX]
 // (1)
 int neck, tail;
@@ -67,17 +67,14 @@ void park(linhenykus alvarezsauroid) {
 }
 \end{lstlisting}
 
-\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title={volatile and Multithreading Semantics}]
-volatile is typically used to denote objects that can change independently of the regular program flow. These are, for example, objects in embedded programming that represent an external device (memory-mapped I/O). Because these objects can change independently of the regular program flow and their value is directly written to main memory, no optimized storing in caches takes place. In other words, volatile avoids aggressive optimization and has no multithreading semantics.
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={volatile和多线程语义}]
+volatile通常用于表示，独立于常规程序流，并可以进行修改的对象。例如，这些是嵌入式编程中表示外部设备(内存映射I/O)的对象。因为这些对象可以独立于常规程序流进行修改，并且它值直接写入主存，因此缓存中不会进行优化存储。换句话说，volatile避免了主动优化，并且没有多线程语义。
 \end{tcolorbox}
 
-\subsubsubsection{4.9.2\hspace{0.2cm} Range-based for loop with Initializers}
+\subsubsubsection{4.9.2\hspace{0.2cm}带有初始化式的范围for循环}
 
-With C++20, you can directly use a range-based for loop with an initializer.
+C++20中，可以直接使用带有初始化式的范围for循环。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Range-based for loop with initializer
 \begin{lstlisting}[style=styleCXX]
 // rangeBasedForLoopInitializer.cpp
 
@@ -110,7 +107,7 @@ int main() {
 }
 \end{lstlisting}
 
-The range-based for loop uses in line 9 a std::vector, in line 15 a std::initializer\_list, and in line 23 a std::string. Furthermore, in line 9 and line 15 I apply automatic type deduction for class templates, which we have since C++17. Instead of std::vector<int>, I just write std::vector.
+基于范围的for循环在第9行使用std::vector，在第15行使用std::initializer\_list，在第23行使用std::string。此外，在第9行和第15行中，类模板使用了C++17的自动类型推断(使用std::vector，而非std::vector<int>)。
 
 \begin{tcblisting}{commandshell={}}
 1 2 3
@@ -120,19 +117,12 @@ The range-based for loop uses in line 9 a std::vector, in line 15 a std::initial
 H e l l o  W o r l d
 \end{tcblisting}
 
-\begin{center}
-Use of a range-based for loop
-\end{center}
+\subsubsubsection{4.9.3\hspace{0.2cm}virtual constexpr函数}
 
-\subsubsubsection{4.9.3\hspace{0.2cm} Virtual constexpr function}
+constexpr函数有可能在编译时运行，但也可以在运行时执行。因此，可以使用C++20的virtual关键字创建constexpr函数。virtual的constexpr函数可以重写为非constexpr函数，virtual的非constexpr函数可以重写virtual的constexpr函数。我想强调的是，重写意味着基类的相关函数是虚函数。
 
-A constexpr function has the potential to run at compile time but can also be executed at run time. Consequently, you can make a constexpr function with C++20 virtual. Both directions are possible. A virtual constexpr function can override a non-constexpr function, and a virtual non-constexpr function can override a virtual constexpr function. I want to emphasize that override implies that the relevant function of a base class is virtual.
+virtualconstexr.cpp展示了这两种组合:
 
-Program virtualConstexpr.cpp shows both combinations:
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-Virtual constexpr functions
 \begin{lstlisting}[style=styleCXX]
 // virtualConstexpr.cpp
 
@@ -166,48 +156,41 @@ int main() {
 }
 \end{lstlisting}
 
-Line 24 uses virtual dispatch (late binding) via a pointer, line 28 uses virtual dispatch via reference.
+第24行通过指针使用虚函数(后期绑定)，第28行通过引用使用虚函数。
 
 \begin{tcblisting}{commandshell={}}
 x1->f(): 4
 x2.f(): 4
 \end{tcblisting}
 
-\begin{center}
-Use of virtual constexpr functions
-\end{center}
+\subsubsubsection{4.9.4\hspace{0.2cm}UTF-8字符串的新字符类型:char8\_t}
 
-\subsubsubsection{4.9.4\hspace{0.2cm} The new Character Type of UTF-8 Strings: char8\_t}
+除了C++11中的字符类型char16\_t和char32\_t外，C++20添加了新的字符类型char8\_t。类型char8\_t足够大，可以表示任何UTF-8代码单元(8位)。其具有与unsigned char相同的大小、符号和对齐方式，但这是两个不同的类型。
 
-In addition to the character types char16\_t and char32\_t from C++11, C++20 gets the new character type char8\_t. Type char8\_t is large enough to represent any UTF-8 code unit (8 bits). It has the same size, signedness, and alignment as an unsigned char, but is a distinct type.
-
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={char versus char8\_t}]
-A char has one byte. In contrast to a char8\_t, the number of bits of a byte and hence of a char is not defined. Nearly all implementations use 8 bits for a byte. The std::string is an alias for a std::basic\_string of chars.
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={char和char8\_t}]
+一个char有一个字节。与char8\_t相反，一个字节的比特数，以及char的比特数是没有定义的。不过，几乎所有的实现都使用8位作为一个字节。std::string是char的std::basic\_string的别名。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-std::string and a std::string literal
+\textbf{std::string和std::string字面值}
 \begin{lstlisting}[style=styleCXX]
 std::string std::basic_string<char>
 "Hello World"s
 \end{lstlisting}
 \end{tcolorbox}
 
-Consequently, C++20 has a new typedef for the character type char8\_t (line 1) and a new UTF-8 string literal (line 2).
+因此，C++20有一个新的字符类型char8\_t(第1行)和新的UTF-8字符串字面值(第2行)。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-A new char8\_t character type and an UTF-8 string literal
+\textbf{新的char8\_t字符类型和UTF-8字面值}
 \begin{lstlisting}[style=styleCXX]
 std::u8string std::basic_string<char8_t>
 u8"Hello World"
 \end{lstlisting}
 
-The program char8Str.cpp shows the straightforward usage of the new character type char8\_t.
+char8Str.cpp展示了新字符类型char8\_t的用法。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Intuitive usage for the new character type char8\_t
 \begin{lstlisting}[style=styleCXX]
 // char8Str.cpp
 
@@ -232,7 +215,7 @@ int main() {
 }
 \end{lstlisting}
 
-Without further ado, here is the output of the program:
+话不多说，下面是程序的输出:
 
 \begin{tcblisting}{commandshell={}}
 char8String.size(): 10
@@ -240,17 +223,13 @@ char8String2.size(): 11
 char8String2.size(): 12
 \end{tcblisting}
 
-\begin{center}
-Use of the new character type char8\_t
-\end{center}
+\subsubsubsection{4.9.5\hspace{0.2cm}本地作用域中的using enum}
 
-\subsubsubsection{4.9.5\hspace{0.2cm} using enum in Local Scopes}
-
-A using enum declaration introduces the enumerators of the named enumeration in the local scope.
+using enum声明在局部作用域中引入已命名枚举的枚举值。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Introducing enumerators in the local scope
+\textbf{本地作用域内引入枚举值}
 \begin{lstlisting}[style=styleCXX]
 // enumUsing.cpp
 
@@ -288,22 +267,19 @@ int main() {
 }
 \end{lstlisting}
 
-The using enum declaration (line 14) introduces the enumerators of the scoped enumerations Color into the local scope. From that point on, the enumerators can be used unscoped (lines 15 - 17).
+using enum声明(第14行)将作用域enumeration Color的枚举值引入到本地作用域。这时起，枚举值可以无作用域的使用(第15-17行)。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/48.png}\\
-Application of using enum
+\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/48.png}\\
+使用using enum
 \end{center}
 
-\subsubsubsection{4.9.6\hspace{0.2cm} Default Member Initializers for Bit Fields}
+\subsubsubsection{4.9.6\hspace{0.2cm}位域成员变量的默认初始化器}
 
-First of all, what is a bit field? Here is the definition from \href{https://en.wikipedia.org/wiki/Bit_field}{Wikipedia}: “A bit field is a data structure used in computer programming. It consists of a number of adjacent computer memory locations which have been allocated to hold a sequence of bits, stored so that any single bit or group of bits within the set can be addressed. A bit field is most commonly used to represent integral types of known, fixed bit-width.”
+首先，什么是位域?下面是来自\href{https://en.wikipedia.org/wiki/Bit_field}{Wikipedia}: “位域是计算机编程中的数据结构，由许多相邻的计算机内存位置组成，这些位置可用来保存一组位值，存储的目的是使该集合中的单个位或一组位都可以寻址。位域常用来表示固定宽度的整型。”
 
-With C++20, we can default-initialize the members of a bit field:
+C++20中，可以默认初始化位域成员变量:
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Default initializers for the members of a bit field
 \begin{lstlisting}[style=styleCXX]
 // bitField.cpp
 
@@ -339,32 +315,32 @@ int main () {
 }
 \end{lstlisting}
 
-According to the members of a class (lines 6 - 11) with C++11, the members of bit field can have default initializers (lines 15 - 20) with C++20. When you sum up the numbers 3, 4, 5, 6, 7, and 7, you get 32. Hence, 32 bits, or 4 bytes is exactly the size of the BitField20:
+C++11中，根据类的成员(第6-11行)，位域成员可以有默认的初始化器(第15-20行)。当把3、4、5、6、7、7这些数字加起来时，会得到32。因此，32位或4字节恰好是BitField20的大小:
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter4/images/49.png}\\
-Size information to a bit field
+\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/49.png}\\
+位域的大小
 \end{center}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 \begin{itemize}
 \item 
-The meaning of volatile is clarified in C++20. volatile has no multithreading semantics and should only be used to avoid aggressive optimization because an object may be changed independently of the regular program flow.
+C++20中明确了volatile的行为。volatile没有多线程语义，应仅用于避免激进优化，因为对象可能独立于常规程序流，并且可以进行修改。
 
 \item 
-Range-based for loops can use an initializer.
+基于范围的for循环可以使用初始化式。
 
 \item 
-The new character type char8\_t is large enough to represent 8 bits.
+新的字符类型char8\_t足够大，明确可以表示8位。
 
 \item 
-A using enum declaration introduces the enumerators of a named enumeration in the local scope.
+using enum声明在本地作用域中引入了命名枚举的枚举值。
 
 \item 
-The members of a bit field can be default-initialized.
+位域的成员可以默认初始化。
 
 \item 
-A constexpr function can be virtual.
+constexpr函数可以是虚函数。
 \end{itemize}
 \end{tcolorbox}
 

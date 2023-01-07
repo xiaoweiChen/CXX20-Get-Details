@@ -1,12 +1,13 @@
 \begin{center}
 \includegraphics[width=0.5\textwidth]{content/3/chapter5/images/2.png}\\
-Cippi starts the pipeline job
+Cippi开启了流水作业
 \end{center}
 
 Thanks to the ranges library in C++20, working with the Standard Template Library (STL) is much more comfortable and powerful. The algorithms of the ranges library are lazy, can work directly on containers and can easily be composed. To make it short: The comfort and the power of the ranges library is due to its functional ideas.
 
 Before I dive into the details, here is a first example of the ranges library:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Combining the transform and filter functions
 \begin{lstlisting}[style=styleCXX]
@@ -37,6 +38,7 @@ range: A range is a group of items that you can iterate over. It provides a begi
 
 A view is something that you apply on a range and performs some operation. A view does not own data, and its time complexity to copy, move, or assign is constant.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Views operating on a range
 \begin{lstlisting}[style=styleCXX]
@@ -87,6 +89,7 @@ In general, you can use a view such as std::views::transform with the alternativ
 
 The algorithms of the Standard Template Library (STL) are sometimes a little inconvenient. They need both begin and end iterators. This is often more than you want to write.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Algorithms of the STL need both begin and end iterators
 \begin{lstlisting}[style=styleCXX]
@@ -105,6 +108,7 @@ int main() {
 
 Wouldn’t it be nice if std::sort could be executed on the entire container? Thanks to the ranges library, this is possible in C++20.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Algorithms of the ranges library operate directly on the container
 \begin{lstlisting}[style=styleCXX]
@@ -125,11 +129,13 @@ Those algorithms of the \href{https://en.cppreference.com/w/cpp/algorithm}{algor
 
 When you study the overloads of std::ranges::sort, you notice that they support a projection.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 5.1.2.1\hspace{0.2cm} Projection
 
 std::ranges::sort has two overloads:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Overload of ‘std::ranges::sort
 \begin{lstlisting}[style=styleCXX]
@@ -147,6 +153,7 @@ constexpr ranges::borrowed_iterator_t<R> sort( R&& r, Comp comp = {}, Proj proj 
 
 When you study the second overload, you notice that it takes a sortable range R, a predicate Comp, and a projection Proj. The predicate Comp uses for default less, and the projection Proj the identity. A projection is a mapping of a set into a subset. Let me show you what that means:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Applying projections on data types
 \begin{lstlisting}[style=styleCXX]
@@ -201,11 +208,13 @@ Applying projections on data types
 
 Most ranges algorithms support projections.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 5.1.2.2\hspace{0.2cm} Direct Views on Keys and Values
 
 Furthermore, you can create direct views on the keys (line 16) and the values (line 24) of a std::unordered\_map.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Views on the keys and the values of a std::unordered\_map
 \begin{lstlisting}[style=styleCXX]
@@ -263,6 +272,7 @@ Working directly on the container might be not so thrilling, but function compos
 
 In the example rangesComposition.cpp, I use a std::map, because the ordering of the keys is crucial.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Composition of views
 \begin{lstlisting}[style=styleCXX]
@@ -323,6 +333,7 @@ Composition of views
 
 The pipe symbol | is \href{https://en.wikipedia.org/wiki/Syntactic_sugar}{syntactic sugar} for function composition. Instead of C(R) you can write R | C. Consequently, the next three lines are equivalent.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Three syntactic forms of function composition
 \begin{lstlisting}[style=styleCXX]
@@ -335,6 +346,7 @@ auto rev3 = freqWord | std::views::keys | std::views::reverse;
 
 std::views::iota is a range factory for creating a sequence of elements by successively incrementing an initial value. This sequence can be finite or infinite. The program rangesIota.cpp fills a std::vector with 10 int’s, starting with 0.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Using std::views::iota to fill a std::vector
 \begin{lstlisting}[style=styleCXX]
@@ -376,6 +388,7 @@ Using std::views::iota to fill a std::vector
 
 Now, I want to solve a small challenge: finding the first 20 prime numbers starting with 1,000,000.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 The first 20 prime numbers starting with 1’000’000
 \begin{lstlisting}[style=styleCXX]
@@ -446,7 +459,7 @@ line 42: Laziness is a virtue. I use std::iota as an infinite number factory, st
 \end{itemize}
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/1-2.png}\\
+\includegraphics[width=1.0\textwidth]{content/3/chapter5/images/1-2.png}\\
 The first 20 prime numbers, starting with 1,000,000
 \end{center}
 
@@ -454,11 +467,13 @@ The first 20 prime numbers, starting with 1,000,000
 
 You can define your own view.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 5.1.5.1\hspace{0.2cm} std::ranges::view\_interface
 
 Thanks to the \href{https://en.cppreference.com/w/cpp/ranges/view_interface}{std::ranges::view\_interface} helper class, defining a view is easy. To fulfil the concept view, your view needs at least a default constructor, and member functions begin() and end():
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Your own view
 \begin{lstlisting}[style=styleCXX]
@@ -473,6 +488,7 @@ By deriving MyView public from the helper class std::ranges::view\_interface usi
 
 I use this technique in the next example to create a view out of a container of the Standard Template Library.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 5.1.5.2\hspace{0.2cm} A Container View
 
@@ -556,11 +572,12 @@ Creating a view from a container
 
 Let me add a few words to the class template argument deduction guide.
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Class Template Argument Deduction Guide}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Class Template Argument Deduction Guide}]
 Since C++17, the compiler can deduce template parameters from template arguments. The template deduction guide is a pattern for the compiler to deduce the template arguments.
 
 When you use ContainerView(myVec), the compiler applies the following user-defined deduction guide:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 User-Defined Deduction Guide for ContainerView
 \begin{lstlisting}[style=styleCXX]
@@ -570,6 +587,7 @@ ContainerView(Range&& range) -> ContainerView<std::ranges::views::all_t<Range>>;
 
 Essentially, a call Container(myVec) causes the compiler to instantiate the code on the right of the arrow ->:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Applying the deduction guide for Container(myVec)
 \begin{lstlisting}[style=styleCXX]
@@ -604,11 +622,13 @@ list comprehension: applies a filter and map phase to an iterable and returns a 
 
 Here is my challenge: I want to implement Python-like functions filter, map, and list comprehension in C++20 using the ranges library.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 5.1.6.1\hspace{0.2cm} filter
 
 Python’s filter function can be directly mapped to the corresponding ranges function.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Python’s filter function in C++
 \begin{lstlisting}[style=styleCXX]
@@ -669,11 +689,13 @@ The filter function applied
 
 The filter function (line 9) should be easy to read. Line 12 detects the type of the underlying element. I just apply the callable func to each element of the sequence and return the elements in the std::vector. Line 27 selects all numbers i from 1 to 50 for which (i \% 3) == 0 holds. Only the strings that start with an uppercase letter can pass the filter in line 32.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 5.1.6.2\hspace{0.2cm} map
 
 map applies a callable to each element of the input sequence.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Python’s map function in C++
 \begin{lstlisting}[style=styleCXX]
@@ -733,6 +755,7 @@ Line 15 in the definition of the map function is quite interesting. The expressi
 The map function applied
 \end{center}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 5.1.6.3\hspace{0.2cm} List Comprehension
 
@@ -740,6 +763,7 @@ The program listComprehensionRanges.cpp has a simplified version of Python’s l
 
 map applies a callable to each element of the input sequence.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 A simplified variant of Python’s list comprehension in C++
 \begin{lstlisting}[style=styleCXX]
@@ -828,7 +852,7 @@ The default predicate that the filter function applies (line 19) always returns 
 Both functions map and filter applied
 \end{center}
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
 \begin{itemize}
 \item 
 The ranges library provides us with an additional version of the STL algorithms. The ranges library algorithms are lazy, can work directly on containers and can be composed.
@@ -848,7 +872,7 @@ can be composed using the pipe (|) symbol.
 \end{itemize}
 \end{tcolorbox}	
 	
-	
+\newpage
 	
 	
 	
