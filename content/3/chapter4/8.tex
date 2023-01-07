@@ -3,15 +3,15 @@
 Cippi已经为比赛做好了准备
 \end{center}
 
-With C++20, we get new and improved attributes such as [[nodiscard("reason")]], [[likely]], [[unlikely]], and [[no\_unique\_address]]. In particular, [[nodiscard("reason")]] can be used to explicitly express the intent of our interface.
+C++20中，对属性进行了改进，并添加了新的属性，如[[nodiscard("reason")]]、[[likely]]、[[unlikely]]和[[no\_unique\_address]]。并且，[[nodiscard("reason")]]可以用来显式地表达接口的意图。
 
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Attributes}]
-Attributes allow the programmer to express additional constraints on the source code or give the compiler additional optimization possibilities. You can use attributes for types, variables, functions, names, and code blocks. When you use more than one attribute, you can apply each one after the other (func1) or all together in one attribute, separated by commas (func2):
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={属性}]
+属性允许开发者对源代码进行约束，或者为编译器提供优化可能性。可以为类型、变量、函数、名称和代码块使用属性。使用多个属性时，可以依次应用(func1)，或者在一个属性中一起应用，用逗号(func2)分隔:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Use of attributes
+\textbf{使用属性}
 \begin{lstlisting}[style=styleCXX]
 [[attribute1]] [[attribute2]] [[attribute3]]
 int func1();
@@ -20,34 +20,34 @@ int func1();
 int func2();
 \end{lstlisting}
 
-Attributes can be implementation-defined language extensions or standard attributes, such as the following list of attributes C++11 - C++17 already have.
+属性可以是实现定义的语言扩展或标准属性，下面是C++11至C++17的已有属性列表。
 
 \begin{itemize}
 \item 
-{}[[noreturn]] (C++11): indicates that the function does not return
+{}[[noreturn]] (C++11): 表示函数不返回
 
 \item 
-{}[[carries\_dependency]] (C++11): indicates a dependency chain in \href{https://en.cppreference.com/w/cpp/atomic/memory_order#Release-Consume_ordering}{release-consume ordering}
+{}[[carries\_dependency]] (C++11): 表示\href{https://en.cppreference.com/w/cpp/atomic/memory_order#Release-Consume_ordering}{release-consume序}依赖链中的依赖项
 
 \item 
-{}[[deprecated]] (C++14): indicates that you should not use a name
+{}[[deprecated]] (C++14):表示不再使用名称
 
 \item 
-{}[[fallthrough]] (C++17): indicates that a fallthrough in a case branch is intentional
+{}[[fallthrough]] (C++17): 表示有意跳过一个分支
 
 \item 
-{}[[maybe\_unused]] (C++17): suppresses compiler warning about used names
+{}[[maybe\_unused]] (C++17): 抑制编译器对使用名称的警告
 \end{itemize}
 \end{tcolorbox}
 
 
 \subsubsubsection{4.8.1\hspace{0.2cm} [[nodiscard("reason")]]}
 
-C++17 introduced the new attribute [[nodiscard]] without a reason. C++20 added the possibility to add a message to the attribute.
+C++17毫无理由地引入了新的属性[[nodiscard]]。C++20增加了向属性中添加信息的可能性。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Discarding objects and error codes
+\textbf{丢弃对象和错误码}
 \begin{lstlisting}[style=styleCXX]
 // withoutNodiscard.cpp
 
@@ -87,17 +87,14 @@ int main() {
 }
 \end{lstlisting}
 
-Thanks to perfect forwarding and parameter packs, the factory function create (line 11) can call any constructor and return a heap-allocated object.
+因为转发和参数包，工厂函数create(第11行)可以调用构造函数并返回一个在堆上分配的对象。
 
-The program has many issues. First, line 30 has a memory leak, because the int created on the heap is never deleted. Second, the error code of the function errorProneFunction (line 32) is not checked. Lastly, the constructor call MyType(5, true) (line 34) creates a temporary, which is created and immediately destroyed. This is at least a waste of resources. Now, [[nodiscard]] comes into play.
+这端代码有很多问题。首先，第30行存在内存泄漏，因为在堆上创建的int永远不会删除。其次，没有检查函数errorProneFunction(第32行)的错误代码。最后，构造函数调用MyType(5, true)(第34行)创建一个临时对象，创建后立即销毁，这至少是一种资源浪费。现在，让[[nodiscard]]发挥作用吧。
 
-[[nodiscard]] can be used in a function declaration, enumeration declaration, or class declaration. If you discard the return value from a function declared as [[nodiscard]], the compiler should issue a warning. The same holds for a function returning by copy an enumeration or a class declared as [[nodiscard]]. If you still want to ignore the return value, you can cast it to void.
+[[nodiscard]]可以在函数声明、枚举声明或类声明中使用。若丢弃了声明为[[nodiscard]]的函数的返回值，编译器应该发出警告。通过复制枚举或声明为[[nodiscard]]的类返回的函数也是如此。若仍然想忽略返回值，可以将其强制转换为void。
 
-Let us see what this means. In the following example, I use the C++17 syntax of the attribute [[nodiscard]].
+下面的例子中，使用了C++17的属性[[nodiscard]]。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Use of the attribute [[nodiscard]] in C++17
 \begin{lstlisting}[style=styleCXX]
 // nodiscard.cpp
 
@@ -138,21 +135,20 @@ int main() {
 }
 \end{lstlisting}
 
-The factory function create (line 13) and the enum ErrorCode (line 17) are declared as [[nodiscard]]. 
-Consequently, the calls in lines 31 and 33 create warnings.
+工厂函数create(第13行)和enum ErrorCode(第17行)声明为[[nodiscard]]。因此，第31行和第33行中在使用时，创建了警告。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter4/images/45.png}\\
-A C++17 compiler complains about a discarded object and a discarded error code
+\includegraphics[width=1.0\textwidth]{content/3/chapter4/images/45.png}\\
+C++17编译器会报错
 \end{center}
 
-Way better, but the program still has a few issues. [[nodiscard]] cannot be used for functions such as a constructor returning nothing. Therefore, the temporary MyType(5, true) (line 35) is still created without a warning. Second, the error messages are too general. As a user of the functions, I want to have a reason why discarding the result is an issue.
+这样就好多了，但这段代码还有一些问题。[[nodiscard]]不能用于构造函数等不返回值的函数。因此，临时MyType(5, true)(第35行)仍会创建，没有警告。第二，错误消息太一般。作为函数的使用者，我想知道为什么丢弃结果这一行为有问题。
 
-Both issues can be solved with C++20. Constructors can be declared as [[nodiscard]], and the warning can have additional information.
+这两个问题都可以用C++20解决。构造函数可以声明为[[nodiscard]]，警告可以包含其他信息。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Use of the attribute [[nodiscard]] in C++20
+\textbf{C++20中使用[[nodiscard]]属性}
 \begin{lstlisting}[style=styleCXX]
 // nodiscardString.cpp
 
@@ -193,21 +189,23 @@ int main() {
 }
 \end{lstlisting}
 
-Now, the user of the functions gets specific messages. Here is the output of the Microsoft compiler.
+现在，将输出特定的消息。下面是Microsoft编译器的输出。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter4/images/46.png}\\
-A C++20 compiler complains about discarded objects and error codes
+\includegraphics[width=1.0\textwidth]{content/3/chapter4/images/46.png}\\
+C++20编译器会对丢弃对象和错误代码的行为报错
 \end{center}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={The issue with std::async}]
-Many existing functions in C++ could benefit from the [[nodiscard]] attribute. An ideal candidate is the function std::async. When you don’t use the return value of std::asnyc, what you intended as an asynchronous std::async call implicitly becomes synchronous. What should have run in a separate thread behaves instead as a blocking function call. Read more about the counterintuitive behavior of std::async in my post \href{https://www.modernescpp.com/index.php/the-special-futures}{“The Special Futures”}.
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={std::async的问题}]
+	
+C++中的许多函数都可以使用[[nodiscard]]属性，并从中获益，其中就包括std::async。当你不使用std::asnyc的返回值时，想要的异步std::async使用隐式地转变为同步使用。应该在单独的线程中运行的内容，反而以阻塞的方式使用。更多关于std::async的反直觉行为，请参阅我的帖子\href{https://www.modernescpp.com/index.php/the-special-futures}{“the-special-futures”}。
 
-While studying the [[nodiscard]] syntax on \href{https://en.cppreference.com/w/cpp/language/attributes/nodiscard}{cppreference.com/nodiscard}, I noticed that the declarations of \href{https://en.cppreference.com/w/cpp/thread/async}{std::async} changed with C++20. Here is one:
+\hspace*{\fill} \\ %插入空行
+研究\href{https://en.cppreference.com/w/cpp/language/attributes/nodiscard}{cppreference.com/nodiscard}上的[[nodiscard]]语法时，我注意到\href{https://en.cppreference.com/w/cpp/thread/async}{std::async}的声明在C++20中发生了变化。来看一下:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-std::async uses in C++20 the attribute [[nodiscard]]
+\textbf{std::async在C++20中使用属性[[nodiscard]]}
 \begin{lstlisting}[style=styleCXX]
 template<class Function, class... Args>
 [[nodiscard]]
@@ -216,19 +214,19 @@ std::future<std::invoke_result_t<std::decay_t<Function>,
 	async( Function&& f, Args&&... args );
 \end{lstlisting}
 
-The return-type of promise std::async, is declared as [[nodiscard]] in C++20.
+std::async的返回类型在C++20中声明为[[nodiscard]]。
 	
 \end{tcolorbox}
 
-The next two attributes [[likely]] and [[unlikely]] are about optimization.
+接下来的两个属性[[likely]]和[[unlikely]]是关于优化的。
 
-\subsubsubsection{4.8.2\hspace{0.2cm} [[likely]] and [[unlikely]]}
+\subsubsubsection{4.8.2\hspace{0.2cm}[[likely]]和[[unlikely]]}
 
-Proposal \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0479r5.html}{P0479R5} for the attributes [[likely]] and [[unlikely]] is the shortest proposal I know of. To give you an idea, this is the interesting note to the proposal. “The use of the likely attribute is intended to allow implementations to optimize for the case where paths of execution including it are arbitrarily more likely than any alternative path of execution that does not include such an attribute on a statement or label. The use of the unlikely attribute is intended to allow implementations to optimize for the case where paths of execution including it are arbitrarily more unlikely than any alternative path of execution that does not include such an attribute on a statement or label. A path of execution includes a label if and only if it contains a jump to that label. Excessive usage of either of these attributes is liable to result in performance degradation.” In summary, both attributes allow for giving the optimizer a hint regarding the path of execution expected to be more or less likely.
+[[likely]]和[[unlikely]]属性的提案 \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0479r5.html}{P0479R5}是据我所知最短的。为了说明动机，提案中添加了有趣的注释。“可能属性的使用旨在允许实现针对以下情况进行优化:语句或标签上，包含该属性的执行路径比不包含该属性的执行路径的可能性都要大。使用unlikely属性是为了允许实现针对以下情况进行优化:语句或标签上，包含该属性的执行路径比不包含该属性的执行路径更不可能。当且仅当执行路径包含到该标签的跳转时，包含该标签。过度使用这些属性都可能导致性能下降。”总而言之，这两个属性都会向优化器提供与预期执行路径相关的提示。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Give the optimizer a hint with [[likely]]
+\textbf{[[likely]]：给优化器一个提示}
 \begin{lstlisting}[style=styleCXX]
 for(size_t i=0; i < v.size(); ++i){
 	if (v[i] < 0) [[likely]] sum -= sqrt(-v[i]);
@@ -236,17 +234,17 @@ for(size_t i=0; i < v.size(); ++i){
 }
 \end{lstlisting}
 
-The story of optimization goes on with the new attribute [[no\_unique\_address]]. This time the optimization addresses space instead of execution time.
+优化的过程继续使用新的属性[[no\_unique\_address]]，这个优化处理的是空间上的，而不是执行时间上的。
 
 \subsubsubsection{4.8.3\hspace{0.2cm} [[no\_unique\_address]]}
 
-[[no\_unique\_address]] expresses that this data member of a class need not have an address distinct from all other non-static data members of its class. Consequently, if the member has an empty type, the compiler can optimize it to occupy no memory.
+[[no\_unique\_address]]表示类中的成员变量不需要有内存地址。因此，若成员为空类型，编译器可以将其优化为不占用内存。
 
-The following program exemplifies the usage of the new attribute.
+下面的程序演示了新属性的用法。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Use of the attribute [[no\_unique\_address]]
+\textbf{使用[[no\_unique\_address]]属性}
 \begin{lstlisting}[style=styleCXX]
 // uniqueAddress.cpp
 
@@ -295,33 +293,30 @@ int main() {
 }
 \end{lstlisting}
 
-The class NoUniqueAddress has a size equal to int (line 7), but not the class UniqueAddress (line 12). The members d and e of UniqueAddress (lines 40 and 41) have different addresses but not the members of the class UniqueAddress (lines 33 and 34).
+类NoUniqueAddress的大小等于int(第7行)，但类UniqueAddress的大小不等于int(第12行)。UniqueAddress的成员d和e(第40行和41行)有不同的地址，但UniqueAddress类的成员没有(第33行和34行)。
 
 \begin{tcblisting}{commandshell={}}
 sizeof(int) == sizeof(NoUniqueAddress): true
 sizeof(int) == sizeof(UniqueAddress): false
 
 &NoUnique.d: 0x7fff44f8fd0c
-&NoUnique.d: 0x7fff44f8fd0c
+&NoUnique.e: 0x7fff44f8fd0c
 
 &unique.d: 0x7fff44f8fd04
-&unique.d: 0x7fff44f8fd08
+&unique.e: 0x7fff44f8fd08
 \end{tcblisting}
 
-\begin{center}
-Use of the class NoUniqueAddress and UniqueAddress
-\end{center}
-
-
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
+C++20添加了一些新的属性。
 \begin{itemize}
 \item 
-C++20 supports a few new attributes. [[nodiscard("reason")]] can be used in various contexts to check if the return value of a function is ignored.
+{}[[nodiscard("reason")]]可以在上下文中检查函数的返回值是否忽略。
 
 \item 
-[[likely]] and [[unlikely]] allows the programmer to give the compiler a hint which code path is more likely to be executed
+{}[[likely]]和[[unlikely]]允许开发者给编译器一个提示，哪个代码路径更有可能执行到。
+
 \item 
-Thanks to the attribute [[no\_unique\_address]], data members of a class can have the same address.
+使用[[no\_unique\_address]]属性，类中不同的成员变量可以拥有相同的地址。
 \end{itemize}
 \end{tcolorbox}
 
