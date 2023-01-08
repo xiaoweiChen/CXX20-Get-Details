@@ -63,15 +63,15 @@ int main() {
 dynamicSpan(第21行)有一个动态范围，而staticSpan(第22行)有一个静态范围。两个std::span都在printMe函数中返回它们的长度(第9行)。具有动态范围的std::span可以赋值给具有静态范围的std::span，但不能反过来。第27行会导致错误，而第7、25和28行是可以工作的。
 
 \begin{center}
-\includegraphics[width=0.5\textwidth]{content/3/chapter5/images/4.png}\\
+\includegraphics[width=0.4\textwidth]{content/3/chapter5/images/4.png}\\
 std::span的静态范围与动态范围
 \end{center}
 
 使用std::span<T>的一个重要原因是，若将普通C数组\href{https://en.cppreference.com/w/cpp/types/decay}{退化}成指针，那么长度信息就会丢失。这种退化是C/C++中出现错误的原因之一。
 
-\subsubsubsection{5.2.2\hspace{0.2cm} Automatically Deduces the Size of a Contiguous Sequence of Objects}
+\subsubsubsection{5.2.2\hspace{0.2cm}自动推断连续对象序列的长度}
 
-In contrast to a C-array, std::span<T> automatically deduces the size of contiguous sequences of objects.
+与C数组相反，std::span<T>可以自动推断对象连续序列的长度。
 
 \begin{lstlisting}[style=styleCXX]
 // printSpan.cpp
@@ -86,7 +86,6 @@ void printMe(std::span<int> container) {
 	std::cout << "container.size(): " << container.size() << '\n';
 	for (auto e : container) std::cout << e << ' ';
 	std::cout << "\n\n";
-	
 }
 
 int main() {
@@ -105,23 +104,23 @@ int main() {
 }
 \end{lstlisting}
 
-The C-array (line 19), std::vector (line 22), and the std::array (line 25) contain int values. Consequently, std::span also holds int values. There is something more interesting in this simple example. For each container, std::span can deduce its size (line 10).
+C-array(第19行)、std::vector(第22行)和std::array(第25行)元素类型都是int。因此，std::span使用int类型的特化。这个简单的例子中，还有一些更有趣的东西。对于每个容器，std::span可以推断其长度(第10行)。
 
 \begin{center}
 \includegraphics[width=0.4\textwidth]{content/3/chapter5/images/5.png}\\
-Automatic size deduction of a std::span
+std::span自动推断长度
 \end{center}
 
-There are more ways to create a std::span.
+创建std::span的方法有很多。
 
 
-\subsubsubsection{5.2.3\hspace{0.2cm} Create a std::span from a Pointer and a Size}
+\subsubsubsection{5.2.3\hspace{0.2cm}用指针和长度值来创建std::span}
 
-You can create a std::span from a pointer and a size.
+可以用指针和表示内存大小的值来创建std::span。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Create a std::span
+\textbf{创建std::span}
 \begin{lstlisting}[style=styleCXX]
 // createSpan.cpp
 
@@ -150,30 +149,33 @@ int main() {
 }
 \end{lstlisting}
 
-As you may expect, mySpan1, created from the std::vector (line 15), and mySpan2, created from a pointer and a size (line 16), are equal (line 21).
+由std::vector创建的mySpan1(第15行)和由指针和长度创建的mySpan2(第16行)是相同的(第21行)。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/6.png}\\
-Create a std::span from a pointer and a size
+\includegraphics[width=0.5\textwidth]{content/3/chapter5/images/6.png}\\
+用指针和长度值来创建std::span
 \end{center}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={A std::span is neither a std::string\_view nor a view}]
-You may remember that a std::span is sometimes called a view. Don’t confuse a std::span with a view from the ranges library or a \href{https://www.modernescpp.com/index.php/c-17-what-s-new-in-the-library}{std::string\_view}.
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={std::span既不是std::string\_view也不是视图}]
+	
+您可能还记得std::span有时会认为是视图，但不要将std::span与范围库中的视图或\href{https://www.modernescpp.com/index.php/c-17-what-s-new-in-the-library}{std::string\_view}混淆。
 
-A view from the ranges library is something that you can apply on a range and performs some operation. A view does not own data, and its time for each copy, move, and assignment is constant. A std::span and a std::string\_view are non-owning views and can deal with strings.
+\hspace*{\fill} \\ %插入空行
+范围库中的视图可以对特定范围内的元素执行一些操作。而视图不拥有数据，其复制、移动和赋值的时间成本都是固定的。std::span和std::string\_view虽不是视图，但也可以处理字符串。
 
-The main difference between a std::span and a std::string\_view is that a std::span can modify its referenced objects.
+\hspace*{\fill} \\ %插入空行
+std::span和std::string\_view的主要区别是，std::span可以修改其引用的对象。
 \end{tcolorbox}
 	
-\subsubsubsection{5.2.4\hspace{0.2cm} Modifying the Referenced Objects}
+\subsubsubsection{5.2.4\hspace{0.2cm}修改引用对象}
 
-You can modify an entire span or only a subspan. When you modify a span, you modify the referenced objects.
+可以修改整个span，也可以只修改子span。修改span时，也会修改引用的对象。
 
-The following program shows how a subspan can be used to modify the referenced objects from a std::vector.
+下面的代码展示了如何使用子span来修改std::vector中引用的对象。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Modify the objects referenced by a std::span
+\textbf{修改std::span的引用对象}
 \begin{lstlisting}[style=styleCXX]
 // spanTransform.cpp
 
@@ -211,48 +213,48 @@ int main() {
 }
 \end{lstlisting}
 
-span1 references the std::vector vec (line 22). In contrast, span2 references only the elements of the underlying vec excluding the first and the last element (line 23). Consequently, the mapping of each element to its square (line 26) only addresses these elements.
+span1引用std::vector vec(第22行)。相反，span2只引用底层vec的元素，不包括第一个和最后一个元素(第23行)。所以，只对这些元素进行平方的映射(第26行)。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/7.png}\\
-Modify the objects referend by a std::span
+\includegraphics[width=0.5\textwidth]{content/3/chapter5/images/7.png}\\
+修改std::span的引用对象
 \end{center}
 
-There are various convenience functions to address the elements of the std::span.
+其实，有很多方便的函数可以用来处理std::span的元素。
 
-\subsubsubsection{5.2.5\hspace{0.2cm} Addressing std::span Elements}
+\subsubsubsection{5.2.5\hspace{0.2cm}处理std::span中的元素}
 
-The following table presents the functions to refer to the elements of a std::span.
+下表给出了用于引用std::span元素的接口。
 
 \begin{center}
-Interface of a std::span spse
+std::span spse的接口
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-Function         & Description                                         \\ \hline
-sp.front()       & Access the first element.                           \\
-sp.back()        & Access the last element.                            \\
-sp{[}i{]}        & Access the i-th element.                            \\
-sp.data()        & Returns a pointer to the beginning of the sequence. \\
-sp.size()        & Returns the number of elements of the sequence.     \\
-sp.size\_bytes() & Returns the size of the sequence in bytes.          \\
-sp.empty()       & Returns true if the sequence is empty.              \\
+接口         & 描述                                         \\ \hline
+sp.front()       & 访问第一个元素。                           \\
+sp.back()        & 访问最后一个元素。                            \\
+sp{[}i{]}        & 访问第i个元素。                            \\
+sp.data()        & 返回一个指向序列开头的指针。 \\
+sp.size()        & 返回元素的个数。     \\
+sp.size\_bytes() & 以字节为单位返回序列的大小。          \\
+sp.empty()       & 若为空，则返回true。              \\
 \begin{tabular}[c]{@{}l@{}}sp.first\textless{}count\textgreater{}()\\ sp.frist(count)\end{tabular} &
-Returns a subspan consisting of the first count elements of the sequence. \\
+返回由序列前count个元素组成的子span。 \\
 \begin{tabular}[c]{@{}l@{}}sp.last\textless{}count\textgreater{}()\\ sp.last(count)\end{tabular} &
-Returns a subspan consisting of the last count elements of the sequence. \\
+返回由序列后count个元素组成的子span。 \\
 \begin{tabular}[c]{@{}l@{}}sp.subspan\textless{}first, count\textgreater{}()\\ sp.subspan(first, count)\end{tabular} &
-Returns a subspan consisting of count elements starting at first.
+返回由first之后的count个元素组成的子span。
 \end{tabular}
 \end{table}
 
-The program subspan.cpp shows the usage of the member function subspan.
+subspan.cpp显示了成员函数subspan的用法。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Use of the member function subspan
+\textbf{使用成员函数subspan}
 \begin{lstlisting}[style=styleCXX]
 // subspan.cpp
 
@@ -283,43 +285,40 @@ int main() {
 }
 \end{lstlisting}
 
-Line 13 fills the vector with all numbers from 0 to 19 (line 13) using the algorithm \href{https://en.cppreference.com/w/cpp/algorithm/iota}{std::iota}. This vector is further used to initialize a std::span (line 18). Finally, the for loop (line 22) uses the function subspan to create all subspans starting at first and having count elements until mySpan is consumed.
+第13行使用算法\href{https://en.cppreference.com/w/cpp/algorithm/iota}{std::iota}用从0到19的所有数字填充vector(第13行)。这个vector用于初始化std::span(第18行)。最后，for循环(第22行)使用subspan函数创建子span，从第一个开始，直到使用mySpan为止，子span都包含count元素。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter5/images/8.png}\\
-Use of the member function subspan
+使用成员函数subspan
 \end{center}
 
-Kilian Henneberger reminded me of a special use case of std::span. A constant range of modifiable elements.
+Kilian Henneberger告诉我了一个std::span的特殊用例，可修改元素的常量范围。
 
-\subsubsubsection{5.2.6\hspace{0.2cm} A Constant Range of Modifiable Elements}
+\subsubsubsection{5.2.6\hspace{0.2cm}可修改元素的常量范围}
 
-For simplicity, I name a std::vector and a std::span a range. A std::vector, like a std::string models a modifiable range of modifiable elements: std::vector<T>. When you declare this std::vector as const, the range models a constant range of constant objects: const std::vector<T>. You cannot model a constant range of modifiable elements. Here comes std::span into play. A std::span models a constant range of modifiable objects: std::span<T>. The following table emphasizes the variations of (constant/modifiable) ranges and (constant/modifiable) elements.
+简单起见，我将std::vector和std::span命名为一个范围。与std::string类似，std::vector对可修改元素的可修改范围进行建模:std::vector<T>。当把这个std::vector声明为const时，范围模型就表示常量对象的常量范围:不能对可修改元素的常量范围进行建模。再来看看std::span。std::span对一个常量范围的可修改对象建模:std::span<T>。下表强调了(常量/可修改)范围和(常量/可修改)元素的变化。
 
 \begin{center}
-(Constant/modifiable) ranges of (constant/modifiable) elements
+(常量/可修改)元素的(常量/可修改)范围
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{lll}
 &
-\textbf{Modifiable Elements} &
-\textbf{Constant Elements} \\
-\textbf{Modifiable Ranges} &
+\textbf{可修改的元素} &
+\textbf{常量元素} \\ \hline
+\textbf{可修改的范围} &
 std::vector\textless{}T\textgreater{} &
-\\
-\textbf{Constant Ranges} &
+\\ \hline
+\textbf{常量范围} &
 std::span\textless{}T\textgreater{} &
 \begin{tabular}[c]{@{}l@{}}const std::vector\textless{}T\textgreater\\ std::span\textless{}const T\textgreater{}\end{tabular}
 \end{tabular}
 \end{table}
 
-The program constRangeModifiableElements.cpp exemplifies each combination.
+constRangeModifiableElements.cpp展示了每种组合。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-(Constant/modifiable) ranges of (constant/modifiable) elements
 \begin{lstlisting}[style=styleCXX]
 // constRangeModifiableElements.cpp
 
@@ -363,29 +362,29 @@ int main() {
 }
 \end{lstlisting}
 
-The vector dynamVec (line 21) is a modifiable range of modifiable elements. This observation does not hold for the vector constVec (line 27). Neither can constVec change an element nor its size. constSpan (line 30) behaves accordingly. dynamSpan models the unique use case of a constant range of modifiable elements.
+vector dynamVec(第21行)是可修改元素的可修改范围。这个观察结果不适用于vector constVec(第27行)，constVec不能改变元素的多少，constSpan(第30行)的行为也一样。dynamSpan为常量范围的可修改元素提供了一种方式。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter5/images/9.png}\\
-(Constant/modifiable) ranges of (constant/modifiable) elements
+(常量/可修改)元素的(常量/可修改)范围
 \end{center}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 
 \begin{itemize}
 \item 
-A std::span is an object that refers to a contiguous sequence of objects. A std::span, also known as view, is never an owner and, therefore, does not allocate memory. The contiguous sequence of objects can be a plain C-array, a pointer with a size, a std::array, a std::vector, or a std::string.
+std::span是一个引用连续对象序列的对象。std::span，也称为视图，从来不是数据的所有者，因此不分配内存。对象的连续序列可以是一个C数组、带内存长度的指针、std::array、std::vector或std::string。
 
 \item 
-In contrast to a C-array, a std::span automatically deduces the size of its referenced sequence of objects.
+与C数组相反，std::span可以自动推断其引用对象序列的长度。
 
 \item 
-When a std::span modifies its elements, the reference objects are also modified.
+std::span修改它的元素时，也会修改其引用的对象。
 \end{itemize}
 
 \end{tcolorbox}
 
-
+\newpage
 
 
 
