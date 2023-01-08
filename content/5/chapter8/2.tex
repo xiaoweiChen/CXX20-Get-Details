@@ -209,7 +209,7 @@ struct D: B{
 
 Both contract definitions of class D are erroneous. The contract of the member function D::f differs from the one from B::f. The member function D::g adds a contract to B::g.
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Closing Thoughts from Herb Sutter}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Closing Thoughts from Herb Sutter}]
 Contracts were planned to be part of C++20 but were delayed at least to C++23. Herb Sutter’s thoughts on \href{https://herbsutter.com/2018/07/02/trip-report-summer-iso-c-standards-meeting-rapperswil/}{Sutter’s Mill} give you an idea about their importance: “contracts is the most impactful feature of C++20 so far, and arguably the most impactful feature we have added to C++ since C++11.
 \end{tcolorbox}
 
@@ -243,7 +243,7 @@ The new reflection operator \$reflect is the crucial expression in the example. 
 
 When you invoke the function min with the argument min(12.34, 23.45), you get the following output:
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 function: min<double>(a: double = 12.34, b: double = 23.45)
 \end{tcblisting}
 

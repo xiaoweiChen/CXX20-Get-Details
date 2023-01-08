@@ -5,13 +5,13 @@ The coroutines library, the modularized standard library, and the executors have
 
 Coroutines in C++20 are no more than a framework for the implementation of concrete coroutines. This means that it is up to the software developer to implement coroutines. The \href{https://github.com/lewissbaker/cppcoro}{cppcoro} library from Lewis Baker gives the first idea how a library of coroutines could look like. His library provides what C++20 could not offer: high-level coroutines.
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Using cppcoro}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Using cppcoro}]
 The cppcoro library is based on the coroutines TS. The TS stands for technical specification and is the preliminary version of the coroutines functionality we get with C++20. Lewis will presumably port the cppcoro library from the coroutines TS to the coroutines defined in C++20. The library can be used on Windows (Visual Studio 2017) or Linux (Clang 5.0/6.0 and libc++). For my experiments, I used the following command line for all examples:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
 cppcoro command line
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 clang++ -std=c++17 -fcoroutines-ts -Iinclude -stdlib=libc++ libcppcoro.a
   cppcoroTask.cpp -pthread
 \end{tcblisting}

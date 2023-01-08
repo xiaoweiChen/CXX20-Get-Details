@@ -109,7 +109,7 @@ int main() {
 
 基于范围的for循环在第9行使用std::vector，在第15行使用std::initializer\_list，在第23行使用std::string。此外，在第9行和第15行中，类模板使用了C++17的自动类型推断(使用std::vector，而非std::vector<int>)。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 1 2 3
 
 1 4 9
@@ -158,7 +158,7 @@ int main() {
 
 第24行通过指针使用虚函数(后期绑定)，第28行通过引用使用虚函数。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 x1->f(): 4
 x2.f(): 4
 \end{tcblisting}
@@ -217,7 +217,7 @@ int main() {
 
 话不多说，下面是程序的输出:
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 char8String.size(): 10
 char8String2.size(): 11
 char8String2.size(): 12

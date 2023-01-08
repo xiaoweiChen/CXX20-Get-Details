@@ -3,7 +3,7 @@
 Cippi studies the calendar
 \end{center}
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Lack of Compiler Support}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Lack of Compiler Support}]
 	
 At the end of 2020, no C++ compiler supports the chrono extensions so far. Thanks to the prototype library \href{https://github.com/HowardHinnant/date}{date} from Howard Hinnant, which is essentially a superset of the extended time functionality in C++20, I can experiment with it. The library is hosted on GitHub. There are various ways to use the date prototype:
 
@@ -33,7 +33,7 @@ A time zone represents time specific to a geographic area.
 Essentially, the time-zone functionality (C++20) is based on the calendar functionality (C++20), and the calendar functionality (C++20) is based on the chrono functionality (C++11).
 
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Lack of Compiler Support}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Lack of Compiler Support}]
 	
 To get the most out of this section, a basic understanding of the chrono library is essential.
 C++11 introduced three main components to deal with time:
@@ -760,14 +760,14 @@ std::chrono::nonexistent\_local\_time & Exception which is thrown if a local tim
 
 I use in my examples the function std::chrono::zones\_time, which is essentially a time zone combined with a time point.
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Compilation of the examples}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Compilation of the examples}]
 	
 Before I show you two examples, I want to make a short remark. To compile a program using the time zone library, you have to compile the tz.cpp file from the \href{https://github.com/HowardHinnant/date}{date} library and link it against the \href{https://curl.se/}{curl} library. The curl library is necessary to get the current \href{https://www.iana.org/timezones}{IANA timezone database}. The following command line for g++ should give you the idea:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
 Compilation with the prototype library date
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 g++ localTime.cpp -I <Path to data/tz.h> tz.cpp -std=c++17 \
   -lcurl -o localTime
 \end{tcblisting}
@@ -948,7 +948,7 @@ std::chrono::parse: Parses a chrono object from a stream. \href{https://en.cppre
 std::formatter: Defines specializations for the various chrono types. Read the details on the format specification on std::formatter here \href{https://en.cppreference.com/w/cpp/chrono/system_clock/formatter#Format_specification}{cppreference.com/formatter}.
 \end{itemize}
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
 
 \begin{itemize}
 \item 

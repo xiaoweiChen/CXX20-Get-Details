@@ -5,7 +5,7 @@ Cippi waters the flowers
 
 Coroutines are functions that can suspend and resume their execution while keeping their state. The evolution of functions in C++ goes one step further.
 
-\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title={The Challenge of Understanding Coroutines}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={The Challenge of Understanding Coroutines}]
 	
 It was quite a challenge for me to understand coroutines. I strongly suggest that you should not read the sections in the chapter in sequence. Skip in your first iteration the sections “The Framework”, and “The Workflow”. Furthermore, read the case studies “Variations of Futures”, “Modification and Generalization of a Generator”, and “Various Job Workflows”. Reading, studying, and playing with the provided examples should give you an initial intuition need for you to actually dive into details and the workflow of coroutines.
 	
@@ -188,7 +188,7 @@ co\_yield, or a
 co\_await expression in a range-based for loop.
 \end{itemize}
 
-\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title={Distinguish Between the Coroutine Factory and the Coroutine Object}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={Distinguish Between the Coroutine Factory and the Coroutine Object}]
 	
 The term coroutine is often used for two different aspects of coroutines: the function invoking co\_return, co\_await, or co\_yield, and the coroutine object. Using one term for two different coroutine aspects may puzzle you (such as it did me). Let me clarify both terms.
 
@@ -314,7 +314,7 @@ check the state of the coroutine: coro (line 11).
 
 The coroutine is automatically destroyed when its function body ends. The call coro only returns true at its final suspension point.
 
-\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title={The resumable object requires an inner type promise\_type}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={The resumable object requires an inner type promise\_type}]
 A resumable object such as Generator must have an inner type promise\_type. Alternatively, you can specialize \href{https://en.cppreference.com/w/cpp/coroutine/coroutine_traits}{std::coroutine\_traits} on Generator and define a public member promise\_type in it: std::coroutine\_traits<Generator>.
 \end{tcolorbox}
 
@@ -523,7 +523,7 @@ awaiter = awaitable;
 \end{lstlisting}
 \end{enumerate}
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={awaiter = awaitable}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={awaiter = awaitable}]
 When you study my coroutine implementations in this chapter, you may notice that I use most of the time that an Awaitable implicitly becomes an Awaiter. Only the example to thread synchronization uses the co\_await operator to get the Awaiter.
 \end{tcolorbox}
 
@@ -780,7 +780,7 @@ MyFuture behaves as a \href{https://en.cppreference.com/w/cpp/thread/future}{fut
 
 There is one subtle difference to a future, the return value of the coroutine createFuture is available after its invocation. Due to the lifetime issues, the return value is managed by a std::shared\_ptr (lines 9 and 17). The coroutine always uses std::suspend\_never (lines 25, and 28) and, therefore, neither suspends before it runs nor after. This means the coroutine is executed when the function createFuture is invoked. The member function get\_return\_object (line 19) creates and stores the handle to the coroutine object, and return\_value (lines 22) stores the result of the coroutine, which was provided by co\_return 2021 (line 38). The client invokes fut.get (line 46) and uses the future as a handle to the promise. The member function get returns the result to the client (line 13).
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 fut.get(): 2021
 \end{tcblisting}
 
@@ -1041,7 +1041,7 @@ int main() {
 
 You may think that the coroutine prepareJob (line 37) is meaningless because the Awaitable always suspends. No! The function prepareJob is at least a coroutine factory using co\_await (line 38) and returning a coroutine object. The function call prepareJob() in line 45 creates the coroutine object of type Job. When you study the data type Job, you recognize that the coroutine object is immediately suspended, because the member function of the promise returns the Awaitable std::suspend\_always (line 23). This is exactly the reason why the function call job.start (line 46) is necessary to resume the coroutine (line 15). The member function final\_suspend also returns std::suspend\_always (line 27).
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 Before job
     Preparing job
     Performing job
@@ -1226,7 +1226,7 @@ means the following resume call on the waiter in line 84 is not executed. The su
 
 In the second workflow, the co\_await event2 call happens before event2 sends its notification. co\_wait event2 triggers the call await\_ready (line 51). The big difference with the first workflow is that event.notified is false. This false value causes the suspension of the coroutine. Technically, method await\_suspend (lines 63 - 73) is executed. await\_suspend gets the coroutine handle corHandle and stores it for later invocation in the variable coroutineHandle (line 65). Of course, later invocation means resumption. Second, the waiter is stored in the variable suspendedWaiter. When later event2.notify triggers its notification, method notify (line 75) is executed. The difference with the first workflow is that the condition waiter != nullptr evaluates to true. The result is that the waiter uses the coroutineHandle to resume the coroutine.
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
 	
 \begin{itemize}
 \item 

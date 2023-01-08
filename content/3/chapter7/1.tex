@@ -4,7 +4,7 @@
 Cippi plays ping-pong
 \end{center}
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={The Reference PCs}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={The Reference PCs}]
 You should take the performance numbers with a grain of salt. I’m not interested in the exact number for each variation of the algorithms on Linux and Windows. I’m more interested in getting a gut feeling of which algorithms may work and which algorithms may not work. I’m not comparing the absolute numbers of my Linux desktop with the numbers on my Windows laptop, but I’m interested to know if some algorithms work better on Linux or Windows.
 \end{tcolorbox}
 
@@ -12,7 +12,7 @@ When you want to synchronize threads more than once, you can use condition varia
 
 To get comparable numbers, I implement a ping-pong game. One thread executes a ping function (or ping thread for short), and the other thread a pong function (or pong thread for short). The ping thread waits for the pong-thread notification and sends the notification back to the pong thread. The game stops after 1,000,000 ball changes. I perform each game five times to get comparable performance numbers.
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={About the Numbers}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={About the Numbers}]
 I made my performance test at the end of 2020 with the brand new Visual Studio compiler 19.28 because it already supported synchronization with atomics (std::atomic\_flag and std::atomic) and semaphores. Additionally, I compiled the examples with maximum optimization (/Ox). The performance number should only give a rough idea of the relative performance of the various ways to synchronize threads. When you want the exact number on your platform, you have to repeat the tests.
 \end{tcolorbox}
 

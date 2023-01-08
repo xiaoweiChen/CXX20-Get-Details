@@ -154,7 +154,7 @@ constexpr ranges::borrowed_iterator_t<R> sort( R&& r, Comp comp = {}, Proj proj 
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{数据类型——应用投影}
+\textbf{应用投影——数据类型}
 \begin{lstlisting}[style=styleCXX]
 // rangeProjection.cpp
 
@@ -198,24 +198,24 @@ int main() {
 }
 \end{lstlisting}
 
-phoneBook (line 23) has structs of type PhoneBookEntry (line 8). A PhoneBookEntry consists of a name and a number. Thanks to projections, the phoneBook can be sorted in ascending order by name (line 26), descending order by name (line 29), ascending order by number (line 33), and descending order by number (line 36).
+phoneBook(第23行)有PhoneBookEntry类型的结构体(第8行)。PhoneBookEntry由名称和一个数字组成。 由于有了投影，phoneBook可以按照姓名升序(第26行)、姓名降序(第29行)、数字升序(第33行)和数字降序(第36行)进行排序。
 
 \begin{center}
 \includegraphics[width=1.0\textwidth]{content/3/chapter5/images/1-1.png}\\
-Applying projections on data types
+应用投影——数据类型
 \end{center}
 
-Most ranges algorithms support projections.
+大多数范围算法都支持投影。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-5.1.2.2\hspace{0.2cm} Direct Views on Keys and Values
+\textbf{5.1.2.2\hspace{0.2cm}键和值的视图}
 
-Furthermore, you can create direct views on the keys (line 16) and the values (line 24) of a std::unordered\_map.
+此外，还可以在std::unordered\_map的键(第16行)和值(第24行)上创建视图。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Views on the keys and the values of a std::unordered\_map
+\textbf{std::unordered\_map键和值的视图}
 \begin{lstlisting}[style=styleCXX]
 // rangesEntireContainer.cpp
 
@@ -249,9 +249,9 @@ std::unordered_map<std::string, int> freqWord{ {"witch", 25}, {"wizard", 33},
 }
 \end{lstlisting}
 
-Of course, the keys and values can be displayed directly (lines 19 and 27). The output is identical.
+当然，键和值可以直接显示(第19和27行)，输出是相同的。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 Keys:
 fish cat dog tale wizard witch
 fish cat dog tale wizard witch
@@ -261,19 +261,15 @@ Values:
 23 34 4 45 33 25
 \end{tcblisting}
 
-\begin{center}
-Views on the keys and values of a std::unordered\_map
-\end{center}
+直接在容器上工作可能没什么，但支持函数组合和惰性计算则是让人眼前一亮的。
 
-Working directly on the container might be not so thrilling, but function composition and lazy evaluation are.
+\subsubsubsection{5.1.3\hspace{0.2cm}函数组合}
 
-\subsubsubsection{5.1.3\hspace{0.2cm} Function Composition}
-
-In the example rangesComposition.cpp, I use a std::map, because the ordering of the keys is crucial.
+rangesComposition.cpp中，使用的是std::map，因为键的顺序至关重要。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Composition of views
+\textbf{视图的组成}
 \begin{lstlisting}[style=styleCXX]
 // rangesComposition.cpp
 
@@ -315,39 +311,35 @@ int main() {
 }
 \end{lstlisting}
 
-I’m only interested in the keys. I display all of them (line 15), all of them reversed (line 20), the first four (line 26), and the keys starting with the letter ‘w’ (line 32).
+我只对键感兴趣。所以，这里显示了所有的键(第15行)、反向的键(第20行)、前四行(第26行)以及以字母“w”开头的键(第32行)。
 
-Finally, here is the output of the program.
+这里是程序的输出。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 All words: cat dog fish tale witch wizard
 All words, reversed: wizard witch tale fish dog cat
 The first 4 words: cat dog fish tale
 All words starting with w: witch wizard
 \end{tcblisting}
 
-\begin{center}
-Composition of views
-\end{center}
-
-The pipe symbol | is \href{https://en.wikipedia.org/wiki/Syntactic_sugar}{syntactic sugar} for function composition. Instead of C(R) you can write R | C. Consequently, the next three lines are equivalent.
+管道符号|属于\href{https://en.wikipedia.org/wiki/Syntactic_sugar}{语法糖}，用于组合函数。组合的方式不是C(R)，而可以写R | C。因此，下面的三行代码是等效的。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Three syntactic forms of function composition
+\textbf{函数组合的三种句法形式}
 \begin{lstlisting}[style=styleCXX]
 auto rev1 = std::views::reverse(std::views::keys(freqWord));
 auto rev2 = std::views::keys(freqWord) | std::views::reverse;
 auto rev3 = freqWord | std::views::keys | std::views::reverse;
 \end{lstlisting}
 
-\subsubsubsection{5.1.4\hspace{0.2cm} Lazy Evaluation}
+\subsubsubsection{5.1.4\hspace{0.2cm}惰性计算}
 
-std::views::iota is a range factory for creating a sequence of elements by successively incrementing an initial value. This sequence can be finite or infinite. The program rangesIota.cpp fills a std::vector with 10 int’s, starting with 0.
+std::views::iota是一个范围工厂，通过连续递增一个初始值来创建一个元素序列。这个序列可以有限，也可以无限。rangesIota.cpp用10个int填充std::vector，从0开始。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Using std::views::iota to fill a std::vector
+\textbf{使用std::views::iota填充std::vector}
 \begin{lstlisting}[style=styleCXX]
 // rangesIota.cpp
 
@@ -374,22 +366,15 @@ int main() {
 }
 \end{lstlisting}
 
-The first iota call (line 15) creates all numbers from 0 to 9, incremented by 1. The second iota call (line 17) creates an infinite data stream, starting with 0, incremented by 1. std::views::iota(0) is lazy. I only get a new value if I ask for it. I ask for it ten times. Consequently, both vectors are identical.
+第一个iota调用(第15行)创建从0到9的所有数字，加1。第二个iota调用(第17行)创建一个无限数据流，从0开始，加1。std::views::iota(0)是惰性的。只有当请求时，才会得到一个新值。我请求了十次。因此，两个vector是相同的。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 vec == vec2: true
 0 1 2 3 4 5 6 7 8 9
 \end{tcblisting}
 
-\begin{center}
-Using std::views::iota to fill a std::vector
-\end{center}
+现在，我想来个小挑战:找出以1,000,000以内，前20个质数。
 
-Now, I want to solve a small challenge: finding the first 20 prime numbers starting with 1,000,000.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-The first 20 prime numbers starting with 1’000’000
 \begin{lstlisting}[style=styleCXX]
 // rangesLazy.cpp
 
@@ -441,40 +426,40 @@ int main() {
 }
 \end{lstlisting}
 
-This is my iterative strategy:
+这是我的迭代策略:
 
 \begin{itemize}
 \item 
-line 18: Of course, I don’t know when I have 20 primes greater than 1000000. To be on the safe side, I create 1000 numbers. For obvious reasons, I displayed only each 100th.
+第18行:我不知道什么时候有20个大于1000000的质数。安全起见，我创建了1000个数字。为了方便观察，每次只展示100个。
 
 \item 
-line 27: I’m only interested in the odd numbers; therefore, I remove the even numbers.
+第27行：我只对奇数感兴趣;因此，去掉偶数。
 
 \item 
-line 34: Now, it’s time to apply the next filter. The predicate isPrime (line 7) returns if a number is prime. As you can see in the following screenshot, I was too eager. I got 75 primes.
+第34行:现在，是时候应用下一个filter了，谓词isPrime(第7行)返回一个数字是否为素数。正如下面的截图所示，获得了75个质数。
 
 \item 
-line 42: Laziness is a virtue. I use std::iota as an infinite number factory, starting with 1000000 and ask precisely for 20 primes.
+第42行:懒惰是一种美德。我使用std::iota作为无限大的数字工厂，从1000000开始，精确地要求20个质数。
 \end{itemize}
 
 \begin{center}
 \includegraphics[width=1.0\textwidth]{content/3/chapter5/images/1-2.png}\\
-The first 20 prime numbers, starting with 1,000,000
+找出以1,000,000以内，前20个质数
 \end{center}
 
-\subsubsubsection{5.1.5\hspace{0.2cm} Define a View}
+\subsubsubsection{5.1.5\hspace{0.2cm}定义视图}
 
-You can define your own view.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-5.1.5.1\hspace{0.2cm} std::ranges::view\_interface
-
-Thanks to the \href{https://en.cppreference.com/w/cpp/ranges/view_interface}{std::ranges::view\_interface} helper class, defining a view is easy. To fulfil the concept view, your view needs at least a default constructor, and member functions begin() and end():
+也可以自定义视图。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Your own view
+\textbf{5.1.5.1\hspace{0.2cm} std::ranges::view\_interface}
+
+由于有了\href{https://en.cppreference.com/w/cpp/ranges/view_interface}{std::ranges::view\_interface}辅助类，更容易对视图进行定义。为了实现视图，自定义视图至少需要一个默认构造函数，以及成员函数begin()和end():
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{你的视图}
 \begin{lstlisting}[style=styleCXX]
 class MyView : public std::ranges::view_interface<MyView> {
 public:
@@ -483,18 +468,19 @@ public:
 };
 \end{lstlisting}
 
-By deriving MyView public from the helper class std::ranges::view\_interface using itself as a template parameter, MyView becomes a view. This technique of class template having itself as a template parameter is called \href{https://www.modernescpp.com/index.php/c-is-still-lazy}{Curiously Recurring Template Pattern} (short CRTP).
+通过从辅助类std::ranges::view\_interface中public派生的MyView ，并将其作为模板参数，MyView变成了一个视图。这种将类模板本身作为模板参数的技术称为\href{https://www.modernescpp.com/index.php/c-is-still-lazy}{奇异的循环模板模式}(简称CRTP)。
 
-I use this technique in the next example to create a view out of a container of the Standard Template Library.
+下一个示例中，我将使用这种技术和标准模板库的容器创建一个视图。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-5.1.5.2\hspace{0.2cm} A Container View
+\textbf{5.1.5.2\hspace{0.2cm}容器视图}
 
-The view ContainerView creates a view on an arbitrary container.
+视图ContainerView在任意容器上创建一个视图。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Creating a view from a container
+\textbf{创建容器的视图}
 \begin{lstlisting}[style=styleCXX]
 // containerView.cpp
 
@@ -560,84 +546,85 @@ int main() {
 }
 \end{lstlisting}
 
-The class template ContainerView (line 8) derives from the helper class std::ranges::view\_interface and requires that the container support the concept std::ranges::view (line 9). The remaining, minimal implementation is straightforward. ContainerView has a default constructor (line 17), and the two required member functions begin() (line 22) and end() (line 25). For convenience, I added a user-defined deduction guide for class template argument deduction (line 32).
+类模板ContainerView(第8行)派生自辅助类std::ranges::view\_interface，并且要求容器支持std::ranges::view(第9行)。剩下的最小的实现很简单，ContainerView有一个默认构造函数(第17行)，两个必需的成员函数begin()(第22行)和end()(第25行)。为了方便起见，我添加了一个用户定义的类模板参数推断指南(第31行)。
 
-In the main function, I apply the ContainerView on a std::vector (line 37) and a std::string (line 49) and iterate through them forwards and backward.
+main函数中，我将在std::vector(第37行)和std::string(第49行)上使用ContainerView，并向前和向后遍历它们。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter5/images/1-3.png}\\
-Creating a view from a container
+创建容器的视图
 \end{center}
 
-Let me add a few words to the class template argument deduction guide.
+这里提到了“类模板参数推断指南”，对于这个概念容我多说几句。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Class Template Argument Deduction Guide}]
-Since C++17, the compiler can deduce template parameters from template arguments. The template deduction guide is a pattern for the compiler to deduce the template arguments.
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={类模板参数推断指南}]
+	
+C++17开始，编译器可以从模板实参推导出模板形参。模板推导指南是编译器用于推导模板参数的模式。
 
-When you use ContainerView(myVec), the compiler applies the following user-defined deduction guide:
+当使用ContainerView(myVec)时，编译器应用以下用户定义的推导指南:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-User-Defined Deduction Guide for ContainerView
+\textbf{ContainerView中用户自定义的推导指南}
 \begin{lstlisting}[style=styleCXX]
 template<class Range>
 ContainerView(Range&& range) -> ContainerView<std::ranges::views::all_t<Range>>;
 \end{lstlisting}
 
-Essentially, a call Container(myVec) causes the compiler to instantiate the code on the right of the arrow ->:
+本质上，使用Container(myVec)会导致编译器实例化箭头->右侧的代码:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Applying the deduction guide for Container(myVec)
+应用容器推导指南(myVec)
 \begin{lstlisting}[style=styleCXX]
 ContainerView<std::ranges::views::all_t<std::vector<int>&>>(myVec);
 \end{lstlisting}
 
-\href{https://en.cppreference.com/w/cpp/language/class_template_argument_deduction}{cppreference.com} provides more information to the user-defined deduction guide for class templates.
+\href{https://en.cppreference.com/w/cpp/language/class_template_argument_deduction}{cppreference.com}提供了类模板的用户定义推导指南的更多信息。
 \end{tcolorbox}
 
-In the next section on the ranges library, I want to perform a small experiment. Can I add a flavor of Python into C++?
+在关于范围库的下一节中，我想进行一个小实验。可以在C++中加入Python吗?
 
-\subsubsubsection{5.1.6\hspace{0.2cm} A Flavor of Python}
+\subsubsubsection{5.1.6\hspace{0.2cm}Python的味道}
 
-The programming language \href{https://www.python.org/}{Python} has the convenient functions filter and map.
-
-\begin{itemize}
-\item 
-filter: applies a predicate to all elements of an iterable and returns those elements for which the predicate returns true
-
-\item 
-map: applies a function to all elements of an iterable and returns a new iterable with the transformed elements
-\end{itemize}
-
-An iterable in C++ would be a type that you could use in a range-based for loop.
-
-Furthermore, Python lets you combine both functions in a list comprehension.
+编程语言\href{https://www.python.org/}{Python}具有方便的过滤器和映射函数。
 
 \begin{itemize}
 \item 
-list comprehension: applies a filter and map phase to an iterable and returns a new iterable
+过滤器(Filter):对可迭代对象的所有元素应用谓词，并返回谓词返回true的那些元素
+
+\item 
+映射函数(Map):对可迭代对象的所有元素使用一个函数，并返回一个包含转换后元素的新可迭代对象
 \end{itemize}
 
-Here is my challenge: I want to implement Python-like functions filter, map, and list comprehension in C++20 using the ranges library.
+C++中的可迭代对象，也可以在基于范围的for循环中使用。
+
+此外，Python允许列表解析中组合这两个函数。
+
+\begin{itemize}
+\item 
+列表解析:将过滤器和映射应用于可迭代对象，并返回一个新的可迭代对象
+\end{itemize}
+
+这就是我的挑战:尝试在C++20中使用范围库实，现类似Python的函数过滤器、映射，以及列表解析。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-5.1.6.1\hspace{0.2cm} filter
+\textbf{5.1.6.1\hspace{0.2cm}filter}
 
-Python’s filter function can be directly mapped to the corresponding ranges function.
+Python的filter函数可以直接映射到相应的范围函数。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Python’s filter function in C++
+\textbf{C++中与Python对应的filter函数}
 \begin{lstlisting}[style=styleCXX]
 / filterRanges.cpp
 
 #include <iostream>
- #include <numeric>
- #include <ranges>
- #include <string>
- #include <vector>
+#include <numeric>
+#include <ranges>
+#include <string>
+#include <vector>
 
 template <typename Func, typename Seq>
 auto filter(Func func, const Seq& seq) {
@@ -674,29 +661,30 @@ int main() {
 }
 \end{lstlisting}
 
-Before I write a few words about the program, let me show you the output.
+在介绍程序之前，先展示一下输出效果。
 
-\begin{tcblisting}{commandshell={}}
+\hspace*{\fill} \\ %插入空行
+\begin{tcblisting}{breakable,commandshell={}}
 3 6 9 12 15 18 21 24 27 30 33 36 39 42 45 48
 
 Only
 \end{tcblisting}
 
 \begin{center}
-The filter function applied
+应用过滤函数
 \end{center}
 
-The filter function (line 9) should be easy to read. Line 12 detects the type of the underlying element. I just apply the callable func to each element of the sequence and return the elements in the std::vector. Line 27 selects all numbers i from 1 to 50 for which (i \% 3) == 0 holds. Only the strings that start with an uppercase letter can pass the filter in line 32.
+filter函数(第9行)可读性还是不错的，第12行检测底层元素的类型。我只是将func应用到序列的每个元素，并返回std::vector中的元素。第27行选择从1到50的所有数字i，i需要满足条件(i \% 3) == 0。只有以大写字母开头的字符串，才能通过第32行中的过滤器。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-5.1.6.2\hspace{0.2cm} map
+\textbf{5.1.6.2\hspace{0.2cm}map}
 
-map applies a callable to each element of the input sequence.
+map对输入序列的每个元素，使用同一个可调用对象。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Python’s map function in C++
+\textbf{C++中与Python对应的map}
 \begin{lstlisting}[style=styleCXX]
 / mapRanges.cpp
 
@@ -742,29 +730,25 @@ int main() {
 }
 \end{lstlisting}
 
-Line 15 in the definition of the map function is quite interesting. The expression decltype(func( std::declval<value\_type>())) deduces the return\_type. The return\_type is the type to which all elements of the input sequence are transformed if the function func is applied to them. std::declval<value\_type>() returns an rvalue reference that decltype can use to deduce the type. This means the call map([](int i){ return i * i; }, myInts) (line 28) maps each element of myInt to its square and the call map([](const std::string\& s){ return std::make\_pair(s.size(), s); }, myStrings) maps each string of myStrings to a pair. The first element of each pair is the length of the string.
+map函数定义中的第15行非常有趣。表达式decltype(func(std::declval<value\_type>()))推导出return\_type。若函数func应用于输入序列的所有元素，则输入类型将转换为return\_type。std::declval<value\_type>()返回一个右值引用，decltype可以使用它来推断类型。所以，使用map([](int i)\{return i * i;\}, myInts)(第28行)将myInt的每个元素映射为其平方值，并且使用map([](const std::string\& s)\{return std::make\_pair(s.s .size(), s);\}, myStrings)将myStrings中的每个字符串映射到为pair，每对的第一个元素是字符串的长度。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable, commandshell={}}
 1 4 9 16 25 36 49 64 81 100
 
 (4, Only) (3, for) (7, testing) (8, purposes)
 \end{tcblisting}
 
-\begin{center}
-The map function applied
-\end{center}
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{5.1.6.3\hspace{0.2cm}列表解析}
+
+listComprehensionRanges.cpp是对Python列表解析算法实现的简化版本。
+
+map对输入序列的每个元素使用同一个可调用对象。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-5.1.6.3\hspace{0.2cm} List Comprehension
-
-The program listComprehensionRanges.cpp has a simplified version of Python’s list-comprehension algorithm.
-
-map applies a callable to each element of the input sequence.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-A simplified variant of Python’s list comprehension in C++
+\textbf{C++中Python列表解析的简化实现}
 \begin{lstlisting}[style=styleCXX]
 // listComprehensionRanges.cpp
 
@@ -835,11 +819,11 @@ int main() {
 }
 \end{lstlisting}
 
-The default predicate that the filter function applies (line 19) always returns true (line 12). Always true means that the function mapFilter simply behaves by default as a map function. Consequently, the mapFilter function behaves in lines 37 and 49 as does the previous map function. Line 42 and 55 apply both functions map and filter in one call.
+过滤器函数使用的默认谓词(第19行)总是返回true(第12行)，所以mapFilter函数在默认情况下只是作为一个映射函数。因此，mapFilter函数在第38行和第50行中的行为与前面的map函数相同。第42和55行在一次调用中同时应用map和filter函数。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 1 4 9 16 25 36 49 64 81 100
-	
+
 1 9 25 49 81
 
 (4, Only) (3, for) (7, testing) (8, purposes)
@@ -848,25 +832,25 @@ The default predicate that the filter function applies (line 19) always returns 
 \end{tcblisting}
 
 \begin{center}
-Both functions map and filter applied
+同时应用了map和filter函数
 \end{center}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 \begin{itemize}
 \item 
-The ranges library provides us with an additional version of the STL algorithms. The ranges library algorithms are lazy, can work directly on containers and can be composed.
+范围库为我们提供了STL算法的特殊版本。范围库算法是惰性的，可以直接工作在容器上，并且可以组合。
 
 \item 
-The algorithm of the ranges library
+范围库的算法
 \begin{itemize}
 \item 
-are lazy and can, therefore, be invoked on infinite data streams.
+惰性，因此可以在无限的数据流上调用。
 
 \item 
-can operate directly on the container and don’t need a range defined by two iterators.
+可以直接操作容器，不需要由两个迭代器定义的范围。
 
 \item 
-can be composed using the pipe (|) symbol.
+可以使用管道(|)符号组合。
 \end{itemize}
 \end{itemize}
 \end{tcolorbox}	

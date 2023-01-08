@@ -327,7 +327,7 @@ wait                            & yes & yes & yes & yes
 
 A \href{https://en.cppreference.com/w/cpp/memory/shared_ptr}{std::shared\_ptr} consists of a control block and its resource. The control block is thread-safe, but access to the resource is not. This means modifying the reference counter is an atomic operation and you have the guarantee that the resource is deleted exactly once. These are the guarantees std::shared\_ptr gives you.
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={The Importance of being Thread-Safe}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={The Importance of being Thread-Safe}]
 	
 I want to take a short detour to emphasize how important it is that the std::shared\_ptr has well-defined multithreading semantics. At first glance, use of a std::shared\_ptr does not appear to be a sensible choice for multithreaded code. It is by definition shared and mutable and is the ideal candidate for non-synchronized read and write operations and hence for undefined behavior. On the other hand, there is the guideline in modern C++: Don’t use raw pointers. This means, consequently, that you should use smart pointers in multithreaded programs.
 	
@@ -683,7 +683,7 @@ As before, here are four runs with the Microsoft Compiler.
 Thread synchronization with std::atomic<bool>
 \end{center}
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Condition Variables versus Promise/Future Pairs versus std::atomic\_flag}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Condition Variables versus Promise/Future Pairs versus std::atomic\_flag}]
 	
 When you only need a one-time notification, such as in the previous program threadSynchronizationConditionVariable.cpp, promises and futures are a better choice than condition variables. Promises and futures cannot be victims of spurious or lost wakeups.
 Furthermore, there is neither a need to use locks or mutexes, nor is there a need to use a predicate to protect against spurious or lost wakeups. There is only one downside to using promises and futures: they can only be used once.
@@ -694,7 +694,7 @@ I’m not sure if I would use a future/promise pair or atomics such as std::atom
 \end{tcolorbox}
 
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
 	
 \begin{itemize}
 \item 

@@ -303,7 +303,7 @@ Automatically Resuming the Awaiter on a Separate Thread
 
 Let me discuss the interesting control flow of the program. Line 59 creates eight default-constructed threads, which the coroutine performJob (line 53) takes by reference. Further, the reference becomes the argument for creating MyAwaitable\{out\} (line 54). Depending on the value of res (line 17), and, therefore, the return value of the function await\_ready, the Awaitable continues (res is true) to run or is suspended (res is false). In case MyAwaitable is suspended, the function await\_suspend (line 22) is executed. Thanks to the assignment of outerThread (line 23), it becomes a running thread. The running threads must outlive the lifetime of the coroutine. For this reason, the threads have the scope of the main function.
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
 	
 \begin{itemize}
 \item 

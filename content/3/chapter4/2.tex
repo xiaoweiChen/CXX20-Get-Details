@@ -442,7 +442,7 @@ Microsoft的编译器
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{使用Microsoft编译器构建可执行文件}
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 cl.exe /experimental:module /c math.ixx
 cl.exe /experimental:module client.cpp math.obj
 \end{tcblisting}
@@ -485,7 +485,7 @@ export int add(int fir, int sec){
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{使用Clang编译器构建可执行文件}
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 clang++ -std=c++2a -stdlib=libc++ -c math.cpp -Xclang -emit-module-interface \
    -o math.pcm
 
@@ -696,7 +696,7 @@ int main() {
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{用模块接口单元和模块实现单元构建模块}
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 cl.exe /c /experimental:module mathInterfaceUnit.ixx /EHsc
 cl.exe /c /experimental:module mathImplementationUnit.cpp /EHsc
 cl.exe /c /experimental:module client3.cpp /EHsc
@@ -802,7 +802,7 @@ int main() {
 	
 模块和其子模块如何一同构建可执行文件
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 cl.exe /c /experimental:module mathModule1.ixx /EHsc
 cl.exe /c /experimental:module mathModule2.ixx /EHsc
 cl.exe /c /experimental:module mathModule.ixx /EHsc
@@ -1102,7 +1102,7 @@ int main() {
 
 头文件单元有一个缺点，并非所有的头文件都是可导入的。哪些头文件可导入\href{https://en.cppreference.com/w/cpp/language/ub}{已经定义好了}，但是C++标准保证所有标准库头文件都是可导入的头文件。导入功能排除了C头文件，它们只是简单包装在std名称空间中而已，例如<cstring>是<string.h>的C++包装器。可以很容易地识别包装的C头文件，因为其模式是:xxx.h包装为cxxx。
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={使用Microsoft编译器构建可执行文件}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={使用Microsoft编译器构建可执行文件}]
 
 \begin{itemize}
 \item 

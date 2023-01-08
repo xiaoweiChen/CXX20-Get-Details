@@ -1,12 +1,13 @@
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter5/images/3.png}\\
-Cippi walks the dog
+Cippi在遛狗
 \end{center}
 
 A std::span stands for an object that refers to a contiguous sequence of objects. A std::span, sometimes also called a view, is never an owner. This contiguous sequence of objects can be a plain C-array, a pointer with a size, a std::array, a std::vector, or a std::string.
 
 A std::span can have a static extent or a dynamic extent. By default, std::span has a dynamic extent:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Definition of std::span
 \begin{lstlisting}[style=styleCXX]
@@ -22,6 +23,7 @@ Implementing a std::span with a dynamic extent consists of a pointer to the firs
 
 The next example staticDynamicExtentSpan.cpp emphasizes the differences between both kinds of views.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 std::spans with static and dynamic extent
 \begin{lstlisting}[style=styleCXX]
@@ -74,6 +76,7 @@ One important reason for having a std::span<T> is that a plain C-array \href{htt
 
 In contrast to a C-array, std::span<T> automatically deduces the size of contiguous sequences of objects.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 A std::span automatically deduces the size of its referenced sequence of object
 \begin{lstlisting}[style=styleCXX]
@@ -122,6 +125,7 @@ There are more ways to create a std::span.
 
 You can create a std::span from a pointer and a size.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Create a std::span
 \begin{lstlisting}[style=styleCXX]
@@ -159,7 +163,7 @@ As you may expect, mySpan1, created from the std::vector (line 15), and mySpan2,
 Create a std::span from a pointer and a size
 \end{center}
 
-\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title={A std::span is neither a std::string\_view nor a view}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={A std::span is neither a std::string\_view nor a view}]
 You may remember that a std::span is sometimes called a view. Don’t confuse a std::span with a view from the ranges library or a \href{https://www.modernescpp.com/index.php/c-17-what-s-new-in-the-library}{std::string\_view}.
 
 A view from the ranges library is something that you can apply on a range and performs some operation. A view does not own data, and its time for each copy, move, and assignment is constant. A std::span and a std::string\_view are non-owning views and can deal with strings.
@@ -173,6 +177,7 @@ You can modify an entire span or only a subspan. When you modify a span, you mod
 
 The following program shows how a subspan can be used to modify the referenced objects from a std::vector.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Modify the objects referenced by a std::span
 \begin{lstlisting}[style=styleCXX]
@@ -251,6 +256,7 @@ Returns a subspan consisting of count elements starting at first.
 
 The program subspan.cpp shows the usage of the member function subspan.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Use of the member function subspan
 \begin{lstlisting}[style=styleCXX]
@@ -317,6 +323,7 @@ std::span\textless{}T\textgreater{} &
 
 The program constRangeModifiableElements.cpp exemplifies each combination.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 (Constant/modifiable) ranges of (constant/modifiable) elements
 \begin{lstlisting}[style=styleCXX]
@@ -369,7 +376,7 @@ The vector dynamVec (line 21) is a modifiable range of modifiable elements. This
 (Constant/modifiable) ranges of (constant/modifiable) elements
 \end{center}
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
 
 \begin{itemize}
 \item 
@@ -385,7 +392,6 @@ When a std::span modifies its elements, the reference objects are also modified.
 \end{tcolorbox}
 
 
-\newpage
 
 
 

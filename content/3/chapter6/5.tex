@@ -7,7 +7,7 @@ The additional functionality of the cooperative interruption thread is based on 
 
 First, why it is not a good idea to kill a thread?
 
-\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title={Killing a Thread is Dangerous}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={Killing a Thread is Dangerous}]
 	
 Killing a thread is dangerous because you don’t know the state of the thread. Here are two possible malicious outcomes.
 
@@ -300,7 +300,7 @@ int main(){
 
 The receiver thread (lines 17 - 29) is waiting for the notification of the sender thread (lines 31 - 41). Before the sender thread sends its notification in line 39, the main thread triggered a stop request in line 50. The output of the program shows that the stop request happened before the notification.
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 Waiting
 Stop request received
 Send notification
@@ -310,7 +310,7 @@ Send notification
 Sending a stop request to a condition variable
 \end{center}
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
 	
 \begin{itemize}
 \item 

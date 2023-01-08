@@ -68,7 +68,7 @@ int main() {
 
 现在，问题来了。泛型构造函数(第7行)是一个全能构造函数，可以接受任何类型。但构造函数太贪婪了，可以通过在构造函数(第14行)前面放置explicit关键字，避免隐式转换(第31和33行)，只有显式调用(第32和34行)的方式是有效的。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 implicit
 implicit
 1998
@@ -246,7 +246,7 @@ void FunctionTemplate() {
 
 StringLiteral是一个文字类型，因此可以用作ClassTemplate(第15行)和FunctionTemplate(第18行)的非类型模板参数。constexpr构造函数(第9行)接受C-string作为参数。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 string literal
 \end{tcblisting}
 

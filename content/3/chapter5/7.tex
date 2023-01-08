@@ -7,7 +7,7 @@ Cippi goes up
 
 std::bind\_front (Func\&\& func, Args\&\& ... args) creates a callable wrapper for a callable func. std::bind\_front can have an arbitrary number of arguments and binds its arguments to the front.
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={std::bind\_front versus std::bind}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={std::bind\_front versus std::bind}]
 	
 Since C++11, we have had \href{https://en.cppreference.com/w/cpp/utility/functional/bind}{std::bind} and \href{https://en.cppreference.com/w/cpp/language/lambda}{lambda expressions}. With C++20, we get \href{https://en.cppreference.com/w/cpp/utility/functional/bind_front}{std::bind\_front}. This may make you wonder. To be pedantic std::bind is available since the \href{https://en.wikipedia.org/wiki/C%2B%2B_Technical_Report_1}{Technical Report 1} (TR1). std::bind and lambda expressions can be used as a replacement of std::bind\_front. Furthermore, std::bind\_front seems like the little sister of std::bind, because only std::bind supports the rearranging of arguments. Of course, there is a reason to use std::bind\_front in the future: in contrast to std::bind, std::bind\_front propagates the exception specification of the underlying call operator.
 	
@@ -60,7 +60,7 @@ int main() {
 
 Each call (lines 18, 21, 24, 31, and 34) gets a callable taking two arguments and returns a callable taking only one argument because the first argument is bound to 2000. The callable is a function (line 18), a lambda expression (line 21), and a predefined function object (line 24). Parameter \_1 is a socalled placeholder (line 31) and stands for the missing argument. With lambda expression (line 34), you can directly apply one argument and provide an argument b for the missing parameter. From the readability perspective, std::bind\_front may be easier to read than std::bind or a lambda expression.
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 twoThousandPlus1(20): 2020
 twoThousandPlus2(20): 2020
 twoThousandPlus3(20): 2020
@@ -219,7 +219,7 @@ int main()
 
 The output of the program is part of its source code.
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
 
 \begin{itemize}
 \item 

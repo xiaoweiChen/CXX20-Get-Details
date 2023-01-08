@@ -209,7 +209,7 @@ template<class I>
 标准模板库
 \end{center}
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={泛型编程的本质}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={泛型编程的本质}]
 我想引用Alexander Stepanov(标准模板库的创建者)和Daniel Rose(信息检索研究员)写的书\href{https://www.fm2gp.com/}{From Mathematics to Generic Programming}中的一段话来开始这段简短的回顾:“泛型编程的本质在于概念的思想，概念是描述一系列相关对象类型的一种方式。”这些相关的对象类型可以是整型，如bool、char或int。概念是对相关类型的一组需求，例如：所支持的操作、语义，以及时间和空间的复杂度。
 
 \hspace*{\fill} \\ %插入空行
@@ -348,7 +348,7 @@ requires子句(第6行)
 
 简单起见，每个函数模板只返回auto。函数模板gcd、gcd1、gcd2和函数gcd3之间存在语义差异。对于gcd、gcd1或gcd2，参数a和b必须具有相同的类型。这对函数gcd3不成立。参数a和b可以有不同的类型，但必须都满足std::integral概念。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 gcd(100, 10) = 10
 gcd1(100, 10) = 10
 gcd2(100, 10) = 10
@@ -396,7 +396,7 @@ int main() {
 
 第6行中使用的编译时谓词，说明了一个有趣的观点:需求应用于非类型i，而不是通常的类型。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 sum<20>(2000): 2020
 \end{tcblisting}
 
@@ -407,7 +407,7 @@ sum<20>(2000): 2020
 requires子句中，使用编译时谓词失败
 \end{center}
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={避免在requires子句中使用编译时谓词}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={避免在requires子句中使用编译时谓词}]
 当使用概念约束模板参数或函数模板时，应该使用命名概念或组合它们。概念是语义范畴的，而不是像i <= 20这样的语法约束。并且，为概念命名可以使其重用。
 \end{tcolorbox}
 
@@ -493,7 +493,7 @@ int main() {
 
 在上面的程序中，我使用了std::three\_way\_comparable<T>这个概念，它在比较时检查T是否支持六个比较运算符。作为编译时谓词std::thre\_way\_comparable可以在运行时(第16行和第20行)或编译时使用。static\_assert(第25行)和\href{https://en.cppreference.com/w/cpp/language/if}{constepr if}(第28和34行)会在编译时进行计算。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 std::three_way_coparable<int>: True
 std::three_way_coparable<double>: True
 
@@ -615,7 +615,7 @@ int main(){
 
 在本例中，逻辑和\&\&(第7行)、逻辑或||(第10行)以及逻辑或的否定(第13行)作为二元运算符。此外，all、any和none要求类型参数必须支持std::integral概念。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 all(5, true, false): false
 any(5, true, false): true
 none(5, ture, false): false
@@ -680,7 +680,7 @@ int main() {
 
 函数advance的三种重载位于std::forward\_iterator(第9行)、std::bidirectional\_iterator(第14行)和std::random\_access\_iterator(第19行)这三个概念上，编译器会选择最合适的重载。所以，对于std::forward\_list(第28行)，是基于std::forward\_list概念的重载；对于std::list(第32行)，是基于std::bidirectional\_iterator概念的重载；对于std::vector(第36行)，是基于std::random\_access\_iterator概念的重载。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 forward_iterator
 bidirectional_iterator
 random_access_iterator
@@ -731,7 +731,7 @@ int main() {
 
 实例化类模板时，编译器选择最特化的一个。从而，对于Vector<int> myVec(第24行)，会选择std::regular(第13行)的偏特化模板。引用Vector<int\&> myVec2(第25行)不是常规类型，因此选择主模板(第6行)。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 Vector<std::regular>
 Vector<T>
 \end{tcblisting}
@@ -871,7 +871,7 @@ std::cout << std::boolalpha << '\n';
 
 std::integral概念可以用作返回类型(第7行)、基于范围的for循环(第16行)，或者用作变量b(第19行)或变量integ(第22行)的类型。为了查看auto和概念之间的对称性，第25行单独使用auto，而不是在第22行使用的std::integral auto。因此，integ1可以接受任何类型的值。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 1 2 3 4 5
 true
 10
@@ -937,7 +937,7 @@ int main() {
 
 函数模板gcd(第6行)、gcd1(第13行)和gcd2(第19行)是我在使用概念的四种方式中已经介绍过的定义。gdc使用requires子句，gcd1使用尾部requires子句，gcd2使用约束模板参数。现在来点新东西，函数模板gcd3有std::integral的概念作为类型参数，因此是一个具有受限类型参数的函数模板。相比之下，gcd4相当于对其类型参数，对函数模板没有限制。gcd3和gcd4中用于创建函数模板的语法，称为缩写函数模板。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 gcd(100, 10)= 10
 gcd1(100, 10)= 10
 gcd2(100, 10)= 10
@@ -1025,7 +1025,7 @@ int main(){
 
 编译器选择auto(第6行)上的重载使用double，std::integral(第10行)上的重载使用int，long(第14行)上的重载使用long。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 auto : 3.14
 Integral : 2010
 long : 2020
@@ -1082,7 +1082,7 @@ concept bool Generic(){
 
 更正式地说，设a和b是类型为t的值。只有在以下情况下，这些值才有three\_way\_comparable性:
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 • (a <=> b == 0) == bool(a == b) is true
 • (a <=> b != 0) == bool(a != b) is true
 • ((a <=> b) <=> 0) and (0 <=> (b <=> a)) are equal
@@ -1553,7 +1553,7 @@ int main() {
 
 使用简化的函数模板语法重载概念SignedIntegral(第15行)和UnsignedIntegral(第19行)上的函数func。编译器选择预期的重载:
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 SignedIntegral: -5
 UnsignedIntegral: 5
 \end{tcblisting}
@@ -1928,7 +1928,7 @@ int main() {
 
 因此，我将第48行注释掉。
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 areEqual(1, 5): false
 getSmaller(1, 5): 1
 areEqual(firSet, secSet): true

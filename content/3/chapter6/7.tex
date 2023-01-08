@@ -4,7 +4,7 @@ Cippi sings in the choir
 \end{center}
 
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Compiler Support for Synchronized Output Streams}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Compiler Support for Synchronized Output Streams}]
 	
 At the end of 2020, only GCC 11 supports synchronized output streams.
 	
@@ -75,7 +75,7 @@ What a mess for such a simple workflow! Each worker screams out his message igno
 Non-synchronized writing to std::cout
 \end{center}
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={std::cout is thread-safe}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={std::cout is thread-safe}]
 	
 The C++11 standard guarantees that you need not protect std::cout. Each character is written atomically. More output statements like those in the example may interleave. This interleaving is only a visual issue; the program is well-defined. This remark is valid for all global stream objects. Insertion to and extraction from global stream objects (std::cout, std::cin, std::cerr, and std::clog) is thread-safe. To put it more formally: writing to std::cout is not participating in a data race, but does create a race condition. This means that the output depends on the interleaving of threads.
 	
@@ -261,7 +261,7 @@ int main() {
 } // emits the contents of bout1
 \end{lstlisting}
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 Goodbye, Planet!
 Hello, World!
 \end{tcblisting}
@@ -270,7 +270,7 @@ Hello, World!
 Synchronized access of std::cout
 \end{center}
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
 	
 \begin{itemize}
 \item 

@@ -6,7 +6,7 @@ Cippi directs the train
 Semaphores are a synchronization mechanism used to control concurrent access to a shared resource. A counting semaphore is a special semaphore that has a counter that is bigger than zero. The counter is initialized in the constructor. Acquiring the semaphore decreases the counter and releasing the semaphore increases the counter. If a thread tries to acquire the semaphore when the counter is zero, the thread will block until another thread increments the counter by releasing the semaphore.
 
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Edsger W. Dijkstra invented Semaphores}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Edsger W. Dijkstra invented Semaphores}]
 	
 The Dutch computer scientist \href{https://en.wikipedia.org/wiki/Edsger_W._Dijkstra}{Edsger W. Dijkstra} presented in 1965 the concept of a semaphore. A semaphore is a data structure with a queue and a counter. The counter is initialized to a value equal to or greater than zero. It supports the two operations wait and signal. Operation wait acquires the semaphore and decreases the counter. It blocks the thread from acquiring the semaphore if the counter is zero. Operation signal releases the semaphore and increases the counter. Blocked threads are added to the queue to avoid \href{https://en.wikipedia.org/wiki/Starvation_(computer_science)}{starvation}.
 
@@ -105,7 +105,7 @@ The std::counting\_semaphore prepareSignal (line 10) can have the values 0 and 1
 Thread synchronization with semaphores
 \end{center}
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
 	
 \begin{itemize}
 \item 

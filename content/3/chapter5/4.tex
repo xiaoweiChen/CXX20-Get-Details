@@ -9,7 +9,7 @@ The comparison of signed and unsigned integers is a subtle cause for unexpected 
 
 When you compare signed and unsigned integers, you may not get the result you expect. Thanks to the six std::cmp\_* functions, there is a cure in C++20. To motivate safe comparison of integers, I want to start with the unsafe variant.
 
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title={Integral versus Integer}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Integral versus Integer}]
 	
 The terms integral and integer are synonyms in C++. This is the wording from the standard for fundamental types: “Types bool, char, char8\_t, char16\_t, char32\_t, wchar\_t, and the signed and unsigned integer types are collectively called integral types. A synonym for [an] integral type is integer type”. I prefer the term integer in this book.
 	
@@ -150,7 +150,7 @@ int main() {
 
 Additionally, I applied the equal and not equal operators.
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 -3 == 7: false
 -3 != 7: true
 -3 < 7: true
@@ -318,7 +318,7 @@ int main() {
 
 The program should, together with its output, be self-explanatory.
 
-\begin{tcblisting}{commandshell={}}
+\begin{tcblisting}{breakable,commandshell={}}
 std::midpoint(10, 20): 15
 
 std::midpoint(10, 20, 0): 10
@@ -523,7 +523,7 @@ int main() {
 Displaying std::bit\_floor, std::bit\_ceil, std::bit\_width, and std::popcount for a few numbers
 \end{center}
 
-\begin{tcolorbox}[colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
 	
 \begin{itemize}
 \item 

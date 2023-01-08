@@ -207,7 +207,7 @@ As you may guess, the promise never runs, and the member functions return\_value
 A lazy future that is not started
 \end{center}
 
-\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title={About the Numbers}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={About the Numbers}]
 One of the challenges of dealing with coroutines is to handle the lifetime of the coroutine. In the previous program eagerFutureWithComments.cpp, I stored the coroutine result in a std::shared\_ptr. This is critical because the coroutine is executed eagerly.
 
 In this program lazyFuture.cpp, the call final\_suspend always suspends (line 48): std::suspend\_always final\_suspend(). Consequently, the promise outlives the client, and a std::shared\_ptr is not necessary anymore. Returning std::suspend\_never from the function final\_suspend would cause, in this case, undefined behavior because the client would outlive the promise. Hence, the lifetime of the result ends, bevor the client asks for it.
