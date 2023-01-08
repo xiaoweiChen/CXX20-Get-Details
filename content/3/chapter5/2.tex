@@ -3,29 +3,26 @@
 Cippi在遛狗
 \end{center}
 
-A std::span stands for an object that refers to a contiguous sequence of objects. A std::span, sometimes also called a view, is never an owner. This contiguous sequence of objects can be a plain C-array, a pointer with a size, a std::array, a std::vector, or a std::string.
+std::span表示一个对象，该对象引用一个连续的对象序列。std::span，有时也称为视图，不是底层数据的所有者。这个连续的对象序列可以是一个普通的C数组、有长度信息的指针、std::array、std::vector或std::string。
 
-A std::span can have a static extent or a dynamic extent. By default, std::span has a dynamic extent:
+std::span可以具有静态范围或动态范围。默认情况下，std::span有一个动态范围:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Definition of std::span
+\textbf{std::span的定义}
 \begin{lstlisting}[style=styleCXX]
 template <typename T, std::size_t Extent = std::dynamic_extent>
 class span;
 \end{lstlisting}
 
-\subsubsubsection{5.2.1\hspace{0.2cm} Static versus Dynamic Extent}
+\subsubsubsection{5.2.1\hspace{0.2cm}静态范围与动态范围}
 
-When a std::span has a static extent, its size is known at compile time and part of the type: std::span<T, size>. Consequently, its implementation needs only a pointer to the first element of the contiguous sequence of objects.
+当std::span有一个静态范围时，其大小在编译时已知，并且是类型:std::span<T, size>的一部分。因此，其实现只需要一个指向连续对象序列的第一个元素的指针。
 
-Implementing a std::span with a dynamic extent consists of a pointer to the first element and the size of the contiguous sequence of objects. The size is not part of the type: std::span<T>.
+具有动态范围的std::span，由指向第一个元素的指针和连续对象序列的长度组成。长度信息不是类型std::span<T>的一部分。
 
-The next example staticDynamicExtentSpan.cpp emphasizes the differences between both kinds of views.
+staticDynamicExtentSpan.cpp展示了这两种视图之间的区别。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-std::spans with static and dynamic extent
 \begin{lstlisting}[style=styleCXX]
 // staticDynamicExtentSpan.cpp
 
@@ -63,22 +60,19 @@ int main() {
 }
 \end{lstlisting}
 
-dynamicSpan (line 21) has a dynamic extent, while staticSpan (line 22) has a static extent. Both std::spans return their size in the printMe function (line 9). A std::span with dynamic extent can be assigned to a std::span with static extent, but not the other way around. Line 27 would cause an error, but lines 7, 25 and 28 are valid.
+dynamicSpan(第21行)有一个动态范围，而staticSpan(第22行)有一个静态范围。两个std::span都在printMe函数中返回它们的长度(第9行)。具有动态范围的std::span可以赋值给具有静态范围的std::span，但不能反过来。第27行会导致错误，而第7、25和28行是可以工作的。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/4.png}\\
-std::spans with static and dynamic extent
+\includegraphics[width=0.5\textwidth]{content/3/chapter5/images/4.png}\\
+std::span的静态范围与动态范围
 \end{center}
 
-One important reason for having a std::span<T> is that a plain C-array \href{https://en.cppreference.com/w/cpp/types/decay}{decays} to a pointer if passed to a function; therefore, the size is lost. This decay is a typical reason for errors in C/C++.
+使用std::span<T>的一个重要原因是，若将普通C数组\href{https://en.cppreference.com/w/cpp/types/decay}{退化}成指针，那么长度信息就会丢失。这种退化是C/C++中出现错误的原因之一。
 
 \subsubsubsection{5.2.2\hspace{0.2cm} Automatically Deduces the Size of a Contiguous Sequence of Objects}
 
 In contrast to a C-array, std::span<T> automatically deduces the size of contiguous sequences of objects.
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-A std::span automatically deduces the size of its referenced sequence of object
 \begin{lstlisting}[style=styleCXX]
 // printSpan.cpp
 
@@ -114,7 +108,7 @@ int main() {
 The C-array (line 19), std::vector (line 22), and the std::array (line 25) contain int values. Consequently, std::span also holds int values. There is something more interesting in this simple example. For each container, std::span can deduce its size (line 10).
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/5.png}\\
+\includegraphics[width=0.4\textwidth]{content/3/chapter5/images/5.png}\\
 Automatic size deduction of a std::span
 \end{center}
 
