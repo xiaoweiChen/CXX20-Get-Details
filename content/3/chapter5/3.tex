@@ -3,17 +3,17 @@
 Cippi在检查集装箱
 \end{center}
 
-C++20 has many improvements regarding containers of the Standard Template Library. First of all, std::vector and std::string have constexpr constructors and so can be used at compile time. All containers support consistent container erasure and the associative containers a member function contains. Additionally, std::string allows you to check for a prefix or suffix.
+C++20对标准模板库的容器还进行了很多改进。首先，是std::vector和std::string添加了constexpr构造函数，从而可以在编译时使用。所有容器都支持统一的erase成员函数，以及关联容器(map/set)添加了成员函数contains。此外，std::string可以对前缀或后缀进行检查。
 
-\subsubsubsection{5.3.1\hspace{0.2cm} constexpr Containers and Algorithms}
+\subsubsubsection{5.3.1\hspace{0.2cm}constexpr的容器和算法}
 
-C++20 supports the constexpr containers std::vector and std::string, where constexpr means that the member functions of both containers can be applied at compile time. Additionally, the more than 100 \href{https://en.cppreference.com/w/cpp/algorithm}{algorithms} of the Standard Template Library are declared as constexpr.
+C++20支持constexpr容器std::vector和std::string，其中constexpr表明这两个容器的成员函数都可以在编译时使用。此外，标准模板库中，声明为constexpr的\href{https://en.cppreference.com/w/cpp/algorithm}{算法}超过100个。
 
-Consequently, you can sort a std::vector of ints at compile time.
+因此，可以在编译时对int类型的std::vector进行排序。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Sort a std::vector at compile time
+\textbf{编译时对std::vector进行排序}
 \begin{lstlisting}[style=styleCXX]
 // constexprVector.cpp
 
@@ -46,7 +46,7 @@ int main() {
 }
 \end{lstlisting}
 
-The two containers std::vector (line 8 and 20) are sorted at compile time using constexpr-declared functions. In the first case, the function maxElement returns the last element of the vector myVec, which is its maximum value. In the second case, I use an immediately-invoked lambda that is declared constexpr.
+两个std::vector(第8行和第20行)在编译时使用constexpr声明的函数进行排序。第一种情况下，函数maxElement返回myVec的最后一个元素，也就是它的最大值。第二种情况下，使用声明为constexpr的Lambda表达式。
 
 \hspace*{\fill} \\ %插入空行
 \begin{tcblisting}{breakable,commandshell={}}
@@ -54,24 +54,21 @@ maxValue: 4
 maxValue2: 4
 \end{tcblisting}
 
-\begin{center}
-Sort a std::vector at compile time
-\end{center}
+\subsubsubsection{5.3.2\hspace{0.2cm}std::array}
 
-\subsubsubsection{5.3.2\hspace{0.2cm} std::array}
-
-C++20 offers two convenient ways to create arrays. std::to\_array creates a std::array and std::make\_shared allows it to create a std::shared\_ptr of arrays.
+C++20提供了两种创建数组的方法。std::to\_array可以创建std::array，而std::make\_shared现在可以创建std::shared\_ptr数组了。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-5.3.2.1\hspace{0.2cm} std::to\_array
+\textbf{5.3.2.1\hspace{0.2cm}std::to\_array}
 
-std::to\_array creates a std::array from an existing one-dimensional array. The elements of the created std::array are copy-initialized from the existing one-dimensional array.
+std::to\_array从现有一维数组创建std::array。新std::array中的元素是从现有的一维数组复制过来的。
 
-The one-dimensional existing array can be a C-string, a std::initializer\_list, or a one-dimensional array of std::pair. The following example is from \href{https://en.cppreference.com/w/cpp/container/array/to_array}{cppreference.com/to\_array}.
+一维数组可以是C-string、std::initializer\_list或std::pair的一维数组。下面的例子来自\href{https://en.cppreference.com/w/cpp/container/array/to_array}{cppreference.com/to\_array}。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Create a std::array from various one-dimensional arrays
+\textbf{使用各种一维数组创建std::array}
 \begin{lstlisting}[style=styleCXX]
 // toArray.cpp
 
@@ -109,8 +106,9 @@ int main() {
 }
 \end{lstlisting}
 
-I created a std::array from a C-string (line 12), from a std::initializer\_list (lines 16 and 20), and from a std::initializer\_list of std::pair’s (line 26). In general, the compiler can deduce the type of the std::array. Optionally, you can specify the type (lines 20 and 26).
+使用C-string(第12行)，std::initializer\_list(第16行和第20行)，std::pair的std::initializer\_list(第26行)都可以创建std::array。通常，编译器可以推断出std::array的类型。还可以对类型进行指定(第20和26行)。
 
+\hspace*{\fill} \\ %插入空行
 \begin{tcblisting}{breakable,commandshell={}}
 A simple test
 
@@ -125,35 +123,30 @@ typeid(arr3[0]).name(): d
 (3, 5.1)
 \end{tcblisting}
 
-\begin{center}
-Create various std::array from existing one-dimensional arrays
-\end{center}
-
 \hspace*{\fill} \\ %插入空行
 \noindent
-5.3.2.2\hspace{0.2cm} std::make\_shared
+\textbf{5.3.2.2\hspace{0.2cm}std::make\_shared}
 
-Since C++11, C++ supports the creation of the std::shared\_ptr via the factory function \href{https://en.cppreference.com/w/cpp/memory/shared_ptr/make_shared}{std::make\_shared}. With C++20, this factory function supports the creation of arrays of std::shared\_ptr.
+C++11起，可以通过工厂函数\href{https://en.cppreference.com/w/cpp/memory/shared_ptr/make_shared}{std::make\_shared}创建std::shared\_ptr。C++20中，这个工厂函数终于支持创建std::shared\_ptr数组了。
 
 \begin{itemize}
 \item 
-std::shared\_ptr<double[]> shar = std::make\_shared<double[]>(1024): creates a shared\_ptr with 1024 default-initialized doubles
+std::shared\_ptr<double[]> sha = std::make\_shared<double[]>(1024):创建一个shared\_ptr，默认初始化1024个double变量
 
 \item 
-std::shared\_ptr<double[]> shar = std::make\_shared<double[]>(1024, 1.0): creates a shared\_ptr with 1024 doubles initialized to 1.0
+std::shared\_ptr<double[]> shar = std::make\_shared<double[]>(1024, 1.0): 创建了一个shared\_ptr，其中1024个double初始化为1.0
 \end{itemize}
 
-\subsubsubsection{5.3.3\hspace{0.2cm} Consistent Container Erasure}
+\subsubsubsection{5.3.3\hspace{0.2cm}擦除功能}
 
-Before C++20, removing elements from a container was too complicated. Let me show why.
+C++20之前，从容器中删除元素太麻烦了。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-5.3.3.1\hspace{0.2cm} The erase-remove Idiom
+\textbf{5.3.3.1\hspace{0.2cm}erase-remove习语}
 
-Removing an element from a container seems to be quite easy. In the case of a std::vector, you can use the function std::remove\_if.
+从容器中删除元素好像很容易。对于std::vector，可以使用std::remove\_if函数。
 
-\noindent
-Using std::remove\_if to remove elements from a container
 \begin{lstlisting}[style=styleCXX]
 // removeElements.cpp
 
@@ -178,19 +171,20 @@ int main() {
 }
 \end{lstlisting}
 
-The program removeElements.cpp removes all elements from the std::vector that are less than zero. Easy, right? Maybe not; now, you fall into the trap that is well-known to many seasoned C++ programmer.
+removeElements.cpp从std::vector中删除所有小于零的元素。很容易，对吧?或许也并不容易;现在，您可能陷入了资深C++程序员所熟知的陷阱。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/11.png}\\
-Using std::remove\_if to remove elements from a container
+\includegraphics[width=0.7\textwidth]{content/3/chapter5/images/11.png}\\
+使用std::remove\_if从容器中删除元素
 \end{center}
 
-std::remove\_if (lines 16) does not remove anything. The std::vector still has the same number of arguments. Both algorithms return the new logical end of the modified container.
+std::remove\_if(第16行)不会删除任何东西，std::vector的元素数量不变。算法只是返回修改后容器的新(逻辑)末端。
 
-To modify a container, you have to apply the new logical end to the container.
+为了修改容器内容，必须将新末端应用于容器。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Applying the erase-remove idiom to a container
+\textbf{容器使用erase-remove习语}
 \begin{lstlisting}[style=styleCXX]
 // eraseRemoveElements.cpp
 
@@ -219,24 +213,26 @@ int main() {
 }
 \end{lstlisting}
 
-Line (16) returns the new logical end newEnd of the container myVec. This new logical end is applied in line 18 to remove all elements from myVec starting at newEnd. When you apply the functions remove and erase in one expression such as in line 19, you see exactly why this construct is called erase-remove idiom.
+第16行返回容器myVec的新末端newEnd。这个新末端应用于第18行，并从newEnd开始删除myVec中的元素。当在表达式中应用函数remove和erase(第19行)时，就会清楚地看到为什么这中方式称为“erase-remove习语”了。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/12.png}\\
-Using the erase-remove idiom
+\includegraphics[width=0.7\textwidth]{content/3/chapter5/images/12.png}\\
+使用erase-remove习语
 \end{center}
 
-Thanks to the new functions erase and erase\_if in C++20, erasing elements from containers is far more convenient.
+由于C++20中新增了erase和erase\_if，从容器中擦除元素就方便了许多。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-5.3.3.2\hspace{0.2cm}  erase and erase\_if in C++20
+\textbf{5.3.3.2\hspace{0.2cm}C++20的erase和erase\_if}
 
-With erase and erase\_if, you can directly operate on the container. In contrast, the previously presented erase-remove idiom is quite verbose: it requires two iterations.
+使用erase和erase\_if，可以直接对容器进行操作。相比之下，前面介绍的erase-remove习语看上去就相当麻烦了:迭代了两次。
 
-Let’s see what the new functions erase and erase\_if mean in practice. The following program erases elements from a few containers.
+来一起看看新函数erase和erase\_if在实践中怎么使用。下面的代码，是从容器中删除一些元素。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Erase elements from a container
+\textbf{从容器中删除元素}
 \begin{lstlisting}[style=styleCXX]
 // eraseCpp20.cpp
 
@@ -298,26 +294,26 @@ int main() {
 }
 \end{lstlisting}
 
-Line 41 erases all the 'e' characters from the given string str. Line 43 applies the lambda expression to the same string and erases all the upper case letters.
+第41行删除给定字符串str中的所有'e'字符。第43行将Lambda表达式应用于同一字符串，并删除了所有大写字母。
 
-In the rest of the program, elements of the sequence containers std::vector (line 47), std::deque (line 51), and std::list (line 55) are erased. On each container, the function template doAll (line 26) is applied. doAll erases the element 5 and all elements greater than or equal to 3. The function template eraseVal (line 10) uses the new function erase and the function template erasePredicate (line 15) uses the new function erase\_if.
+代码的其余部分，删除了std::vector(第47行)、std::deque(第51行)和std::list(第55行)的相应元素。对每个容器上应用函数模板doAll(第26行)，doAll删除元素5和所有大于或等于3的元素。函数模板eraseVal(第10行)使用新的erase函数，函数模板erasePredicate(第15行)使用新的函数erase\_if。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/13.png}\\
-Application of the new functions erase and erase\_if
+\includegraphics[width=0.5\textwidth]{content/3/chapter5/images/13.png}\\
+使用新函数erase和erase\_if
 \end{center}
 
-The new functions erase and erase\_if can be applied to all containers of the Standard Template Library. This does not hold for the next convenience function contains, which requires an associative container.
+新函数erase和erase\_if可以应用于标准模板库的所有容器。这并不适用于另一个方便的函数contains，其需要对关联容器进行操作。
 
-\subsubsubsection{5.3.4\hspace{0.2cm} contains for Associative Containers}
+\subsubsubsection{5.3.4\hspace{0.2cm}关联容器的contains}
 
-Thanks to the function contains, you can easily check if an element exists in an associative container.
-Stop, you may say, we can already do this with find or count.
+由于contains函数，就可以轻松地检查关联容器中是否存在元素。等一下，你可能会说，我们已经可以用find或count来完成这个任务了。
 
-No, both functions are not beginner-friendly and have their downsides.
+非也非也，这两个函数都不适合初学者，而且有各自的缺点。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-Erase elements from a container
+\textbf{从容器中删除元素}
 \begin{lstlisting}[style=styleCXX]
 // checkExistence.cpp
 
@@ -343,7 +339,7 @@ int main() {
 }
 \end{lstlisting}
 
-The functions produce the expected result.
+函数产生预期的结果。
 
 \begin{tcblisting}{breakable,commandshell={}}
 2 inside
@@ -351,15 +347,16 @@ The functions produce the expected result.
 \end{tcblisting}
 
 \begin{center}
-Use of find and count to check if a container has a given element
+使用find和count检查容器中是否有给定的元素
 \end{center}
 
-There are issues with both calls. The find call (line 11) is too verbose. The same argument holds for the count call (line 16). The count call also has a performance issue. When you want to know if an element is in a container, you should stop when you found it and not count until the end. In the concrete case myMultiSet.count(2) returned 2.
+两个方式都有问题。find(第11行)太冗长了，count(第16行)也是，count还存在性能上的问题。当想知道某个元素是否在容器中时，应该在找到它时停止计算，而不是继续查找，直到结束。上面的代码中，myMultiSet.count(2)会返回2。
 
-Unlike find and count, the contains member function in C++20 is quite convenient to use.
+与find和count不同，C++20中的contains成员函数使用起来非常方便。
 
+\hspace*{\fill} \\ %插入空行
 \noindent
-contains in C++20
+\textbf{C++20中的contains}
 \begin{lstlisting}[style=styleCXX]
 // containsElement.cpp
 
@@ -404,19 +401,17 @@ int main() {
 }
 \end{lstlisting}
 
-There is not much to add to this example. The function template containsElement5 returns true if the associative container contains the key 5. In my example, I used only the associative containers std::set, std::unordered\_set, std::map, and std::unordered\_set, none of which can hold a given key more than once.
+这个示例中没有太多添加的内容。若关联容器包含键5，则函数模板containsElement5返回true。例子中，我只使用了关联容器std::set、std::unordered\_set、std::map和std::unordered\_set，它们都不能多次保存给定的键。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter5/images/14.png}\\
-Use of the new function contains
+使用新函数contains
 \end{center}
 
-\subsubsubsection{5.3.5\hspace{0.2cm} String prefix and suffix checking}
+\subsubsubsection{5.3.5\hspace{0.2cm}字符串检查前缀和后缀}
 
-std::string gets new member functions starts\_with and ends\_with. They allow you to check if a std::string starts or ends with a specified substring.
+std::string获取新的成员函数starts\_with和ends\_with，可以检查std::string是否以指定的子字符串开始或结束。
 
-\noindent
-Check if a string starts with or ends with a given string
 \begin{lstlisting}[style=styleCXX]
 // stringStartsWithEndsWith.cpp
 
@@ -465,7 +460,7 @@ int main() {
 }
 \end{lstlisting}
 
-Both member functions starts\_with and ends\_with are predicates and, hence, return a boolean. You can invoke the new member functions starts\_with and ends\_with with a std::string (lines 29 and 39), a std::string\_view (lines 31 and 41), and a char (lines 33 and 43).
+starts\_with和ends\_with的成员函数都是谓词，返回布尔值。可以用std::string(第29行和39行)，std::string\_view(第31行和41行)和char(第33行和43行)使用新的成员函数。
 
 \begin{tcblisting}{breakable,commandshell={}}
 Hello World
@@ -479,27 +474,23 @@ Hello World
             ends with d: true
 \end{tcblisting}
 
-\begin{center}
-Check if a string starts with or ends with a given string
-\end{center}
-
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 	
 \begin{itemize}
 \item 
-std::vector and std::string have constexpr constructors and can, therefore, be instantiated at compile time. Thanks to the constexpr algorithms of the Standard Template Library (STL), you can manipulate them at compile time.
+std::vector和std::string具有constexpr构造函数，因此可以在编译时实例化。由于标准模板库(STL)提供constexpr算法，所以可以在编译时操作它们。
 
 \item 
-C++20 offers two convenient ways to create arrays. std::to\_array creates a std::array and std::make\_shared allows the creation of a std::shared\_ptr wrapping a C-array.
+C++20提供了两种创建数组的方法。std::to\_array创建std::array，std::make\_shared可以创建包含数组的std::shared\_ptr。
 
 \item 
-The new algorithm std::erase and std::erase\_if are used to erase specific elements (erase) or elements satisfying a predicate (erase\_if) from an arbitrary container of the STL.
+新的算法std::erase和std::erase\_if用于从STL容器中删除特定的元素(erase)或满足谓词(erase\_if)的元素。
 
 \item 
-Thanks to the member function contains, you can check for an associative container if it has the requested key.
+因为新成员函数contains，可以直接检查关联容器是否具有所请求的键。
 
 \item 
-std::string supports the new member function start\_with and end\_with to check if the container has a specific prefix or suffix.
+std::string支持新的成员函数start\_with和end\_with，可用来检查容器是否具有特定的前缀或后缀。
 \end{itemize}
 	
 \end{tcolorbox}

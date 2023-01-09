@@ -1,11 +1,11 @@
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter5/images/15.png}\\
-Cippi studies arithmetic
+Cippi在研究算盘
 \end{center}
 
 The comparison of signed and unsigned integers is a subtle cause for unexpected behavior and, therefore, of bugs. Thanks to the new safe comparison functions for integers, std::cmp\_*, a source of subtle bugs is gone. Additionally, C++20 includes mathematical constants such as e, π, or ϕ, and with the functions std::midpoint and std::lerp, you can calculate the midpoint of two numbers or their linear interpolation. The new bit manipulation allows you to access and modify individual bits or bit sequences.
 
-\subsubsubsection{5.4.1\hspace{0.2cm} Safe Comparison of Integers}
+\subsubsubsection{5.4.1\hspace{0.2cm}整型数的安全比较}
 
 When you compare signed and unsigned integers, you may not get the result you expect. Thanks to the six std::cmp\_* functions, there is a cure in C++20. To motivate safe comparison of integers, I want to start with the unsafe variant.
 
@@ -15,11 +15,13 @@ The terms integral and integer are synonyms in C++. This is the wording from the
 	
 \end{tcolorbox}
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 5.4.1.1\hspace{0.2cm} Unsafe Comparison
 
 Of course, there is a reason for the name unsafeComparison.cpp of the following program.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Unsafe comparison of integers
 \begin{lstlisting}[style=styleCXX]
@@ -55,6 +57,7 @@ Surprises with unsafe comparisons of integers
 
 When you read the output of the program, you recognize that -3 is bigger than 7. You presumably know the reason. I compared a signed x (line 11) with an unsigned y (line 12). What is happening under the hood? The following program provides the answer.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Unsafe comparison of integers resolved
 \begin{lstlisting}[style=styleCXX]
@@ -119,6 +122,7 @@ std::cmp\_greater\_equal  & \textgreater{}=
 
 Thanks to the six comparison functions, I can easily transform the previous program unsafeComparison.cpp into the program safeComparison.cpp. The new comparison functions require the header <utility>.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Safe comparison of integers
 \begin{lstlisting}[style=styleCXX]
@@ -165,6 +169,7 @@ Safe comparison
 
 Invoking a safe-comparison function with a non-integer, such as a double, causes a compile-time error.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Safe comparison of an unsigned int and a double
 \begin{lstlisting}[style=styleCXX]
@@ -185,6 +190,7 @@ int main() {
 
 On the other hand, you can compare a double and an unsigned int the classical way. The program classicalComparison.cpp applies classical comparison of a double and an unsigned int.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Classical comparison of an unsigned int and a double
 \begin{lstlisting}[style=styleCXX]
@@ -237,6 +243,7 @@ std::numbers::phi         & $\phi$
 
 The program mathematicConstants.cpp applies the mathematical constants.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 The mathematical constants
 \begin{lstlisting}[style=styleCXX]
@@ -289,6 +296,7 @@ std::lerp(a, b, t): calculates the linear interpolation (a + t(b - a)). When t i
 
 The program midpointLerp.cpp applies both functions.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Calculating the midpoint and the linear interpolation of numbers
 \begin{lstlisting}[style=styleCXX]
@@ -350,6 +358,7 @@ Thanks to the new type std::endian, you get the endianness of a scalar type. End
 
 The class endian provides the endianness of all scalar types:
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 enum class endian
 \begin{lstlisting}[style=styleCXX]
@@ -381,6 +390,7 @@ If the platform uses mixed endianness, std::endian::native is neither equal to s
 
 When I perform the following program getEndianness.cpp on a x86 architecture, I get the answer little-endian.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 enum class endian
 \begin{lstlisting}[style=styleCXX]
@@ -435,6 +445,7 @@ All of the functions except std::bit\_cast require an unsigned integer type (uns
 
 The program bit.cpp shows the application of the functions.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Bit manipulation
 \begin{lstlisting}[style=styleCXX]
@@ -483,6 +494,7 @@ Bit manipulation
 
 The following program shows the std::bit\_floor, std::bit\_ceil, std::bit\_width, and std::bit\_popcount for the numbers 2 to 7.
 
+\hspace*{\fill} \\ %插入空行
 \noindent
 Displaying std::bit\_floor, std::bit\_ceil, std::bit\_width, and std::popcount for a few numbers
 \begin{lstlisting}[style=styleCXX]
