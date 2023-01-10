@@ -60,7 +60,7 @@ int main() {
 
 Each call (lines 18, 21, 24, 31, and 34) gets a callable taking two arguments and returns a callable taking only one argument because the first argument is bound to 2000. The callable is a function (line 18), a lambda expression (line 21), and a predefined function object (line 24). Parameter \_1 is a socalled placeholder (line 31) and stands for the missing argument. With lambda expression (line 34), you can directly apply one argument and provide an argument b for the missing parameter. From the readability perspective, std::bind\_front may be easier to read than std::bind or a lambda expression.
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 twoThousandPlus1(20): 2020
 twoThousandPlus2(20): 2020
 twoThousandPlus3(20): 2020

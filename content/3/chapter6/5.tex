@@ -300,7 +300,7 @@ int main(){
 
 The receiver thread (lines 17 - 29) is waiting for the notification of the sender thread (lines 31 - 41). Before the sender thread sends its notification in line 39, the main thread triggered a stop request in line 50. The output of the program shows that the stop request happened before the notification.
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 Waiting
 Stop request received
 Send notification

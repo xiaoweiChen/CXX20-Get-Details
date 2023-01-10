@@ -780,7 +780,7 @@ MyFuture behaves as a \href{https://en.cppreference.com/w/cpp/thread/future}{fut
 
 There is one subtle difference to a future, the return value of the coroutine createFuture is available after its invocation. Due to the lifetime issues, the return value is managed by a std::shared\_ptr (lines 9 and 17). The coroutine always uses std::suspend\_never (lines 25, and 28) and, therefore, neither suspends before it runs nor after. This means the coroutine is executed when the function createFuture is invoked. The member function get\_return\_object (line 19) creates and stores the handle to the coroutine object, and return\_value (lines 22) stores the result of the coroutine, which was provided by co\_return 2021 (line 38). The client invokes fut.get (line 46) and uses the future as a handle to the promise. The member function get returns the result to the client (line 13).
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 fut.get(): 2021
 \end{tcblisting}
 
@@ -1041,7 +1041,7 @@ int main() {
 
 You may think that the coroutine prepareJob (line 37) is meaningless because the Awaitable always suspends. No! The function prepareJob is at least a coroutine factory using co\_await (line 38) and returning a coroutine object. The function call prepareJob() in line 45 creates the coroutine object of type Job. When you study the data type Job, you recognize that the coroutine object is immediately suspended, because the member function of the promise returns the Awaitable std::suspend\_always (line 23). This is exactly the reason why the function call job.start (line 46) is necessary to resume the coroutine (line 15). The member function final\_suspend also returns std::suspend\_always (line 27).
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 Before job
     Preparing job
     Performing job

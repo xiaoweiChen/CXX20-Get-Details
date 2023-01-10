@@ -163,7 +163,7 @@ int main() {
 
 令人惊讶的是，a1 == a2(第21行)的结果是false，而不是true，因为其比较了std::vector<int>*的地址。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 (a1 == a2): false
 \end{tcblisting}
 
@@ -313,7 +313,7 @@ int main() {
 
 程序对int(第14行)、string(第21行)和vector(第28行)使用了太空船操作符。下面是程序的输出。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 a < b
 str1 > str2
 vec1 == vec2
@@ -483,7 +483,7 @@ int main() {
 
 第24行、第29行和第34行中使用了小于操作符和相应的太空船表达式。第35行是最有趣的。它举例说明了比较(int2011 < myInt2014)如何触发飞船表达式(0 < (myInt2014 <=> int2011)的生成。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 myInt2011 < myInt2014
 myInt2011 < myInt2014
 
@@ -553,7 +553,7 @@ int main() {
 
 我在(第10行)中定义了三向比较运算符，并将其声明为constexpr。用户定义的三向比较操作符不是隐式的constexpr，这与编译器生成的三向比较操作符不同。在每个组合中都可以比较MyInt和int(第34、37和40行)。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 isLessThan(MyInt2011, myInt2014): true
 isLessThan(int2011, myInt2014): true
 isLessThan(MyInt2011, int2014): true
@@ -613,7 +613,7 @@ int main() {
 
 看看会发生什么：
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 ==
 ==
 <

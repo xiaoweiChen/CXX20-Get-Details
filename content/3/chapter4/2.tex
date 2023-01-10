@@ -442,7 +442,7 @@ Microsoft的编译器
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{使用Microsoft编译器构建可执行文件}
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 cl.exe /experimental:module /c math.ixx
 cl.exe /experimental:module client.cpp math.obj
 \end{tcblisting}
@@ -485,7 +485,7 @@ export int add(int fir, int sec){
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{使用Clang编译器构建可执行文件}
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 clang++ -std=c++2a -stdlib=libc++ -c math.cpp -Xclang -emit-module-interface \
    -o math.pcm
 
@@ -696,7 +696,7 @@ int main() {
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{用模块接口单元和模块实现单元构建模块}
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 cl.exe /c /experimental:module mathInterfaceUnit.ixx /EHsc
 cl.exe /c /experimental:module mathImplementationUnit.cpp /EHsc
 cl.exe /c /experimental:module client3.cpp /EHsc
@@ -802,7 +802,7 @@ int main() {
 	
 模块和其子模块如何一同构建可执行文件
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 cl.exe /c /experimental:module mathModule1.ixx /EHsc
 cl.exe /c /experimental:module mathModule2.ixx /EHsc
 cl.exe /c /experimental:module mathModule.ixx /EHsc

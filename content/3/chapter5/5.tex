@@ -1,88 +1,83 @@
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter5/images/18.png}\\
-Cippi studies the calendar
+\includegraphics[width=0.3\textwidth]{content/3/chapter5/images/18.png}\\
+Cippi在研究日历
 \end{center}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Lack of Compiler Support}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={缺少编译器支持}]
 	
-At the end of 2020, no C++ compiler supports the chrono extensions so far. Thanks to the prototype library \href{https://github.com/HowardHinnant/date}{date} from Howard Hinnant, which is essentially a superset of the extended time functionality in C++20, I can experiment with it. The library is hosted on GitHub. There are various ways to use the date prototype:
+截止到2020年底，还没有C++编译器支持chrono扩展。感谢HowardHinnant的原型库\href{https://github.com/HowardHinnant/date}{date}，它本质上是C++20中扩展时间功能的超集，我对它做了一些实验。该库托管在GitHub上，使用date原型的方法有很多:
 
 \begin{itemize}
 \item 
-You can try it out on Wandbox. Howard has uploaded the date.h header, which is sufficient to play with the new type std::time\_of\_day and the calendar. Here is Howard’s link: \href{https://wandbox.org/permlink/L8MwjzSSC3fXXrMd}{Try it out on Wandbox!}.
+可以在Wandbox上试试。Howard已经上传了date.h头文件，这足以使用新的类型std::time\_of\_day和日历。下面是Howard给出的链接:\href{https://wandbox.org/permlink/L8MwjzSSC3fXXrMd}{在Wandbox上试一试吧!}。
 
 \item 
-Download the project and build it. The already mentioned GitHub page \href{https://github.com/HowardHinnant/date}{date} gives you more information. This step is required when you want to try out the new time zone features.
+下载项目并构建它，GitHub上\href{https://github.com/HowardHinnant/date}{date}提供了更多信息。想要尝试新的时区特性时，需要进行此步骤。
 \end{itemize}
 
-The examples in this chapter use Howard Hinnant’s library. My explanations, though, are based on the C++20 terminology. When a C++ compiler supports the extended chrono functionality, I will adapt the examples to the C++20 syntax.
+本章的例子使用Howard Hinnant的库。不过，我的解释是基于C++20术语的。当C++编译器支持扩展的chrono功能时，我将使示例适配C++20的语法。
 
 \end{tcolorbox}
 
 \begin{itemize}
 \item 
-The time of day is the time duration since midnight, split into hours, minutes, seconds, and fractional seconds.
+一天中的时间是指从午夜开始的时间长度，分为小时、分钟、秒和分数秒。
 
 \item 
-Calendar stands for various calendar dates such as year, a month, a weekday, or the n-th day of a week.
+Calendar表示各种日历日期，如年、月、工作日或一周的第n天。
 
 \item 
-A time zone represents time specific to a geographic area.
+时区表示特定于地理区域的时间。
 \end{itemize}
 
-Essentially, the time-zone functionality (C++20) is based on the calendar functionality (C++20), and the calendar functionality (C++20) is based on the chrono functionality (C++11).
+时区功能(C++20)是基于日历功能(C++20)，而日历功能(C++20)是基于时间功能(C++11)。
 
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Lack of Compiler Support}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={C++11的时间库}]
 	
-To get the most out of this section, a basic understanding of the chrono library is essential.
-C++11 introduced three main components to deal with time:
+为了充分利用本节的内容，必须先对chrono库有基本的了解。C++11引入了三个主要组件来处理时间:
 
 \begin{itemize}
 \item 
-A time point is defined by a starting point, the so-called epoch, and additional time duration.
+时间点由时间起点(即所谓的epoch)和持续时间定义。
 
 \item 
-A time duration is the difference between two time points. It is given by the number of ticks.
+时间间隔由两个时间点之间的差值，使用时钟周期数表示。
 
 \item 
-A clock consists of a starting point (epoch) and a tick, so that the current time point can be calculated.
+时钟由时间起点(epoch)和时钟周期数组成，可以计算出当前的时间点。
 \end{itemize}
 
-Honestly, time, for me, is a mystery. On one hand, each of us has an intuitive idea of time, on the other hand, defining it formally is extremely challenging. For example, the three components time point, time duration, and clock depend on each other. If you want to know more about the time functionality in C++11, read my posts about time from \href{https://www.modernescpp.com/index.php/tag/time}{time}.
+老实说，时间对我来说是个谜。一方面，每个人对时间都有一个直观的概念，另一方面，正式定义它极具挑战性。例如，时间点(time point)、持续时间(time duration)和时钟(clock)三者相互依赖。若想了解更多C++11中有关时间的功能，请阅读我在\href{https://www.modernescpp.com/index.php/tag/time}{time}上发布的关于时间的文章。
 	
 \end{tcolorbox}
 
-\subsubsubsection{5.5.1\hspace{0.2cm} Time of day}
+\subsubsubsection{5.5.1\hspace{0.2cm}日期}
 
-std::chrono::hh\_mm\_ss is the duration since midnight, split into hours, minutes, seconds, and fractional seconds. This type is typically used as a formatting tool. First, the following table gives you a concise overview of std::chrono::hh\_mm\_ss instance tOfDay.
+std::chrono::hh\_mm\_ss是自午夜开始的持续时间，分为小时、分钟、秒和分数秒，这种类型通常用作格式化工具。下表提供了std::chrono::hh\_mm\_ss实例tOfDay的简明概述。
 
 \begin{center}
-Time of Day
+日期
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{Function}         & \textbf{Description}                        \\ \hline
-tOfDay.hours()            & Returns the hour component since midnight   \\
-tOfDay.minutes()          & Returns the minute component since midnight \\
-tOfDay.seconds()          & Returns the second component since midnight \\
-tOfDay.subseconds()       & Returns the fractional second component since midnight  \\
-tOfDay.to\_duration()     & Returns the time duration since midnight    \\
-std::chrono::make12(hour) & Returns the 12-hour equivalent of a 24-hour format time \\
-std::chrono::make12(hour  & Returns the 24-hour equivalent of a 12-hour format time \\
-std::chrono::is\_am(hour) & Detects if the 24-hour format time is a.m.  \\
-std::chrono::is\_pm(hour) & Detects if the 24-hour format time is p.m. 
+\textbf{函数}         & \textbf{描述}                        \\ \hline
+tOfDay.hours()            & 返回从午夜开始累计的小时数   \\
+tOfDay.minutes()          & 返回从午夜开始累计的分钟数 \\
+tOfDay.seconds()          & 返回从午夜开始累计的秒数 \\
+tOfDay.subseconds()       & 返回从午夜开始累计的分秒数  \\
+tOfDay.to\_duration()     & 返回从午夜以来的持续时间    \\
+std::chrono::make12(hour) & 返回12小时的等价24小时的时间格式 \\
+std::chrono::make24(hour) & 返回24小时的等价12小时的时间格式 \\
+std::chrono::is\_am(hour) & 检测24小时时间格式是否为a.m.  \\
+std::chrono::is\_pm(hour) & 检测24小时时间格式是否为p.m.
 \end{tabular}
 \end{table}
 
+这些函数的使用起来很简单。
 
-he use of the functions is straightforward.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-Time of day
 \begin{lstlisting}[style=styleCXX]
 // timeOfDay.cpp
 
@@ -90,7 +85,7 @@ Time of day
 #include <iostream>
 
 int main() {
-	using namespace date;    \
+	using namespace date;    
 	
 	using namespace std::chrono_literals;
 	
@@ -123,61 +118,70 @@ int main() {
 }
 \end{lstlisting}
 
-First, I create in line 12 a new instance of std::chrono::hh\_mm\_ss: timeOfDay. Thanks to the chrono literals from C++14, I can add a few time durations to initialize a time of day object. With C++20, you can directly output timeOfDay (line 14). This is the reason I have to introduce the namespace date in line 7. The rest should be straightforward to read. Lines 18 - 21 display the components of the time since midnight in hours, minutes, seconds, and fractional seconds. Line 22 returns the time duration since midnight in seconds. Line 26 is more interesting: the given seconds correspond to the time displayed in line 15. Lines 30 and 32 return if the given hour is a.m. Line 35 and 36 return the 12-hour equivalent of the given hour.
+首先，我在第12行创建了std::chrono::hh\_mm\_ss: timeOfDay的一个新实例。C++14添加了chrono字面值，就可以添加一些时间持续时间来初始化一天中的时间对象。使用C++20，可以直接输出timeOfDay(第14行)，这就是我必须在第7行中引入命名空间date的原因。其余部分应该很容易阅读。第18-21行，以小时、分钟、秒和分数秒为单位显示了从午夜开始的时间分量。第22行返回自午夜以来的时间持续时间，以秒为单位。第26行更有趣:给定的秒对应于第15行中显示的时间。若给定的时间是a.m.，则返回第30和32行。第35行和36行返回与给定小时等价12小时的时间格式。
 
-Here is the output of the program:
+下面是程序的输出:
+
+\begin{tcblisting}{commandshell={}}
+timeOfDay: 12:41:40.500000
+
+timeOfDay.hours(): 12h
+timeOfDay.minutes(): 41min
+timeOfDay.seconds(): 40s
+timeOfDay.subseconds(): 0.500000s
+timeOfDay.to_duration(): 45700.500000s
+
+date::hh_mm_ss(45700.5s): 12:41:40.500000
+
+date::is_am(5h): true
+date::is_am(15h): false
+
+date::make12(5h): 5h
+date::make12(15h): 3h
+\end{tcblisting}
+
+\subsubsubsection{5.5.2\hspace{0.2cm}日历日期}
+
+C++20中一个新的chrono扩展类型是日历日期。C++20支持多种方式来创建日历日期，并可以与之交互。那什么是日历日期呢?
+
+日历日期是由一年、一个月和一天组成的日期。因此，C++20有一个特定的数据类型std::chrono::year\_month\_day。C++20提供了很多相关的功能。在下面的表中，将了解日历日期类型，然后再展示各种方式的用例。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/19.png}\\
-Time of day
-\end{center}
-
-
-\subsubsubsection{5.5.2\hspace{0.2cm} Calendar Dates}
-
-A new type of the chrono extension in C++20 is a calendar date. C++20 supports various ways to create a calendar date and interact with them. First of all: What is a calendar date?
-
-A calendar date is a date that consists of a year, a month and a day. Consequently, C++20 has a specific data type std::chrono::year\_month\_day. C++20 has way more to offer. The following table should give you the first overview of calendar-date types before I show you various usecases.
-
-\begin{center}
-Various calendar-date types
+各种日历日期类型
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{Type}                 & \textbf{Description}                                   \\ \hline
-std::chrono::last\_spec       & Indicates the last day or weekday of a month           \\
-std::chrono::day              & Represents a day of a month                            \\
-std::chrono::month            & Represents a month of a year                           \\
-std::chrono::year             & Represents a year in the Gregorian calendar            \\
-std::chrono::weekday          & Represents a day of the week in the Gregorian calendar \\
-std::chrono::weekday\_indexed & Represents the n-th weekday of a month                 \\
-std::chrono::weekday\_last    & Represents the last weekday of a month                 \\
-std::chrono::month\_day       & Represents a specific day of a specific month          \\
-std::chrono::month\_day\_last & Represents the last day of a specific month            \\
-std::chrono::month\_weekday   & Represents the n-th weekday of a specific month        \\
-std::chrono::month\_weekday\_last            & Represents the last weekday of a specific month           \\
-std::chrono::year\_month      & Represents a specific month of a specific year         \\
-std::chrono::year\_month\_day & Represents a specific year, month, and day             \\
-std::chrono::year\_month\_day\_last          & Represents the last day of a specific year and month      \\
-std::chrono::year\_month\_weekday            & Represents the n-th weekday of a specific year and month  \\
-std::chrono::year\_month\_day\_weekday\_last & Represents the last weekday of a specific years and month \\
-std::chrono::operator /       & Creates a date of the Gregorian calendar              
+\textbf{类型}                 & \textbf{描述}                                   \\ \hline
+std::chrono::last\_spec       & 一个月的最后一天或工作日           \\
+std::chrono::day              & 一个月中的一天                            \\
+std::chrono::month            & 一年中的一个月                           \\
+std::chrono::year             & 表示公历中的一年            \\
+std::chrono::weekday          & 表示公历中的一周中的一天 \\
+std::chrono::weekday\_indexed & 表示每月的第n个工作日                 \\
+std::chrono::weekday\_last    & 表示一个月的最后一个工作日                 \\
+std::chrono::month\_day       & 表示特定月份中的特定日期          \\
+std::chrono::month\_day\_last & 表示特定月份的最后一天            \\
+std::chrono::month\_weekday   & 表示特定月份的第n个工作日        \\
+std::chrono::month\_weekday\_last            & 表示特定月份的最后一个工作日           \\
+std::chrono::year\_month      & 表示特定年份中的特定月份         \\
+std::chrono::year\_month\_day & 表示特定的年、月和日             \\
+std::chrono::year\_month\_day\_last          & 表示特定年份和月份的最后一天      \\
+std::chrono::year\_month\_weekday            & 表示特定年份和月份的第n个工作日  \\
+std::chrono::year\_month\_day\_weekday\_last & 表示特定年份和月份的最后一个工作日 \\
+std::chrono::operator /       & 创建公历日期              
 \end{tabular}
 \end{table}
 
-Let me start simple and create a few calendar dates.
+现从简单的开始，创建几个日历日期。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.5.2.1\hspace{0.2cm} Create Calendar Dates}
+\textbf{5.5.2.1\hspace{0.2cm}创建日历日期}
 
-The program createCalendar.cpp shows various ways to create calendar-related dates.
+createCalendar.cpp展示了创建日历相关日期的各种方法。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Create calendar dates
 \begin{lstlisting}[style=styleCXX]
 // createCalendar.cpp
 
@@ -767,7 +771,7 @@ Before I show you two examples, I want to make a short remark. To compile a prog
 \hspace*{\fill} \\ %插入空行
 \noindent
 Compilation with the prototype library date
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 g++ localTime.cpp -I <Path to data/tz.h> tz.cpp -std=c++17 \
   -lcurl -o localTime
 \end{tcblisting}

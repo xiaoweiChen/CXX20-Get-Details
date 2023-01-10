@@ -3,27 +3,24 @@
 Cippi在研究算盘
 \end{center}
 
-The comparison of signed and unsigned integers is a subtle cause for unexpected behavior and, therefore, of bugs. Thanks to the new safe comparison functions for integers, std::cmp\_*, a source of subtle bugs is gone. Additionally, C++20 includes mathematical constants such as e, π, or ϕ, and with the functions std::midpoint and std::lerp, you can calculate the midpoint of two numbers or their linear interpolation. The new bit manipulation allows you to access and modify individual bits or bit sequences.
+有符号整数和无符号整数的比较，有时导致意外行为和错误的原因。C++20添加了新的类型安全的比较函数std::cmp\_*，相应的错误就能完全避免了。此外，C++20还包含了一些数学常数，比如e、π或φ，使用函数std::midpoint和std::lerp，你可以计算两个数的中点或它们的线性插值。新的位操作可以访问和修改单个位或位序列。
 
 \subsubsubsection{5.4.1\hspace{0.2cm}整型数的安全比较}
 
-When you compare signed and unsigned integers, you may not get the result you expect. Thanks to the six std::cmp\_* functions, there is a cure in C++20. To motivate safe comparison of integers, I want to start with the unsafe variant.
+比较有符号整数和无符号整数时，可能得不到预期的结果。C++20添加了六个std::cmp\_*函数，使得比较更加安全。为了更好的了解添加整数安全比较意义，这里先从不安全比较开始说起。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Integral versus Integer}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={整数与整型}]
 	
-The terms integral and integer are synonyms in C++. This is the wording from the standard for fundamental types: “Types bool, char, char8\_t, char16\_t, char32\_t, wchar\_t, and the signed and unsigned integer types are collectively called integral types. A synonym for [an] integral type is integer type”. I prefer the term integer in this book.
+术语integral(整数)和integer(整型)是C++中的同义词。这是基本类型标准的表述:“类型bool, char, char8\_t, char16\_t, char32\_t, wchar\_t，以及有符号整型和无符号整型统称为整数类型。整数是某一种具体的整型”。本书里，我更喜欢用整型这个词。
 	
 \end{tcolorbox}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-5.4.1.1\hspace{0.2cm} Unsafe Comparison
+\textbf{5.4.1.1\hspace{0.2cm}不安全的比较}
 
-Of course, there is a reason for the name unsafeComparison.cpp of the following program.
+当然，下面这段代码的名称为unsafcompare.cpp，命名成这样是有原因的。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Unsafe comparison of integers
 \begin{lstlisting}[style=styleCXX]
 // unsafeComparison.cpp
 
@@ -48,18 +45,24 @@ int main() {
 }
 \end{lstlisting}
 
-When I execute the program, the output may not meet your expectations.
+当执行时，输出可能不符合期望。
+
+\begin{tcblisting}{commandshell={}}
+-3 < 7: false
+-3 <= 7: false
+-3 > 7: true
+-3 => 7: true
+\end{tcblisting}
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/16.png}\\
-Surprises with unsafe comparisons of integers
+不安全的比较结果令人惊讶
 \end{center}
 
-When you read the output of the program, you recognize that -3 is bigger than 7. You presumably know the reason. I compared a signed x (line 11) with an unsigned y (line 12). What is happening under the hood? The following program provides the answer.
+看到程序的输出时，会发现-3比7大。我想你大概知道为什么会这样。我比较了有符号的x(第11行)和无符号的y(第12行)。这背后发生了什么?下面的代码会告诉我们答案。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Unsafe comparison of integers resolved
+\textbf{解决不安全的整数比较}
 \begin{lstlisting}[style=styleCXX]
 // unsafeComparison2.cpp
 
@@ -72,45 +75,54 @@ int main() {
 }
 \end{lstlisting}
 
-In the example, I’m focusing on the less-than operator. \href{https://cppinsights.io/s/62732a01}{C++ Insights} gives me the following output:
+本例中，主要关注小于操作符。\href{https://cppinsights.io/s/62732a01}{C++ Insights}输出如下:
 
+\begin{lstlisting}[style=styleCXX]
+int main()
+{
+	int x = -3;
+	unsigned int y = 7;
+	bool val = static_cast<unsigned int>(x) < y;
+	/* PASSED: static_assert(static_cast<long>(static_cast<unsigned int>(-3)) == 4294967293L); */
+	return 0;
+}
+\end{lstlisting}
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/1-4.png}\\
-Unsafe comparison analyzed
+分析不安全的比较
 \end{center}
 
-Here is what’s happening:
+事情是这样的:
 
 \begin{itemize}
 \item 
-The compiler transforms the expression x < y (line 7) into static\_cast<unsigned int>(x) < y. In particular, the signed x is converted to an unsigned int.
+编译器将表达式x < y(第7行)转换为static\_cast<unsigned int>(x) < y。特别地，有符号x转换为无符号int类型。
 
 \item 
-Due to the conversion, -3 becomes 4'294'967'293.
+因为这个转换，-3变成了4'294'967'293。
 
 \item 
-4'294'967'293 is equal to −3 mod $ 2^{32} $
+4'294'967'293等于$ 2^{32} $加−3
 
 \item 
-32 is the number of bits of an unsigned int on C++ Insights.
+32是C++ Insights中无符号整型的位宽。
 \end{itemize}
 
-Thanks to C++20, we have a safe comparison of integers.
+由于C++20的出现，现在可以安全地对整数进行比较了。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.4.1.2\hspace{0.2cm} Safe Comparison of Integers}
+\textbf{5.4.1.2\hspace{0.2cm}安全的整数比较}
 
-C++20 supports six comparison functions for integers:
+C++20支持6个整数比较函数:
 
 \begin{center}
-Six safe comparison functions
+六种安全比较函数
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{compare Function} & \textbf{Meaning} \\ \hline
+\textbf{比较函数} & \textbf{描述} \\ \hline
 std::cmp\_equal           & ==               \\
 std::cmp\_not\_equal      & !=               \\
 std::cmp\_less            & \textless{}      \\
@@ -120,11 +132,8 @@ std::cmp\_greater\_equal  & \textgreater{}=
 \end{tabular}
 \end{table}
 
-Thanks to the six comparison functions, I can easily transform the previous program unsafeComparison.cpp into the program safeComparison.cpp. The new comparison functions require the header <utility>.
+由于这个六个比较函数的出现，现在可以轻松地将之前的程序unsafecomparis.cpp改写为safecomparis.cpp。新的比较函数需要头文件<utility>。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Safe comparison of integers
 \begin{lstlisting}[style=styleCXX]
 // safeComparison.cpp
 
@@ -152,9 +161,9 @@ int main() {
 }
 \end{lstlisting}
 
-Additionally, I applied the equal and not equal operators.
+另外，这里使用了等号和不等号运算符。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 -3 == 7: false
 -3 != 7: true
 -3 < 7: true
@@ -163,15 +172,11 @@ Additionally, I applied the equal and not equal operators.
 -3 => 7: false
 \end{tcblisting}
 
-\begin{center}
-Safe comparison
-\end{center}
-
-Invoking a safe-comparison function with a non-integer, such as a double, causes a compile-time error.
+使用非整数(如double)调用安全比较函数会导致编译时错误。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Safe comparison of an unsigned int and a double
+\textbf{尝试安全比较uint和double}
 \begin{lstlisting}[style=styleCXX]
 // safeComparison2.cpp
 
@@ -188,11 +193,11 @@ int main() {
 }
 \end{lstlisting}
 
-On the other hand, you can compare a double and an unsigned int the classical way. The program classicalComparison.cpp applies classical comparison of a double and an unsigned int.
+另外，还是可以用经典的方法比较double型和unsigned型的数值。classicalcompare.cpp就使用了double类型和unsigned int类型的经典比较方式。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Classical comparison of an unsigned int and a double
+\textbf{uint和double的经典比较方式}
 \begin{lstlisting}[style=styleCXX]
 // classicalComparison.cpp
 
@@ -206,20 +211,16 @@ int main() {
 }
 \end{lstlisting}
 
-It works. The unsigned int is \href{https://en.cppreference.com/w/cpp/language/implicit_conversion}{floating-point promoted} to double. \href{https://cppinsights.io/s/44216566}{C++ Insights} shows the truth:
+没毛病！unsigned int将\href{https://en.cppreference.com/w/cpp/language/implicit_conversion}{升格为浮点}，再提升为double。\href{https://cppinsights.io/s/44216566}{C++ Insights}展示了实际发生了什么:
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter5/images/1-5.png}\\
-Floating point promotion to double
+浮点提升为double
 \end{center}
 
-\subsubsubsection{5.4.2\hspace{0.2cm} Mathematical Constants}
+\subsubsubsection{5.4.2\hspace{0.2cm}数学常数}
 
-First of all, the constants require the header <numbers> and the namespace std::numbers. The following table gives you an overview.
-
-\begin{center}
-The mathematical constants
-\end{center}
+首先，数学常数要求头文件<numbers>和命名空间std::numbers，下表提供了一个概述。
 
 \begin{table}[H]
 \centering
@@ -236,16 +237,13 @@ std::numbers::ln10        & ln10                      \\
 std::numbers::sqrt2       & $\sqrt{2}$                \\
 std::numbers::sqrt3       & $\sqrt{3}$                \\
 std::numbers::inv\_sqrt3  & $\frac{1}{\sqrt{3}}$      \\
-std::numbers::egamma      & \href{https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant}{Euler-Mascheroni constant} \\
+std::numbers::egamma      & \href{https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant}{欧拉常数(Euler-Mascheroni常数)} \\
 std::numbers::phi         & $\phi$                   
 \end{tabular}
 \end{table}
 
-The program mathematicConstants.cpp applies the mathematical constants.
+mathematicConstants.cpp使用了一些数学常数。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-The mathematical constants
 \begin{lstlisting}[style=styleCXX]
 // mathematicConstants.cpp
 
@@ -275,30 +273,44 @@ int main() {
 }
 \end{lstlisting}
 
-Here is the output of the program with the MSVC compiler.
+下面是使用MSVC编译器生成程序的输出。
+
+\begin{tcblisting}{commandshell={}}
+std::numbers::e: 2.718281828
+std::numbers::log2e: 1.442695041
+std::numbers::log10e: 0.4342944819
+std::numbers::pi: 3.141592654
+std::numbers::inv_pi: 0.3183098862
+std::numbers::inv_sqrtpi: 0.5641895835
+std::numbers::ln2: 0.6931471806
+std::numbers::sqrt2: 1.414213562
+std::numbers::sqrt3: 1.732050808
+std::numbers::inv_sqrt3: 0.5773502692
+std::numbers::egamma: 0.5772156649
+std::numbers::phi: 1.618033989
+\end{tcblisting}
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/17.png}\\
-Use of all mathematical constants
+使用所有的数学常数
 \end{center}
 
-The mathematical constants are available for float, double, and long double. By default, double is used but, you can also specify float (std::numbers::pi\_v<float>) or long double (std::numbers::pi\_v<long double>).
+数学常数可用于float、double和long double。默认情况下，使用double。但也可以指定float (std::numbers::pi\_v<float>)或long double (std::numbers::pi\_v<long double>)。
 
-\subsubsubsection{5.4.3\hspace{0.2cm} Midpoint and Linear Interpolation}
+\subsubsubsection{5.4.3\hspace{0.2cm}中间值与线性插值}
 
 \begin{itemize}
 \item 
-std::midpoint(a, b): calculates the midpoint (a + (b - a) / 2) of integers, floating points, or pointers. If a and b are pointers, they have to point to the same array object. The function needs the header <numeric>.
+std::midpoint(a, b):计算整数、浮点数或指针的中点(a + (b - a) / 2)。若a和b是指针，则必须指向同一个数组对象。该函数需要头文件<numeric>。
 
 \item 
-std::lerp(a, b, t): calculates the linear interpolation (a + t(b - a)). When t is outside the range [0, 1], it calculates the linear extrapolation. The function needs the header <cmath>.
+std::lerp(a, b, t):计算线性插值(a + t(b - a))。当t在范围[0,1]之外时，则计算线性外推。函数需要头文件<cmath>。
 \end{itemize}
 
-The program midpointLerp.cpp applies both functions.
+midpointLerp.cpp使用这两个函数。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Calculating the midpoint and the linear interpolation of numbers
+\textbf{计算中点和数字的线性插值}
 \begin{lstlisting}[style=styleCXX]
 // midpointLerp.cpp
 
@@ -324,9 +336,9 @@ int main() {
 }
 \end{lstlisting}
 
-The program should, together with its output, be self-explanatory.
+程序及其输出就没什么好说的了：
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 std::midpoint(10, 20): 15
 
 std::midpoint(10, 20, 0): 10
@@ -342,25 +354,21 @@ std::midpoint(10, 20, 0.9): 19
 std::midpoint(10, 20, 1): 20
 \end{tcblisting}
 
-\begin{center}
-Calculating the midpoint and the linear interpolation of numbers
-\end{center}
+\subsubsubsection{5.4.4\hspace{0.2cm}位操作}
 
-\subsubsubsection{5.4.4\hspace{0.2cm} Bit Manipulation}
-
-The header <bit> supports functions to access and manipulate individual bits or bit sequences.
+头文件<bit>声明了访问和操作单个位或位序列的函数。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.4.4.1\hspace{0.2cm} std::endian}
+\textbf{5.4.4.1\hspace{0.2cm}std::endian}
 
-Thanks to the new type std::endian, you get the endianness of a scalar type. Endianness can be bigendian or little-endian. Big-endian means that the most significant byte is furthest left, little-endian means that the least significant byte is furthest left. A scalar type is either an arithmetic type, an enum, a pointer, a member pointer, or a std::nullptr\_t.
+新类型std::endian，可以获得标量类型的字节序。端序可以是大端序或小端序。大端表示高位字节在最左边，小端表示低位字节在最左边。标量类型可以是算术类型、枚举、指针、成员指针或std::nullptr\_t。
 
-The class endian provides the endianness of all scalar types:
+endian类提供了所有标量类型的端序:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-enum class endian
+\textbf{枚举类endian}
 \begin{lstlisting}[style=styleCXX]
 enum class endian
 {
@@ -372,27 +380,24 @@ enum class endian
 
 \begin{itemize}
 \item 
-If all scalar types are little-endian, std::endian::native is equal to std::endian::little.
+若所有标量类型都是小端，则std::endian::native等于std::endian::little。
 
 \item 
-If all scalar types are big-endian, std::endian::native is equal to std::endian::big.
+若所有标量类型都是大端，则std::endian::native等于std::endian::big。
 \end{itemize}
 
-Even corner cases are supported:
+即使是极端情况也支持:
 
 \begin{itemize}
 \item 
-If all scalar types have sizeof 1 and therefore endianness does not matter, the values of the enumerators std::endian::little, std::endian::big, and std::endian::native are identical.
+若所有的标量类型都具有sizeof 1，端序就不重要了，枚举数std::endian::little、std::endian::big和std::endian::native的值是相同的。
 
 \item 
-If the platform uses mixed endianness, std::endian::native is neither equal to std::endian::big nor std::endian::little.
+若平台使用混合字节序，std::endian::native既不等于std::endian::big，也不等于std::endian::little。
 \end{itemize}
 
-When I perform the following program getEndianness.cpp on a x86 architecture, I get the answer little-endian.
+当在x86架构上执行下面的getEndianness.cpp时，我得到的结果是little-endian。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-enum class endian
 \begin{lstlisting}[style=styleCXX]
 // getEndianness.cpp
 
@@ -411,43 +416,44 @@ int main() {
 }
 \end{lstlisting}
 
-constexpr if enables the compiler to conditionally compile source code. This means that the compilation depends on the endianness of your architecture.
+constexpr if使编译器能够有条件地编译源代码。所以，编译依赖于架构的字节序。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.4.4.2\hspace{0.2cm} Accessing or Manipulating Bits or Bit Sequences}
+\textbf{5.4.4.2\hspace{0.2cm}访问，位操作，位序列}
 
-The following table gives you an overview of all functions. You can find the functions in the header <bit>.
+下表概述了所有函数，可以在头文件<bit>中找到相应的函数。
 
 \begin{center}
-Bit manipulation
+位操作
 \end{center}
 
 \begin{table}[H]
+\centering
 \begin{tabular}{ll}
-\textbf{Function}     & \textbf{Desctiption}                                                             \\ \hline
-std::bit\_cast        & Reinterprets the object representation                                           \\
-std::has\_single\_bit & Checks if a number is a power of two                                             \\
-std::bit\_ceil        & Finds the smallest integer power of two that is not smaller than the given value \\
-std::bit\_floor       & Finds the largest integer power of two that is not greater than the given value  \\
-std::bit\_width       & Finds the smallest number of bits to represent the given value                   \\
-std::rotl             & Computes the bitwise left-rotation                                               \\
-std::rotr             & Computes the bitwise right-rotation                                              \\
-std::countl\_zero     & Counts the number of consecutive 0s, starting with the most significant bit      \\
-std::countl\_one      & Counts the number of consecutive 1s, starting with the most significant bit      \\
-std::countr\_zero     & Counts the number of consecutive 0s, starting with the least significant bit     \\
-std::countr\_one      & Counts the number of consecutive 1s, starting with the least significant bit     \\
-std::popcount         & Counts the number of 1s in an unsigned integer                                  
+\textbf{函数}     & \textbf{描述}                                                             \\ \hline
+std::bit\_cast        & 重新解释对象的表示                                           \\
+std::has\_single\_bit & 检查数字是否为2的次幂                                             \\
+std::bit\_ceil        & 求不小于给定值的2的最小整数次幂 \\
+std::bit\_floor       & 求不大于给定值的2的最大整数次幂  \\
+std::bit\_width       & 找到表示给定值的最小位数                   \\
+std::rotl             & 计算按位向左移                                               \\
+std::rotr             & 计算按位向右移                                               \\
+std::countl\_zero     & 从最高位开始，计数连续0的个数      \\
+std::countl\_one      & 从最高位开始，计算连续1的个数      \\
+std::countr\_zero     & 从最低位开始，计数连续0的个数    \\
+std::countr\_one      & 从最低有效位，计算连续1的个数     \\
+std::popcount         & 统计无符号整数中位值为1的个数                                  
 \end{tabular}
 \end{table}
 
-All of the functions except std::bit\_cast require an unsigned integer type (unsigned char, unsigned short, unsigned int, unsigned long, or unsigned long long).
+除std::bit\_cast外，所有函数都要求是无符号整数类型(unsigned char、unsigned short、unsigned int、unsigned long或unsigned long)。
 
-The program bit.cpp shows the application of the functions.
+bit.cpp展示了如何使用这些函数。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Bit manipulation
+\textbf{位操作}
 \begin{lstlisting}[style=styleCXX]
 // bit.cpp
 
@@ -485,18 +491,24 @@ int main() {
 }
 \end{lstlisting}
 
-Here is the output of the program.
+下面是程序的输出。
 
-\begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/1-6.png}\\
-Bit manipulation
-\end{center}
+\begin{tcblisting}{commandshell={}}
+std::has_single_bit(0b00110010): false
+std::bit_ceil(0b00110010): 01000000
+std::bit_floor(0b00110010): 00100000
+std::bit_width(5u): 3
+std::rotl(0b00110010, 2): 11001000
+std::rotr(0b00110010, 2): 10001100
+std::countl_zero(0b00110010): 2
+std::countl_one(0b00110010): 0
+std::countr_zero(0b00110010): 1
+std::countr_one(0b00110010): 0
+std::popcount(0b00110010): 3
+\end{tcblisting}
 
-The following program shows the std::bit\_floor, std::bit\_ceil, std::bit\_width, and std::bit\_popcount for the numbers 2 to 7.
+下面的程序显示了，将std::bit\_floor, std::bit\_ceil, std::bit\_width和std::bit\_popcount用于数字2到7的效果。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Displaying std::bit\_floor, std::bit\_ceil, std::bit\_width, and std::popcount for a few numbers
 \begin{lstlisting}[style=styleCXX]
 // bitFloorCeil.cpp
 
@@ -530,25 +542,56 @@ int main() {
 }
 \end{lstlisting}
 
+\begin{tcblisting}{commandshell={}}
+bit_floor(00000010) = 2
+bit_ceil(00000010) = 2
+bit_width(00000010) = 2
+popcount(00000010) = 1
+
+bit_floor(00000011) = 2
+bit_ceil(00000011) = 4
+bit_width(00000011) = 2
+popcount(00000011) = 2
+
+bit_floor(00000100) = 4
+bit_ceil(00000100) = 4
+bit_width(00000100) = 3
+popcount(00000100) = 1
+
+bit_floor(00000101) = 4
+bit_ceil(00000101) = 8
+bit_width(00000101) = 3
+popcount(00000101) = 2
+
+bit_floor(00000110) = 4
+bit_ceil(00000110) = 8
+bit_width(00000110) = 3
+popcount(00000110) = 2
+
+bit_floor(00000111) = 4
+bit_ceil(00000111) = 8
+bit_width(00000111) = 3
+popcount(00000111) = 3
+\end{tcblisting}
+
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter5/images/1-7.png}\\
-Displaying std::bit\_floor, std::bit\_ceil, std::bit\_width, and std::popcount for a few numbers
+对一些数字使用std::bit\_floor, std::bit\_ceil, std::bit\_width和std::popcount
 \end{center}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 	
 \begin{itemize}
 \item 
-The cmp\_* functions in C++20 support the safe comparison of integrals because they detect the comparison of a signed and an unsigned integral. In the case of an unsafe comparison, the compilation fails.
+C++20中的cmp\_*函数支持安全的整数比较，其可以检测有符号整数和无符号整数的比较。在不安全比较的情况下，编译会失败。
 
 \item 
-Many mathematical constants such as $e$, $log_2e$, or $\pi$ are now defined.
+并且，定义了许多数学常数，如$e$、$log_2e$或$\pi$。
 
 \item 
-C++20 provides utility functions for calculating the midpoint or linear interpolation of two values.
+C++20提供了计算两个值的中点或线性插值的工具函数。
 
 \item 
-New functions to access and manipulate individual bits or bit sequences are available.
+有新函数可以访问和操作位或位序列。
 \end{itemize}
 	
 \end{tcolorbox}

@@ -131,7 +131,7 @@ sumDec返回2。为什么?第二个形参sec的类型变成了第一个形参fir
 sumTem是无效的。
 \end{itemize}
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 sumInt(2000, 11): 2011
 sumGen(2000, 11): 2011
 sumDec(2000, 11): 2011
@@ -201,7 +201,7 @@ auto lambdaVectorIntegral = []<std::integral T>(const std::vector<T>& vec) {
 
 函数lambdaGeneric(第9行)可以接受有成员函数size()的数据类型。函数lambdaVector(第10行)更具体:只接受std::vector。函数lambdaVectorIntegral(第11行)使用C++20概念std::integral。因此，它只接受使用整型(如int)的std::vector。为了使用std::integral概念，必须包含头文件<concepts>。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 lambdaGeneric(deq): 3
 
 lambdaGeneric(vecDouble): 4
@@ -411,7 +411,7 @@ set1(第19行)和set4(第38行)按升序排序键。set2(第26行)、set3(第33�
 
 下面是程序的输出。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 Bjarne Dave Herb michael scott
 scott michael Herb Dave Bjarne
 Herb scott Bjarne michael

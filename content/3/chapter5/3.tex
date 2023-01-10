@@ -49,7 +49,7 @@ int main() {
 两个std::vector(第8行和第20行)在编译时使用constexpr声明的函数进行排序。第一种情况下，函数maxElement返回myVec的最后一个元素，也就是它的最大值。第二种情况下，使用声明为constexpr的Lambda表达式。
 
 \hspace*{\fill} \\ %插入空行
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 maxValue: 4
 maxValue2: 4
 \end{tcblisting}
@@ -109,7 +109,7 @@ int main() {
 使用C-string(第12行)，std::initializer\_list(第16行和第20行)，std::pair的std::initializer\_list(第26行)都可以创建std::array。通常，编译器可以推断出std::array的类型。还可以对类型进行指定(第20和26行)。
 
 \hspace*{\fill} \\ %插入空行
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 A simple test
 
 12345
@@ -341,7 +341,7 @@ int main() {
 
 函数产生预期的结果。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 2 inside
 2 inside
 \end{tcblisting}
@@ -462,7 +462,7 @@ int main() {
 
 starts\_with和ends\_with的成员函数都是谓词，返回布尔值。可以用std::string(第29行和39行)，std::string\_view(第31行和41行)和char(第33行和43行)使用新的成员函数。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 Hello World
             starts with Hello World: true
             starts with Hello: true

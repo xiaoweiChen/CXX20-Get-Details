@@ -295,7 +295,7 @@ int main() {
 
 类NoUniqueAddress的大小等于int(第7行)，但类UniqueAddress的大小不等于int(第12行)。UniqueAddress的成员d和e(第40行和41行)有不同的地址，但UniqueAddress类的成员没有(第33行和34行)。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 sizeof(int) == sizeof(NoUniqueAddress): true
 sizeof(int) == sizeof(UniqueAddress): false
 

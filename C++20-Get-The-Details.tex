@@ -309,6 +309,7 @@
 }
 
 \tcbset{
+  breakable,
   commandshell/.style={
     listing only,
     colback=black!75!white,
@@ -316,6 +317,7 @@
     lowerbox=ignored,
     listing options={
       language={bash},
+      breaklines=true,
       basicstyle=\ttfamily,
       columns = fixed,
       flexiblecolumns

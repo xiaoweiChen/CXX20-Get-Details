@@ -251,7 +251,7 @@ std::unordered_map<std::string, int> freqWord{ {"witch", 25}, {"wizard", 33},
 
 当然，键和值可以直接显示(第19和27行)，输出是相同的。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 Keys:
 fish cat dog tale wizard witch
 fish cat dog tale wizard witch
@@ -315,7 +315,7 @@ int main() {
 
 这里是程序的输出。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 All words: cat dog fish tale witch wizard
 All words, reversed: wizard witch tale fish dog cat
 The first 4 words: cat dog fish tale
@@ -368,7 +368,7 @@ int main() {
 
 第一个iota调用(第15行)创建从0到9的所有数字，加1。第二个iota调用(第17行)创建一个无限数据流，从0开始，加1。std::views::iota(0)是惰性的。只有当请求时，才会得到一个新值。我请求了十次。因此，两个vector是相同的。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 vec == vec2: true
 0 1 2 3 4 5 6 7 8 9
 \end{tcblisting}
@@ -664,7 +664,7 @@ int main() {
 在介绍程序之前，先展示一下输出效果。
 
 \hspace*{\fill} \\ %插入空行
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 3 6 9 12 15 18 21 24 27 30 33 36 39 42 45 48
 
 Only
@@ -732,7 +732,7 @@ int main() {
 
 map函数定义中的第15行非常有趣。表达式decltype(func(std::declval<value\_type>()))推导出return\_type。若函数func应用于输入序列的所有元素，则输入类型将转换为return\_type。std::declval<value\_type>()返回一个右值引用，decltype可以使用它来推断类型。所以，使用map([](int i)\{return i * i;\}, myInts)(第28行)将myInt的每个元素映射为其平方值，并且使用map([](const std::string\& s)\{return std::make\_pair(s.s .size(), s);\}, myStrings)将myStrings中的每个字符串映射到为pair，每对的第一个元素是字符串的长度。
 
-\begin{tcblisting}{breakable, commandshell={}}
+\begin{tcblisting}{ commandshell={}}
 1 4 9 16 25 36 49 64 81 100
 
 (4, Only) (3, for) (7, testing) (8, purposes)
@@ -821,7 +821,7 @@ int main() {
 
 过滤器函数使用的默认谓词(第19行)总是返回true(第12行)，所以mapFilter函数在默认情况下只是作为一个映射函数。因此，mapFilter函数在第38行和第50行中的行为与前面的map函数相同。第42和55行在一次调用中同时应用map和filter函数。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 1 4 9 16 25 36 49 64 81 100
 
 1 9 25 49 81

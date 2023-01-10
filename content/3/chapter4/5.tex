@@ -91,7 +91,7 @@ int main() {
 
 下面是程序的输出:
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 sqr(5): 25
 sqr(a): 25
 \end{tcblisting}
@@ -136,7 +136,7 @@ int main() {
 
 res1和res2是具有静态存储的变量。res3具有线程存储的变量。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 sqr(5): 25
 sqr(5): 25
 sqr(5): 25
@@ -237,7 +237,7 @@ int main() {
 
 constinit(第18行)并不意味着常量化，就像const(第16行)或constexpr(第17行)一样。声明了constexpr(第20行)或const(第13行)的变量可以创建为局部变量，但不能创建声明了constinit变量(第21行)。
 
-\begin{tcblisting}{breakable,commandshell={}}
+\begin{tcblisting}{commandshell={}}
 res: 1001
 ++constinitVal: 1001
 \end{tcblisting}
