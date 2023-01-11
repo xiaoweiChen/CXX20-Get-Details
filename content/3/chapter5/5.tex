@@ -256,77 +256,69 @@ int main() {
 }
 \end{lstlisting}
 
-There are essentially two ways to create a calendar date. You can use the so-called cute syntax yearMonthDay\{year(1940)/month(6)/day(26)\} (line 12), or you can use the explicit type date::year\_month\_day(1940y, June, 26d) (line 14). In order not to overwhelm you, I will delay my explanation of the cute syntax to the next section. The explicit type is quite interesting, because it uses the date-time literals 1940y, 26d, and the predefined constant June. This was the obvious part of the program.
+有两种方法可以创建日历日期。可以使用yearMonthDay\{year(1940)/month(6)/day(26)\}(第12行)，或直接使用显式类型date::year\_month\_day(1940y, June, 26d)(第14行)。使用显式类型非常有趣，因为它使用了日期-时间的字面值1940y、26d和常量June。这里，我把对第一种好用的语法的解释推迟到下一节。
 
-Line 18, line 22, and line 26 offer further ways to create calendar dates.
+第18行、第22行和第26行提供了更多创建日历日期的方法。
 
 \begin{enumerate}
 \item 
-Line 18: the last day of March 2010: 
+第18行:2010年3月的最后一天
 \begin{lstlisting}[style=styleCXX]
 {year(2010)/March/last}
 \end{lstlisting}
-or
+或
 \begin{lstlisting}[style=styleCXX]
 year_month_day_last(2010y, month_day_last(month(3)))
 \end{lstlisting}
 
 \item 
-Line 22: the second Thursday of March 2020:
+第22行:2020年3月第二个星期四
 \begin{lstlisting}[style=styleCXX]
 {year(2020)/March/Thursday[2]}
 \end{lstlisting}
-or
+或
 \begin{lstlisting}[style=styleCXX]
 year_month_weekday(2020y, month(March), Thursday[2])
 \end{lstlisting}
 
 \item 
-Line 26: the last Monday of March 2010: 
+第26行:2010年3月的最后一个星期一
 \begin{lstlisting}[style=styleCXX]
 {year(2010)/March/Monday[last]}
 \end{lstlisting}
-or
+或
 \begin{lstlisting}[style=styleCXX]
 year_month_weekday_last(2010y, month(March), weekday_last(Monday))
 \end{lstlisting}
 \end{enumerate}
 
-The remaining calendar types stand for a day (line 33), a month (line 37), or a year (line 41). You can combine and use them as basic building blocks for fully specified calendar dates, such as in lines 18, 22, or 26.
+其余日历类型代表一天(第33行)、一个月(第37行)或一年(第41行)。可以将它们组合使用，并将其用作完全指定的日历日期的基本构建块，例如第18、22或26行。
 
-This is the output of the program:
+这是程序的输出:
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/20.png}\\
-Various calendar days
+\includegraphics[width=0.8\textwidth]{content/3/chapter5/images/20.png}\\
+各种日历日期
 \end{center}
 
-As promised, let me write about the cute syntax.
-
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.5.2.2\hspace{0.2cm} Cute Syntax}
+\textbf{5.5.2.2\hspace{0.2cm}“好用的”语法解释}
 
-The cute syntax consists of overloaded division operators to specify a calendar date. The overloaded operators support time literals (e.g.: 2020y, 31d) and constants (January, February, March, April, May, June, July, August, September, October, November, December).
+这种语法由重载除法运算符组成，用于指定日历日期。重载操作符支持时间字面量(例如:2020y, 31d)和常量(January, February, March, April, May, June, July, August, September, October, November, December)。
 
-The following three combinations of year, month, and day are possible when you use the cute syntax.
+使用这种语法时，可以使用以下年、月和日的三种组合。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Cute syntax
 \begin{lstlisting}[style=styleCXX]
 year/month/day
 day/month/year
 month/day/year
 \end{lstlisting}
 
-These combinations are not arbitrarily chosen. They are the ones used worldwide. Any other combination is not allowed.
+这些组合并不是随意选择的，是可以在世界范围内使用的。但不能使用其他的组合方式。
 
-Consequently, when you choose the type year, month, or day for the first argument, the type for the remaining two arguments is no longer necessary anymore, and a number would do the job.
+所以，当为第一个参数选择类型年、月或日时，其余两个参数的类型就不再需要了，用数字就可以了。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Cute syntax
 \begin{lstlisting}[style=styleCXX]
 // cuteSyntax.cpp
 
@@ -356,24 +348,21 @@ int main() {
 }
 \end{lstlisting}
 
-The combination year/day/month (line 21) is not allowed and causes a run-time message.
+年/日/月的组合(第21行)是非法的，这会导致一条运行时的错误。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter5/images/21.png}\\
-Use of cute syntax
+使用“好用的”语法
 \end{center}
 
-I assume you want to display a calendar date \{year(2010)/March/last\} in a readable form, for example, 2020-03-31. This is a job for the local\_days or sys\_days operator.
+这里，假设希望以可读的形式显示日历日期\{year(2010)/March/last\}，例如2020-03-31。这是local\_days或sys\_days操作符的任务。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.5.2.3\hspace{0.2cm} Displaying Calendar Dates}
+\textbf{5.5.2.3\hspace{0.2cm}显示日历日期}
 
-Thanks to std::chrono::local\_days or std::chrono::sys\_days, you can convert calendar dates to a std::chrono::time\_point. I use std::chrono::sys\_days in my example. std::chrono::sys\_days is based on \href{https://en.cppreference.com/w/cpp/chrono/system_clock}{std::chrono::system\_clock}. Let me convert the calendar dates (lines 18, 22, and 26) from the previous program createCalendar.cpp.
+使用std::chrono::local\_days或std::chrono::sys\_days，可以将日历日期转换为std::chrono::time\_point。例子中，我使用的是std::chrono::sys\_days。std::chrono::sys\_days基于\href{https://en.cppreference.com/w/cpp/chrono/system_clock}{std::chrono::system\_clock}。这里，我将对前一个程序createCalendar.cpp中的日历日期进行转换(第18、22和26行)。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Displaying calendar dates
 \begin{lstlisting}[style=styleCXX]
  // sysDays.cpp
 
@@ -411,24 +400,21 @@ int main() {
 }
 \end{lstlisting}
 
-The std::chrono::last constant (line 11) lets me easily determine how many days a month has. The output shows that 2012 is a leap year (line 26), but not 2013 (line 29).
+std::chrono::last常量(第11行)让可以轻松确定一个月有多少天。输出显示，2012是闰年(第26行)，而2013年不是(第29行)。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter5/images/22.png}\\
-Displaying calendar dates
+显示日历日期
 \end{center}
 
-Assume you have a calendar date such as year(2100)/2/29. Your first question may be: Is this date valid?
+假设有一个日历日期，例如：year(2100)/2/29。第一个问题可能是:这个日期有效吗?
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.5.2.4\hspace{0.2cm} Check if a Date is valid}
+\textbf{5.5.2.4\hspace{0.2cm}检查日期是否有效}
 
-The various calendar types in C++20 have a function ok. This function returns true if the date is valid.
+C++20中的各种日历类型都有一个ok函数。若日期有效，该函数返回true。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Checking if a date is valid
 \begin{lstlisting}[style=styleCXX]
 // leapYear.cpp
 
@@ -511,40 +497,29 @@ int main() {
 }
 \end{lstlisting}
 
-I check in the program if a given day (line 12), a given month (line 23), or a given year (line 33) is valid. The range of a day is [1, 31], of a month [1, 12], and of a year [ -32767, 32767]. Consequently, the ok() calls on the corresponding values returns false. Two facts are interesting when I display various values. First, if the value is not valid, the output displays: “is not a valid day”, “is not a valid month”, “is not a valid year”. Second, month values are displayed in string representation.
+在程序中检查给定的日期(第12行)、给定的月份(第23行)或给定的年份(第33行)是否有效。天的范围是[1,31]，月的范围是[1,12]，年的范围是[-32767,32767]。因此，ok()将返回false。当我显示不同的值时，若值无效，则输出显示:“不是有效的日期”、“不是有效的月份”、“不是有效的年份”。其次，月份值会以字符串形式显示。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter5/images/23.png}\\
-Check if a data is valid
+检查日期是否有效
 \end{center}
 
-You can apply the ok-call on a calendar date. Now it’s quite easy to check if a specific calendar date is a leap day and, therefore, the corresponding year a leap year. In the worldwide used \href{https://en.wikipedia.org/wiki/Gregorian_calendar}{Gregorian calendar}, the following rules apply:
+您可以在日历日期上使用ok。那么现在，检查一个特定的日历日期是否为闰日就很容易了，因此，就可以判断相应的年份是否为闰年。全球使用的\href{https://en.wikipedia.org/wiki/Gregorian_calendar}{格里高利历}中，适用以下规则:
 
-Each year that is exactly divisible by 4 is a leap year.
+非整世纪年能能被4整除的年份是闰年。
  
-\begin{itemize}
-\item 
-Except for years which are exactly divisible by 100. They are not leap years.
+整世纪年能被100整除的年份是不是闰年，能被400整除的年份才是闰年。
 
-\begin{itemize}
-\item 
-Except for years which are exactly divisible by 400. They are leap years.
-\end{itemize}
-\end{itemize}
+有点复杂哈?leapYears.cpp用代码表达了这个规则。
 
-Too complicated? The program leapYears.cpp exemplifies this rule.
-
-The extended chrono library makes it quite easy to ask for the time duration between calendar dates.
+扩展的chrono库可以很容易地计算日历日期之间的时间持续时间。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.5.2.5\hspace{0.2cm} Query Calendar Dates}
+\textbf{5.5.2.5\hspace{0.2cm}查询日历日期}
 
-Without further ado. The following program queryCalendarDates.cpp queries a few calendar dates.
+废话不多说。下面的queryCalendarDates.cpp就是在查询一些日历日期。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Query calendar dates
 \begin{lstlisting}[style=styleCXX]
 // queryCalendarDates.cpp
 
@@ -596,26 +571,23 @@ int main() {
 }
 \end{lstlisting}
 
-With the C++20 extension, you can directly display a time point, such as now (line 12). std::chrono::floor converts the time point to a day std::chrono::sys\_days. This value can be used to initialize the calendar type std::chrono::year\_month\_day. Finally, when I put the value into a std::chrono::year\_month\_weekday calendar type, I get the answer that this specific day is the 3rd Tuesday in October. Of course, I can also ask a calendar date for its components, such as the current year, month, or day (line 23).
+使用C++20扩展，可以直接显示时间点，例如：now(第12行)。atd::chrono::floor将时间点转换为atd::chrono::sys\_days，这个值可以用来初始化日历类型std::chrono::year\_month\_day。当我将值放入std::chrono::year\_month\_weekday日历类型中时，我得到的答案是这个特定的日子是10月的第3个星期二。当然，我还可以基于月份计算日历日期，例如当前的年、月或日(第23行)。
 
-Line 33 is the most interesting one. When I subtract from the current date, using hour resolution, the first of January of the current year, I get the number of hours since the new year. Conversely, when I subtract from the first of January of the next year (line 37) the current date, using hour resolution, I get the hours to the new year. Maybe you don’t like hour resolution. Line 42 and 43 display the values using day resolution.
+第33行是最有趣的一行。当我使用基于小时的日期，从当前日期减去当前年份的1月1日时，我得到了自新的一年以来的小时数。相反，当我从明年的1月1日减去当前日期(第37行)时，使用小时解析后，我得到了到新的一年的小时数。也许你不喜欢基于小时的方式，第42和43行使用基于天的方式显示值。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter5/images/24.png}\\
-Query calendar days
+查询日历日期
 \end{center}
 
-Now, I want to know the day of the week of my birthday.
+现在，我想知道我的生日是星期几。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.5.2.6\hspace{0.2cm} Query Weekdays}
+\textbf{5.5.2.6\hspace{0.2cm}查询星期几}
 
-Thanks to the extended chrono library, it is quite easy to get the weekday of a given calendar date.
+由于扩展的chrono库，可以很容易地获得给定日历日期是星期几。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Weekdays of given calendar dates
 \begin{lstlisting}[style=styleCXX]
 // weekdaysOfBirthdays.cpp
 
@@ -677,18 +649,59 @@ int main() {
 }
 \end{lstlisting}
 
-First, the program asks you for the year, month, and day of your birthday (line 17). Based on the input, a calendar date is created (line 26) and checked if it’s valid (line 28). Now I display the weekday of your birthday. I use the calendar date to fill the calendar type std::chrono::year\_month\_weekday (line 34). To get the int representation of the calendar type year, I have to convert it to int (line 41). Now I can display your age. Finally, the for loop displays, for each of your next ten birthdays (line 46), the following information: your age, the calendar date, and the weekday. I just have to increment the age and newYear variable.
+首先，程序询问我的出生的年、月和日(第17行)信息。根据输入，创建一个日历日期(第26行)并检查它是否有效(第28行)。现在，显示了生日的星期名称。我使用日历日期来填充std::chrono::year\_month\_weekday(第34行)。为了获得日历类型year的int表示形式，必须将其转换为int(第41行)。现在，可以显示年龄了。最后，for循环为接下来的十个生日(第46行)显示以下信息:年龄、日历日期和工作日。这里，只需要增加age和newYear就好。
 
-Here is a run of the program with my birthday.
+以我生日作为输入时，程序运行的后的输出。
+
+\begin{tcblisting}{commandshell={}}
+Year: 1966
+Month: 6
+Day: 26
+
+Birthday: 1966-06-26
+Weekday of birthday: Sun
+Your age: 57
+
+Weekdays for your next 10 birthdays
+  Age 58
+    Birthday: 2024-06-26
+    Weekday of birthday: Wed
+  Age 59
+    Birthday: 2025-06-26
+    Weekday of birthday: Thu
+  Age 60
+    Birthday: 2026-06-26
+    Weekday of birthday: Fri
+  Age 61
+    Birthday: 2027-06-26
+    Weekday of birthday: Sat
+  Age 62
+    Birthday: 2028-06-26
+    Weekday of birthday: Mon
+  Age 63
+    Birthday: 2029-06-26
+    Weekday of birthday: Tue
+  Age 64
+    Birthday: 2030-06-26
+    Weekday of birthday: Wed
+  Age 65
+    Birthday: 2031-06-26
+    Weekday of birthday: Thu
+  Age 66
+    Birthday: 2032-06-26
+    Weekday of birthday: Sat
+  Age 67
+    Birthday: 2033-06-26
+    Weekday of birthday: Sun
+\end{tcblisting}
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/25.png}\\
-Weekdays of birthdays
+我生日那天的星期名称
 \end{center}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.5.2.7\hspace{0.2cm} Calculating Ordinal Dates}
+\textbf{5.5.2.7\hspace{0.2cm}计算日期的顺序}
 
 As a last example of the new calendar facility, I want to present the online resource \href{https://github.com/HowardHinnant/date/wiki/Examples-and-Recipes}{Examples and Recipes} from Howard Hinnant, which has about 40 examples of the new chrono functionality. Presumably, the chrono extension in C++20 is not easy to get, therefore it’s quite important to have so many examples. You should use these examples as a starting point for further experiments and, therefore, sharpen your understanding. You can also add your recipes.
 
