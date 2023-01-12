@@ -17,6 +17,8 @@ Cippi在研究日历
 
 本章的例子使用Howard Hinnant的库。不过，我的解释是基于C++20术语的。当C++编译器支持扩展的chrono功能时，我将使示例适配C++20的语法。
 
+\hspace*{\fill} \\ %插入空行
+{}[译者注：本书作者在成书时，使用的编译器支持的并不完善。在译这本书的时候，很多编译器已经支持相关的特性。所以，在代码改动量不大的前提下，译书中的代码会使用标准库的写法，取代原书中使用原型库的方式。不过，对于文字表述上，保留作者的原始表达，不做修改。]
 \end{tcolorbox}
 
 \begin{itemize}
@@ -39,7 +41,7 @@ Calendar表示各种日历日期，如年、月、工作日或一周的第n天�
 
 \begin{itemize}
 \item 
-时间点由时间起点(即所谓的epoch)和持续时间定义。
+时间点由时间起点(即所谓的epoch)和时间段定义。
 
 \item 
 时间间隔由两个时间点之间的差值，使用时钟周期数表示。
@@ -48,13 +50,13 @@ Calendar表示各种日历日期，如年、月、工作日或一周的第n天�
 时钟由时间起点(epoch)和时钟周期数组成，可以计算出当前的时间点。
 \end{itemize}
 
-老实说，时间对我来说是个谜。一方面，每个人对时间都有一个直观的概念，另一方面，正式定义它极具挑战性。例如，时间点(time point)、持续时间(time duration)和时钟(clock)三者相互依赖。若想了解更多C++11中有关时间的功能，请阅读我在\href{https://www.modernescpp.com/index.php/tag/time}{time}上发布的关于时间的文章。
+老实说，时间对我来说是个谜。一方面，每个人对时间都有一个直观的概念，另一方面，正式定义它极具挑战性。例如，时间点(time point)、时间段(time duration)和时钟(clock)三者相互依赖。若想了解更多C++11中有关时间的功能，请阅读我在\href{https://www.modernescpp.com/index.php/tag/time}{time}上发布的关于时间的文章。
 	
 \end{tcolorbox}
 
 \subsubsubsection{5.5.1\hspace{0.2cm}日期}
 
-std::chrono::hh\_mm\_ss是自午夜开始的持续时间，分为小时、分钟、秒和分数秒，这种类型通常用作格式化工具。下表提供了std::chrono::hh\_mm\_ss实例tOfDay的简明概述。
+std::chrono::hh\_mm\_ss是自午夜开始的时间段，分为小时、分钟、秒和分数秒，这种类型通常用作格式化工具。下表提供了std::chrono::hh\_mm\_ss实例tOfDay的简明概述。
 
 \begin{center}
 日期
@@ -68,7 +70,7 @@ tOfDay.hours()            & 返回从午夜开始累计的小时数   \\
 tOfDay.minutes()          & 返回从午夜开始累计的分钟数 \\
 tOfDay.seconds()          & 返回从午夜开始累计的秒数 \\
 tOfDay.subseconds()       & 返回从午夜开始累计的分秒数  \\
-tOfDay.to\_duration()     & 返回从午夜以来的持续时间    \\
+tOfDay.to\_duration()     & 返回从午夜以来的时间段    \\
 std::chrono::make12(hour) & 返回12小时的等价24小时的时间格式 \\
 std::chrono::make24(hour) & 返回24小时的等价12小时的时间格式 \\
 std::chrono::is\_am(hour) & 检测24小时时间格式是否为a.m.  \\
@@ -81,16 +83,16 @@ std::chrono::is\_pm(hour) & 检测24小时时间格式是否为p.m.
 \begin{lstlisting}[style=styleCXX]
 // timeOfDay.cpp
 
-#include "date.h"
+#include <chrono>
 #include <iostream>
 
 int main() {
-	using namespace date;    
+	using namespace std::chrono;    
 	
 	using namespace std::chrono_literals;
 	
 	std::cout << std::boolalpha << '\n';
-	auto timeOfDay = date::hh_mm_ss(10.5h + 98min + 2020s + 0.5s);
+	auto timeOfDay = std::chrono::hh_mm_ss(10.5h + 98min + 2020s + 0.5s);
 	
 	std::cout<< "timeOfDay: " << timeOfDay << '\n';
 	
@@ -103,22 +105,22 @@ int main() {
 	std::cout << "timeOfDay.to_duration(): " << timeOfDay.to_duration() << '\n';
 	std::cout << '\n';
 	
-	std::cout << "date::hh_mm_ss(45700.5s): " << date::hh_mm_ss(45700.5s) << '\n';
+	std::cout << "date::hh_mm_ss(45700.5s): " << std::chrono::hh_mm_ss(45700.5s) << '\n';
 	
 	std::cout << '\n';
 	
-	std::cout << "date::is_am(5h): " << date::is_am(5h) << '\n';
-	std::cout << "date::is_am(15h): " << date::is_am(15h) << '\n';
+	std::cout << "date::is_am(5h): " << std::chrono::is_am(5h) << '\n';
+	std::cout << "date::is_am(15h): " << std::chrono::is_am(15h) << '\n';
 	
 	std::cout << '\n';
 	
-	std::cout << "date::make12(5h): " << date::make12(5h) << '\n';
-	std::cout << "date::make12(15h): " << date::make12(15h) << '\n';
-
+	std::cout << "date::make12(5h): " << std::chrono::make12(5h) << '\n';
+	std::cout << "date::make12(15h): " << std::chrono::make12(15h) << '\n';
+	
 }
 \end{lstlisting}
 
-首先，我在第12行创建了std::chrono::hh\_mm\_ss: timeOfDay的一个新实例。C++14添加了chrono字面值，就可以添加一些时间持续时间来初始化一天中的时间对象。使用C++20，可以直接输出timeOfDay(第14行)，这就是我必须在第7行中引入命名空间date的原因。其余部分应该很容易阅读。第18-21行，以小时、分钟、秒和分数秒为单位显示了从午夜开始的时间分量。第22行返回自午夜以来的时间持续时间，以秒为单位。第26行更有趣:给定的秒对应于第15行中显示的时间。若给定的时间是a.m.，则返回第30和32行。第35行和36行返回与给定小时等价12小时的时间格式。
+首先，我在第12行创建了std::chrono::hh\_mm\_ss: timeOfDay的一个新实例。C++14添加了chrono字面值，就可以添加一些时间时间段来初始化一天中的时间对象。使用C++20，可以直接输出timeOfDay(第14行)，这就是我必须在第7行中引入命名空间date的原因。其余部分应该很容易阅读。第18-21行，以小时、分钟、秒和分数秒为单位显示了从午夜开始的时间分量。第22行返回自午夜以来的时间时间段，以秒为单位。第26行更有趣:给定的秒对应于第15行中显示的时间。若给定的时间是a.m.，则返回第30和32行。第35行和36行返回与给定小时等价12小时的时间格式。
 
 下面是程序的输出:
 
@@ -364,7 +366,7 @@ int main() {
 使用std::chrono::local\_days或std::chrono::sys\_days，可以将日历日期转换为std::chrono::time\_point。例子中，我使用的是std::chrono::sys\_days。std::chrono::sys\_days基于\href{https://en.cppreference.com/w/cpp/chrono/system_clock}{std::chrono::system\_clock}。这里，我将对前一个程序createCalendar.cpp中的日历日期进行转换(第18、22和26行)。
 
 \begin{lstlisting}[style=styleCXX]
- // sysDays.cpp
+// sysDays.cpp
 
 #include <iostream>
 #include "date.h"
@@ -419,20 +421,20 @@ C++20中的各种日历类型都有一个ok函数。若日期有效，该函数�
 // leapYear.cpp
 
 #include <iostream>
-#include "date.h"
+#include <chrono>
 
 int main() {
 	
 	std::cout << std::boolalpha << '\n';
 	
-	using namespace date;
+	using namespace std::chrono;
 	
 	std::cout << "Valid days" << '\n';
 	day day31(31);
 	day day32 = day31 + days(1);
-	std::cout << " day31: " << day31 << "; ";
+	std::cout << " day31: " << static_cast<unsigned>(day31) << "; ";
 	std::cout << "day31.ok(): " << day31.ok() << '\n';
-	std::cout << " day32: " << day32 << "; ";
+	std::cout << " day32: " << static_cast<unsigned>(day32) << "; ";
 	std::cout << "day32.ok(): " << day32.ok() << '\n';
 	
 	
@@ -441,9 +443,9 @@ int main() {
 	std::cout << "Valid months" << '\n';
 	month month1(1);
 	month month0(0);
-	std::cout << " month1: " << month1 << "; ";
+	std::cout << " month1: " << static_cast<unsigned>(month1) << "; ";
 	std::cout << "month1.ok(): " << month1.ok() << '\n';
-	std::cout << " month0: " << month0 << "; ";
+	std::cout << " month0: " << static_cast<unsigned>(month0) << "; ";
 	std::cout << "month0.ok(): " << month0.ok() << '\n';
 	
 	std::cout << '\n';
@@ -451,9 +453,9 @@ int main() {
 	std::cout << "Valid years" << '\n';
 	year year2020(2020);
 	year year32768(-32768);
-	std::cout << " year2020: " << year2020 << "; ";
+	std::cout << " year2020: " << static_cast<int>(year2020) << "; ";
 	std::cout << "year2020.ok(): " << year2020.ok() << '\n';
-	std::cout << " year32768: " << year32768 << "; ";
+	std::cout << " year32768: " << static_cast<int>(year32768) << "; ";
 	std::cout << "year32768.ok(): " << year32768.ok() << '\n';
 	
 	std::cout << '\n';
@@ -493,14 +495,42 @@ int main() {
 	std::cout << " leapYear2800.ok(): " << leapYear2800.ok() << '\n';
 	
 	std::cout << '\n';
-
+	
 }
 \end{lstlisting}
 
-在程序中检查给定的日期(第12行)、给定的月份(第23行)或给定的年份(第33行)是否有效。天的范围是[1,31]，月的范围是[1,12]，年的范围是[-32767,32767]。因此，ok()将返回false。当我显示不同的值时，若值无效，则输出显示:“不是有效的日期”、“不是有效的月份”、“不是有效的年份”。其次，月份值会以字符串形式显示。
+在程序中检查给定的日期(第12行)、给定的月份(第23行)或给定的年份(第33行)是否有效。天的范围是[1,31]，月的范围是[1,12]，年的范围是[-32767,32767]。因此，ok()将返回false。当我显示不同的值时，若值无效，则输出显示:“不是有效的日期”、“不是有效的月份”、“不是有效的年份”[译者注：标准库不会输出这些信息。]。其次，月份值会以字符串形式显示。
+
+\begin{tcblisting}{commandshell={}}
+Valid days
+  day31: 31; day31.ok(): true
+  day32: 32; day32.ok(): false
+
+Valid months
+  month1: 1; month1.ok(): true
+  month0: 0; month0.ok(): false
+
+Valid years
+  year2020: 2020; year2020.ok(): true
+  year32768: -32768; year32768.ok(): false
+
+Leap Years
+  leapYear2016.ok(): true
+  leapYear2020.ok(): true
+  leapYear2024.ok(): true
+
+No Leap Years
+  leapYear2100.ok(): false
+  leapYear2200.ok(): false
+  leapYear2300.ok(): false
+
+Leap Years
+  leapYear2000.ok(): true
+  leapYear2400.ok(): true
+  leapYear2800.ok(): true
+\end{tcblisting}
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/23.png}\\
 检查日期是否有效
 \end{center}
 
@@ -512,7 +542,7 @@ int main() {
 
 有点复杂哈?leapYears.cpp用代码表达了这个规则。
 
-扩展的chrono库可以很容易地计算日历日期之间的时间持续时间。
+扩展的chrono库可以很容易地计算日历日期之间的时间时间段。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -701,27 +731,25 @@ Weekdays for your next 10 birthdays
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.5.2.7\hspace{0.2cm}计算日期的顺序}
+\textbf{5.5.2.7\hspace{0.2cm}计算日期序数}
 
-As a last example of the new calendar facility, I want to present the online resource \href{https://github.com/HowardHinnant/date/wiki/Examples-and-Recipes}{Examples and Recipes} from Howard Hinnant, which has about 40 examples of the new chrono functionality. Presumably, the chrono extension in C++20 is not easy to get, therefore it’s quite important to have so many examples. You should use these examples as a starting point for further experiments and, therefore, sharpen your understanding. You can also add your recipes.
+这是最后一个日历功能的例子，我想介绍HowardHinnant提供的\href{https://github.com/HowardHinnant/date/wiki/Examples-and-Recipes}{示例}，其中有大约40个计时功能的示例。据推测，C++20中的chrono扩展并不容易获得，这么些示例就显得尤为宝贵了。读者们应该尝试这些例子，并将其作为进一步实验的起点，从而加强对这块内容的理解。
 
-To get an idea of Examples and Recipes I want to present a program by \href{https://github.com/rbock}{Roland Bock} that calculates ordinal dates.
+这里，介绍一个由\href{https://github.com/rbock}{Roland Bock}编写的计算日期顺序的程序。
 
-“An ordinal date consists of a year and a day of year (1st of January being day 1, 31st of December being day 365 or day 366). The year can be obtained directly from year\_month\_day. And calculating the day is wonderfully easy. In the code below we make us of the fact that year\_month\_day can deal with invalid dates like the 0th of January:” (Roland Bock) I added the necessary headers to Roland’s program.
+“日期序数由一年和该年中的某一天组成(1月1日是第1天，12月31日是第365天或第366天)。年份可以直接从year\_month\_day获取。计算起来非常简单。在下面的代码中，我们知道year\_month\_day可以处理像1月0日这样的无效日期：”我在Roland(Roland Bock)的程序中添加了必要的头文件。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Calculating ordinal dates
 \begin{lstlisting}[style=styleCXX]
 // ordinalDate.cpp
 
-#include "date.h"
+#include <chrono>
 #include <iomanip>
 #include <iostream>
+#include <cassert>
 
 int main()
 {
-	using namespace date;
+	using namespace std::chrono;
 	
 	const auto time = std::chrono::system_clock::now();
 	const auto daypoint = floor<days>(time);
@@ -731,59 +759,62 @@ int main()
 	const auto year = ymd.year();
 	const auto year_day = daypoint - sys_days{year/January/0};
 	
-	std::cout << year << '-' << std::setfill('0') << std::setw(3)
-	          << year_day.count() << '\n';
+	std::cout << (int)year << '-' << std::setfill('0') << std::setw(3)
+	<< year_day.count() << '\n';
 	
 	// inverse calculation and check
 	assert(ymd == year_month_day{sys_days{year/January/0} + year_day});
 }
 \end{lstlisting}
 
-I want to make a few remarks about the program. Line 12 truncates the current time point. The value is used in the following line to initialize a calendar date. Line 17 calculates the time duration between the two time points. Both time points have the resolution day. Finally, year\_day.count() in line 19 returns the time duration in days.
+第13行截断当前时间点，该值在下一行中用于初始化日历日期。第18行计算两个时间点之间的时间时间段。两个时间点都以天为单位。最后，第21行中的year\_day.count()返回以天为单位的时间时间段。[译者注：输出表示该日为2020年的第298天]
+
+\begin{tcblisting}{commandshell={}}
+2020-298
+\end{tcblisting}
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/26.png}\\
-Caculating ordinal dates
+计算日期序数
 \end{center}
 
-\subsubsubsection{5.5.3\hspace{0.2cm} Time Zones}
+\subsubsubsection{5.5.3\hspace{0.2cm}时区}
 
-First of all, a time zone is a region, and its full history of the date, such as daylight saving time or leap seconds. The time zone library in C++20 is a complete parser of the \href{https://www.iana.org/timezones}{IANA timezone database}. The following table should give you a first idea of the new functionality.
+首先，时区是一个地区，具有日期全部的历史，如夏令时或闰秒。C++20中的时区库是\href{https://www.iana.org/timezones}{IANA时区数据库}的完整解析器。下表将带您初步了解添加的新功能。
 
 \begin{center}
-The time-zone data types
+时区数据类型
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{Type}                         & \textbf{Description}                                              \\ \hline
-std::chrono::tzdb                     & Describes a copy of the IANA time-zone database                   \\
-std::chrono::tdzb\_list               & Represents a linked list of the tzdb                              \\
+\textbf{类型}                         & \textbf{描述}                                              \\ \hline
+std::chrono::tzdb                     & 描述IANA时区数据库的副本                   \\
+std::chrono::tdzb\_list               & 表示tzdb的链表                              \\
 \begin{tabular}[c]{@{}l@{}}std::chrono::get\_tzdb \\ std::chrono::get\_tzdb\_list \\ std::chrono::reload\_tzdb \\ std::chrono::remote\_version\end{tabular} &
-Accesses and controls the global time-zone database \\
-std::chrono::locate\_zone             & Locates the time zone based on its name                           \\
-std::chrono::current\_zone            & Returns the current time zone                                     \\
-std::chrono::time\_zone               & Represents a time zone                                            \\
-std::chrono::sys\_info                & Represents information about a time zone at a specific time point \\
-std::chrono::local\_info              & Represents information about a local time to UNIX time conversion \\
-std::chrono::zoned\_traits            & Class for time zone pointers                                      \\
-std::chrono::zoned\_time              & Represents a time zone and a time point                           \\
-std::chrono::leap\_second             & Contains information about a leap-second insertion                \\
-std::chrono::time\_zone\_link         & Represents an alternative name for a time zone                    \\
-std::chrono::nonexistent\_local\_time & Exception which is thrown if a local time does not exist         
+访问和控制全局时区数据库 \\
+std::chrono::locate\_zone             & 根据名称定位时区                           \\
+std::chrono::current\_zone            & 返回当前时区                                     \\
+std::chrono::time\_zone               & 表示时区                                            \\
+std::chrono::sys\_info                & 表示特定时间点上的时区信息 \\
+std::chrono::local\_info              & 表示本地时间到UNIX时间转换的信息 \\
+std::chrono::zoned\_traits            & 用于表示时区的类指针                                      \\
+std::chrono::zoned\_time              & 表示时区和时间点                           \\
+std::chrono::leap\_second             & 包含有关闰秒的信息                \\
+std::chrono::time\_zone\_link         & 表示时区的别名                    \\
+std::chrono::nonexistent\_local\_time & 若本地时间不存在将引发该异常         
 \end{tabular}
 \end{table}
 
-I use in my examples the function std::chrono::zones\_time, which is essentially a time zone combined with a time point.
+例子中，使用了std::chrono::zones\_time函数，其本质上是一个时区和一个时间点的组合。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Compilation of the examples}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={编译示例}]
 	
-Before I show you two examples, I want to make a short remark. To compile a program using the time zone library, you have to compile the tz.cpp file from the \href{https://github.com/HowardHinnant/date}{date} library and link it against the \href{https://curl.se/}{curl} library. The curl library is necessary to get the current \href{https://www.iana.org/timezones}{IANA timezone database}. The following command line for g++ should give you the idea:
+首先，我想简短地说一下。要使用时区库编译程序，必须从\href{https://github.com/HowardHinnant/date}{date}库编译tz.cpp文件，并将其链接到\href{https://curl. se/}{curl}库。curl库是获取当前\href{https://www.iana.org/timezones}{IANA时区数据库}所必需的。下面的g++编译命令应该能让你明白所有的事情:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Compilation with the prototype library date
+\textbf{使用原型库日期进行编译}
 \begin{tcblisting}{commandshell={}}
 g++ localTime.cpp -I <Path to data/tz.h> tz.cpp -std=c++17 \
   -lcurl -o localTime
@@ -791,19 +822,16 @@ g++ localTime.cpp -I <Path to data/tz.h> tz.cpp -std=c++17 \
 
 \end{tcolorbox}
 
-My first example is straightforward. It displays the UTC time and the local time.
+第一个例子很简单，显示UTC时间和本地时间。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.5.3.1\hspace{0.2cm} UTC Time and Local Time}
+\textbf{5.5.3.1\hspace{0.2cm}UTC时间和本地时间}
 
-The \href{https://en.wikipedia.org/wiki/Coordinated_Universal_Time}{UTC time or Coordinated Universal Time} is the primary time standard worldwide. A computer uses \href{https://en.wikipedia.org/wiki/Unix_time}{Unix time} which is a very close approximation of UTC. The UNIX time is the number of seconds since the Unix epoch. The Unix epoch is 00:00:00 UTC on 1 January 1970.
+\href{https://en.wikipedia.org/wiki/Coordinated_Universal_Time}{UTC时间或协调世界时}是世界范围内的主要时间标准。计算机使用\href{https://en.wikipedia.org/wiki/Unix_time}{Unix time}，非常接近UTC。UNIX时间是从UNIX纪元开始的秒数。Unix纪元是UTC时间1970年1月1日00:00:00。
 
-std::chrono::system\_clock::now() returns in the program localTime.cpp the Unix time.
+std::chrono::system\_clock::now()在程序中返回localTime.cpp的Unix时间。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Getting the UTC time and local time
 \begin{lstlisting}[style=styleCXX]
 // localTime.cpp
 
@@ -837,26 +865,26 @@ int main() {
 }
 \end{lstlisting}
 
-The code block beginning with line 12 gets the current time point, truncates it to seconds, and displays it. The call make\_zoned (line 20) creates a std::chrono::zoned\_time localTime. After that, the call localTime.get\_local\_time() returns the stored time point as a local time. This time point is also truncated to seconds. localTime (line 25) can also be used to get information about the time zone. In this case, I’m interested in the offset to the UTC time.
+从第12行开始的代码块获取当前时间点，将其截断为秒，并显示它。调用make\_zoned(第20行)创建std::chrono::zoned\_time localTime。之后，使用localTime.get\_local\_time()将存储的时间点作为本地时间返回，这个时间点也截断为秒。localTime(第25行)还可以用于获取关于时区的信息。在本例中，我感兴趣的是UTC时间的偏移量。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter5/images/27.png}\\
-Displaying UTC time and local time
+显示UTC时间和本地时间
 \end{center}
 
-My last example answers a crucial question when I teach in a different time zone: When should I start my online class?
+下面的例子回答了我在教授不同时区时的一个关键问题:应该什么时候开始线上课程?
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.5.3.2\hspace{0.2cm} Various Time Zones for Online Classes}
+\textbf{5.5.3.2\hspace{0.2cm}线上课程的不同时区}
 
-The program onlineClass.cpp answers the following question: How late is it in given time zones, when I start an online class at the 7h, 13h, or 17h local time (Germany)?
+onlineClass.cpp程序回答以下问题:当我在当地时间(德国)7小时、13小时或17小时开始线上课程时，在给定的时区是几点?
 
-The online class should start on the 1st of February 2021 and should take four hours. Because of daylight saving time, the calendar date is essential to get the correct answer.
+线上课程将于2021年2月1日开始，时长为4小时。由于夏令时，日历日期对于得到正确答案至关重要。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Calculating the time in different time zones
+\textbf{计算不同时区的时间}
 \begin{lstlisting}[style=styleCXX]
 // onlineClass.cpp
 
@@ -917,68 +945,68 @@ int main() {
 }
 \end{lstlisting}
 
-Before I dive into the functions getMinutes (line 8) and printStartEndTimes (line 13), let me say a few words about the main function. The main function defines the day of the class, the duration of the class, and all time zones. Finally, the range-based for loop (line 51) iterates through all potential starting points for an online class. Thanks to the function printStartEndTimes (line 13), all necessary information is displayed.
+深入getMinutes(第8行)和printStartEndTimes(第13行)函数之前，来看看你main函数。main函数定义上课的日期、上课的时间段和所有时区。最后，使用基于范围的for循环(第51行)，遍历所有时间段的起始时间。因为printStartEndTimes函数(第13行)的帮助，所有必要的信息都显示出来了。
 
-The few lines beginning with line 18 calculate the startDate and endDate of my training by adding the start time and the duration of the class to the calendar date. Both values are displayed with the help of the function getMinutes (line 8). floor<std::chrono::minutes>(zonedTime.get\_local\_time()) gets the stored timepoint out of the std::chrono::zoned\_time and truncates the value to the minute resolution. To properly align the output of the program, line 23 determines the size of the longest of all timezone names. Line 25 iterates through all time zones and displays the name of the time zone, and the beginning and end of each online class. A few calendar dates even cross the day boundaries.
+从第18行开始的几行，通过将课程的开始时间和时间段添加到日历日期，来计算我的培训的startDate和endDate。这两个值都在函数getMinutes(第8行)的帮助下显示出来了。floor<std::chrono::minutes>(zonedTime.get\_local\_time())从std::chrono::zoned\_time中获取存储的时间点，并将值以分钟为单位表示。为了正确对齐程序的输出，第23行确定所有时区名称中最长的一个的大小。第25行遍历所有时区，并显示时区名称，以及每个时间段的开始和结束。一些日期甚至在0点(半夜)之后了。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/28.png}\\
-Displaying start and end times in various time zones
+\includegraphics[width=0.8\textwidth]{content/3/chapter5/images/28.png}\\
+显示不同时区的开始和结束时间
 \end{center}
 
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.5.3.3\hspace{0.2cm} New Clocks}
+\textbf{5.5.3.3\hspace{0.2cm}新时钟}
 
-Beside the wall clock \href{https://www.modernescpp.com/index.php/the-three-clocks}{std::system\_clock}, the monotonic clock std::steady\_clock, and the most precise clock std::high\_resolution\_clock in C++11, C++20 supports five additional clocks.
+除了C++11中的墙壁时钟\href{https://www.modernescpp.com/index.php/the-three-clocks}{std::system\_clock}、稳定时钟std::steady\_clock和精确时钟std::high\_resolution\_clock之外，C++20还添加了5个时钟。
 
 \begin{itemize}
 \item 
-std::utc\_clock: Clock for the coordinated Universal Time (UTC). Measures the time since 00:00:00 UTC, 1 January 1970, including leap seconds.
+std::utc\_clock: 协调世界时(UTC)的时钟。度量自UTC时间1970年1月1日00:00:00开始的时间，包括闰秒。
 
 \item 
-std::tai\_clock: Clock for \href{https://en.wikipedia.org/wiki/International_Atomic_Time}{International Atomic Time} (TAI). Measure time since 00:00:00, 1 January 1958, and is offset 10 seconds ahead of UTC at that date. Leap seconds are not inserted.
+std::tai\_clock: \href{https://en.wikipedia.org/wiki/International_Atomic_Time}{国际原子时}(TAI)。测量1958年1月1日00:00:00以来的时间，并将该日期的UTC时间往前偏移10秒，不包括闰秒。
 
 \item 
-std::gps\_clock: Clock for GPS time. It represents \href{https://en.wikipedia.org/wiki/Global_Positioning_System}{Global Positioning System} (GPS) time. It measures the time since 00:00:00, 6 January 1980 UTC. Leap seconds are not inserted.
+std::gps\_clock: GPS时间时钟，表示\href{https://en.wikipedia.org/wiki/Global_Positioning_System}{全球定位系统}(GPS)的时间。测量的是从1980年1月6日00:00:00 UTC开始的时间，不包括闰秒。
 
 \item 
-std::file\_clock: Clock for file time. It’s an alias for \href{https://en.cppreference.com/w/cpp/filesystem/file_time_type}{std::filesystem::file\_time\_type}.
+std::file\_clock: 文件时间时钟，是\href{https://en.cppreference.com/w/cpp/filesystem/file_time_type}{std::filesystem::file\_time\_type}的别名。
 
 \item 
-std::local\_t: Pseudo clock to represent local time.
+std::local\_t: 表示本地时间的伪时钟。
 \end{itemize}
 
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.5.3.4\hspace{0.2cm} Chrono I/O}
+\textbf{5.5.3.4\hspace{0.2cm}时间的I/O}
 
-Thanks to the function std::chrono::parse and the std::formatter from the formatting library, you can read and write chrono objects.
+格式化库中的std::chrono::parse函数和std::formatter函数，可以对chrono对象进行读写。
 
 \begin{itemize}
 \item 
-std::chrono::parse: Parses a chrono object from a stream. \href{https://en.cppreference.com/w/cpp/chrono/parse}{cppreference.com/parse} gives you detailed infomation about the format string.
+std::chrono::parse: 从流中解析chrono对象。\href{https://en.cppreference.com/w/cpp/chrono/parse}{cppreference.com/parse}提供了关于格式字符串的详细信息。
 
 \item 
-std::formatter: Defines specializations for the various chrono types. Read the details on the format specification on std::formatter here \href{https://en.cppreference.com/w/cpp/chrono/system_clock/formatter#Format_specification}{cppreference.com/formatter}.
+std::formatter: 定义各种时间类型的特化。阅读关于std::formatter格式规范的详细信息，\href{https://en.cppreference.com/w/cpp/chrono/system_clock/formatter#Format_specification}{cppreference.com/formatter}。
 \end{itemize}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 
 \begin{itemize}
 \item 
-C++20 adds new components to the chrono library: time of day, calendar, and time zone.
+C++20在chrono库中添加了新的组件:当日时间、日历和时区。
 
 \item 
-Time of day is the time duration since midnight, split into hours, minutes, seconds, and fractional seconds.
+当日时间是指从午夜开始的时间长度，分为小时、分钟、秒和分秒。
 
 \item 
-Calendar stands for various calendar dates such as year, a month, a weekday, or the n-th day of a week.
+日历表示各种日历日期，如年、月、工作日或一周的第n天。
 
 \item 
- A time zone represents time specific to a geographic area.
+时区表示特定于地理区域的时间。
 \end{itemize}
 
 \end{tcolorbox}
