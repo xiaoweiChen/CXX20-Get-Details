@@ -16,9 +16,6 @@ Cippi在研究日历
 \end{itemize}
 
 本章的例子使用Howard Hinnant的库。不过，我的解释是基于C++20术语的。当C++编译器支持扩展的chrono功能时，我将使示例适配C++20的语法。
-
-\hspace*{\fill} \\ %插入空行
-{}[译者注：本书作者在成书时，使用的编译器支持的并不完善。在译这本书的时候，很多编译器已经支持相关的特性。所以，在代码改动量不大的前提下，译书中的代码会使用标准库的写法，取代原书中使用原型库的方式。不过，对于文字表述上，保留作者的原始表达，不做修改。]
 \end{tcolorbox}
 
 \begin{itemize}
@@ -298,10 +295,23 @@ year_month_weekday_last(2010y, month(March), weekday_last(Monday))
 
 这是程序的输出:
 
-\begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter5/images/20.png}\\
-各种日历日期
-\end{center}
+\begin{tcblisting}{commandshell={}}
+1940-06-26 1940-06-26
+
+2010/Mar/last 2021/Mar/last
+2020/Mar/Thu[2] 2020/Mar/Thu[2]
+2010/Mar/mon[last] 2010/Mar/mon[last]
+
+19 19
+Jan Jan
+1988 1988
+Fri Fri
+1988/Jan 1988/Jan
+Oct/22 Oct/22
+Jun/last Jun/last
+Feb/Mon[3] Feb/Mon[3]
+Jun/Sun[last] Jun/Sun[last]
+\end{tcblisting}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -351,6 +361,13 @@ int main() {
 \end{lstlisting}
 
 年/日/月的组合(第21行)是非法的，这会导致一条运行时的错误。
+
+\begin{tcblisting}{commandshell={}}
+1966-06-26
+1966-06-26
+1966-06-26
+1966-26-06 is not a valid data
+\end{tcblisting}
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter5/images/21.png}\\
@@ -404,12 +421,16 @@ int main() {
 
 std::chrono::last常量(第11行)让可以轻松确定一个月有多少天。输出显示，2012是闰年(第26行)，而2013年不是(第29行)。
 
-\begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/22.png}\\
-显示日历日期
-\end{center}
+\begin{tcblisting}{commandshell={}}
+sys_days(yearMonthDayLast): 2010-03-31
+sys_days(yearMonthWeekday): 2020-03-12
+sys_days(yearMonthWeekdayLast): 2010-03-29
 
-假设有一个日历日期，例如：year(2100)/2/29。第一个问题可能是:这个日期有效吗?
+sys_days(leapDate): 2012-02-29
+sys_days(noLeapDate): 2013-02-28
+\end{tcblisting}
+
+假设有一个日历日期，例如：year(2100)/2/29。第一个问题是:这个日期有效吗?
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -530,10 +551,6 @@ Leap Years
   leapYear2800.ok(): true
 \end{tcblisting}
 
-\begin{center}
-检查日期是否有效
-\end{center}
-
 您可以在日历日期上使用ok。那么现在，检查一个特定的日历日期是否为闰日就很容易了，因此，就可以判断相应的年份是否为闰年。全球使用的\href{https://en.wikipedia.org/wiki/Gregorian_calendar}{格里高利历}中，适用以下规则:
 
 非整世纪年能能被4整除的年份是闰年。
@@ -605,10 +622,22 @@ int main() {
 
 第33行是最有趣的一行。当我使用基于小时的日期，从当前日期减去当前年份的1月1日时，我得到了自新的一年以来的小时数。相反，当我从明年的1月1日减去当前日期(第37行)时，使用小时解析后，我得到了到新的一年的小时数。也许你不喜欢基于小时的方式，第42和43行使用基于天的方式显示值。
 
-\begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/24.png}\\
-查询日历日期
-\end{center}
+\begin{tcblisting}{commandshell={}}
+The current time is: 2020-10-20 06:08:01.516990636 UTC
+The current date is: 2020-10-20
+The current date is: 2020-10-20
+The current data is: 2020/Oct/Tue[3]
+
+The current year is 2020
+The current month is Oct
+The current day is 20
+
+It has been 7038h sine New Year!
+It is 1746h before New Year!
+
+It has been 293d since New Year!
+It is 72d before New Year!
+\end{tcblisting}
 
 现在，我想知道我的生日是星期几。
 
@@ -867,10 +896,16 @@ int main() {
 
 从第12行开始的代码块获取当前时间点，将其截断为秒，并显示它。调用make\_zoned(第20行)创建std::chrono::zoned\_time localTime。之后，使用localTime.get\_local\_time()将存储的时间点作为本地时间返回，这个时间点也截断为秒。localTime(第25行)还可以用于获取关于时区的信息。在本例中，我感兴趣的是UTC时间的偏移量。
 
-\begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/27.png}\\
-显示UTC时间和本地时间
-\end{center}
+\begin{tcblisting}{commandshell={}}
+UTC time
+  2020-10-23 21:23:26.128743011
+  2020-10-23 21:23:26
+  
+Local time
+  2020-10-23 21:23:26.128743011 CEST
+  2020-10-23 21:23:26
+  UTC offset: 7200s
+\end{tcblisting}
 
 下面的例子回答了我在教授不同时区时的一个关键问题:应该什么时候开始线上课程?
 
@@ -950,7 +985,7 @@ int main() {
 从第18行开始的几行，通过将课程的开始时间和时间段添加到日历日期，来计算我的培训的startDate和endDate。这两个值都在函数getMinutes(第8行)的帮助下显示出来了。floor<std::chrono::minutes>(zonedTime.get\_local\_time())从std::chrono::zoned\_time中获取存储的时间点，并将值以分钟为单位表示。为了正确对齐程序的输出，第23行确定所有时区名称中最长的一个的大小。第25行遍历所有时区，并显示时区名称，以及每个时间段的开始和结束。一些日期甚至在0点(半夜)之后了。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter5/images/28.png}\\
+\includegraphics[width=1.0\textwidth]{content/3/chapter5/images/28.png}\\
 显示不同时区的开始和结束时间
 \end{center}
 
@@ -997,7 +1032,7 @@ std::formatter: 定义各种时间类型的特化。阅读关于std::formatter�
 
 \begin{itemize}
 \item 
-C++20在chrono库中添加了新的组件:当日时间、日历和时区。
+C++20在chrono库中添加了新的组件:当日时间、日历时间和时区。
 
 \item 
 当日时间是指从午夜开始的时间长度，分为小时、分钟、秒和分秒。

@@ -1,42 +1,38 @@
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter5/images/29.png}\\
-Cippi forms a cup
+\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/29.png}\\
+Cippi在做杯子
 \end{center}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Lack of Compiler Support}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={缺少编译器支持}]
 	
-At the end of 2020, no C++ compiler supports the formatting library. Thanks to the prototype library \href{https://github.com/fmtlib/fmt}{fmt} by Victor Zverovich, I can experiment with it. The library is hosted on the \href{https://godbolt.org/z/Eq5763}{Compiler Explorer}. Once one of the big three compilers GCC, Clang, or MSVC supports the C++20 formatting library, I will replace the examples in this chapter.
+截止到2020年底，没有C++编译器支持格式化库。感谢Victor Zverovich的原型库\href{https://github.com/fmtlib/fmt}{fmt}，我可以用它进行实验。该库托管在\href{https://godbolt.org/z/Eq5763}{Compiler Explorer}上。当三大编译器GCC、Clang或MSVC中的一个支持C++20格式库，我将修改本章中的示例，使其使用标准库。
 	
 \end{tcolorbox}
 
-The formatting library offers a secure and expandable alternative to the \href{https://en.cppreference.com/w/cpp/io/c/fprintf}{printf} family and extends the I/O streams. The library requires the header <format>. The format specification follows \href{https://docs.python.org/3/library/stdtypes.html#str.format}{Python syntax} and allows you to specify fill letters and text alignment, set the sign, specify the width and the precision of numbers, and specify the data type.
-
+格式化库为替代\href{https://en.cppreference.com/w/cpp/io/c/fprintf}{printf}系列函数提供了一种安全且可扩展的方案，并扩展了I/O流。标准库为头文件<format>。格式规范遵循\href{https://docs.python.org/3/library/stdtypes.html#str.format}{Python语法}，并允许指定填充字母和文本对齐、设置符号、指定数字的宽度和精度以及指定数据类型。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.6.0.1\hspace{0.2cm} Formatting Functions}
+\textbf{5.6.0.1\hspace{0.2cm}格式化函数}
 
-C++20 supports three formatting functions:
+C++20支持三个格式化函数:
 
 \begin{center}
-Formatting Functions
+格式化函数
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{Function}  & \textbf{Description}                               \\ \hline
-std::format        & Returns the formatted string                       \\
-std::format\_to    & Writes the result to the output iterator           \\
-std::format\_to\_n & Writes at most n characters to the output iterator
+\textbf{函数}  & \textbf{描述}                               \\ \hline
+std::format        & 返回格式化的字符串                      \\
+std::format\_to    & 将结果写入输出迭代器           \\
+std::format\_to\_n & 向输出迭代器写入最多n个字符
 \end{tabular}
 \end{table}
 
-The formatting functions accept an arbitrary number of arguments. The following program format.cpp gives a first impression of the functions std::format, std::format\_to, and std::format\_to\_n.
-\
-\hspace*{\fill} \\ %插入空行
-\noindent
-Calculating the time in different time zones
+格式化函数接受任意数量的参数。format.cpp就来使用一下这三个函数。
+
 \begin{lstlisting}[style=styleCXX]
 // format.cpp
 
@@ -75,7 +71,7 @@ std::cout << '\n';
 }
 \end{lstlisting}
 
-The program on line 13 directly displays the formatted string. The calls on line 17 and 26, though, use a string as a buffer. Additionally, std::format\_to\_n pushes only five characters onto the buffer.
+第13行的程序直接显示格式化的字符串，第17行和第26行的调用使用字符串作为缓冲区。此外，std::format\_to\_n只将5个字符压入缓冲区。
 
 \begin{tcblisting}{commandshell={}}
 Hello, C++20!
@@ -86,62 +82,59 @@ Hello
 \end{tcblisting}
 
 \begin{center}
-Formatted output
+格式化输出
 \end{center}
 
-Presumably, the most interesting part of the three formatting functions is the format string \begin{lstlisting}[style=styleCXX]
-("Hello, C++{}!\n")
-\end{lstlisting}
+这三个格式化函数中最有趣的部分是格式化字符串的部分("Hello, C++{}!\verb|\|n")。
 
-\subsubsubsection{5.6.1\hspace{0.2cm} Format String}
+\subsubsubsection{5.6.1\hspace{0.2cm}格式化字符串}
 
-The formatting string syntax is identical for the formatting functions std::format, std::format\_to, and std::format\_to\_n. I use std::format in my examples.
+格式化字符串语法与格式化函数std::format、std::format\_to和std::format\_to\_n相同。我在示例中使用了std::format。
 
 \begin{itemize}
 \item 
 Syntax: std::format(FormatString, Args)
 \end{itemize}
 
-The format string FormatString consists of
+格式字符串FormatString由
 
 \begin{itemize}
 \item 
-Ordinary characters (except \{ and \})
+普通字符(\{和\}除外)
 
 \item 
-Escape sequences \{\{ and \}\} that are replaced by \{ and \}
+使用\{和\}替换转义序列\{\{和\}\}
 
 \item 
-Replacement fields
+替换字段
 \end{itemize}
 
-A replacement field has the format \{ \}
+替换字段的格式为\{\}
 
 \begin{itemize}
 \item 
-You can use inside the replacement field an argument id and a colon followed by a format specification, both components are optional.
+可以在替换字段中使用一个参数id和一个冒号，后面跟着一个指定的格式。这两个组件都是可选的。
 \end{itemize}
 
-The argument id allows you to specify the index of the arguments in Args. The ids start with 0.
-When you don’t provide the argument id, the fields are filled in the same order as the arguments are given. Either all replacement fields have to use an argument id or none; i.e., 
+参数id允许你指定参数在Args中的索引，id以0开头。当不提供参数id时，字段将按照给定参数的相同顺序填充。要么所有替换字段都必须使用参数id，要么不使用。
 
 \begin{lstlisting}[style=styleCXX]
 std::format("{}, {}", "Hello", "World") 
 \end{lstlisting}
 
-and 
+等价于
+
 \begin{lstlisting}[style=styleCXX]
 std::format("{1}, {0}", "World", "Hello")
 \end{lstlisting}
 
-will both compile, but 
+但下面这样不行
+
 \begin{lstlisting}[style=styleCXX]
 std::format("{1}, {}", "World", "Hello") 
 \end{lstlisting}
 
-won’t.
-
-std::formatter and its specializations define the format specification for the argument types.
+std::formatter及其特化定义了参数类型的具体格式。
 
 \begin{itemize}
 \item 
@@ -196,7 +189,7 @@ For completeness, here is the output of the program:
 \begin{tcblisting}{commandshell={}}
 Hello World: 2020!
 Hello World: 2020!
-Hello Hello World: 2020!\
+Hello Hello World: 2020!
 Hello: 2020!
 \end{tcblisting}
 
