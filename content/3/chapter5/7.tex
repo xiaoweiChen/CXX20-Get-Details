@@ -1,21 +1,21 @@
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter5/images/32.png}\\
-Cippi goes up
+\includegraphics[width=0.6\textwidth]{content/3/chapter5/images/32.png}\\
+Cippi在上楼
 \end{center}
 
-\subsubsubsection{5.7.1\hspace{0.2cm} std::bind\_front}
+\subsubsubsection{5.7.1\hspace{0.2cm}std::bind\_front}
 
-std::bind\_front (Func\&\& func, Args\&\& ... args) creates a callable wrapper for a callable func. std::bind\_front can have an arbitrary number of arguments and binds its arguments to the front.
+std::bind\_front (Func\&\& Func, Args\&\&…Args)会为func可调用对象创建包装器。std::bind\_front可以有任意数量的参数，并将其参数绑定到前面。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={std::bind\_front versus std::bind}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={std::bind\_front与std::bind}]
 	
-Since C++11, we have had \href{https://en.cppreference.com/w/cpp/utility/functional/bind}{std::bind} and \href{https://en.cppreference.com/w/cpp/language/lambda}{lambda expressions}. With C++20, we get \href{https://en.cppreference.com/w/cpp/utility/functional/bind_front}{std::bind\_front}. This may make you wonder. To be pedantic std::bind is available since the \href{https://en.wikipedia.org/wiki/C%2B%2B_Technical_Report_1}{Technical Report 1} (TR1). std::bind and lambda expressions can be used as a replacement of std::bind\_front. Furthermore, std::bind\_front seems like the little sister of std::bind, because only std::bind supports the rearranging of arguments. Of course, there is a reason to use std::bind\_front in the future: in contrast to std::bind, std::bind\_front propagates the exception specification of the underlying call operator.
+自C++11起，就有了\href{https://en.cppreference.com/w/cpp/utility/functional/bind}{std::bind}和\href{https://en.cppreference.com/w/cpp/language/lambda}{Lambda表达式}。C++20中，添加了\href{https://en.cppreference.com/w/cpp/utility/functional/bind_front}{std::bind\_front}。这可能会大伙感到疑惑。std::bind自\href{https://en.wikipedia.org/wiki/C%2B%2B_Technical_Report_1}{技术报告1} (TR1)开始可用，std::bind和Lambda表达式可以用来替换std::bind\_front。此外，std::bind\_front看起来像是std::bind的姊妹，因为std::bind支持参数的重排。当然，使用std::bind\_front是有原因的:与std::bind相反，std::bind\_front会传播底层调用操作符的异常规范。
 	
 \end{tcolorbox}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Comparing std::bind\_front, std::bind, and a lambda expression
+\textbf{比较std::bind\_front、std::bind和Lambda表达式}
 \begin{lstlisting}[style=styleCXX]
 // bindFront.cpp
 
@@ -58,7 +58,7 @@ int main() {
 }
 \end{lstlisting}
 
-Each call (lines 18, 21, 24, 31, and 34) gets a callable taking two arguments and returns a callable taking only one argument because the first argument is bound to 2000. The callable is a function (line 18), a lambda expression (line 21), and a predefined function object (line 24). Parameter \_1 is a socalled placeholder (line 31) and stands for the missing argument. With lambda expression (line 34), you can directly apply one argument and provide an argument b for the missing parameter. From the readability perspective, std::bind\_front may be easier to read than std::bind or a lambda expression.
+每个调用(第18、21、24、31和34行)获得一个带有两个参数的可调用对象，并返回一个只带有一个参数的可调用对象，并且第一个参数绑定到2000。可调用对象是一个函数(第18行)、一个Lambda表达式(第21行)和一个预定义的函数对象(第24行)。\_1就是占位符(第31行)，代表缺失的参数。使用Lambda表达式(第34行)，可以直接应用一个参数，并为缺失的形参提供参数b。从可读性的角度来看，std::bind\_front可能比std::bind或Lambda表达式更容易阅读。
 
 \begin{tcblisting}{commandshell={}}
 twoThousandPlus1(20): 2020
@@ -69,61 +69,57 @@ twoThousandPlus4(20): 2020
 twoThousandPlus5(20): 2020
 \end{tcblisting}
 
-\begin{center}
-Applying std::bind, std::bind\_front, and a lambda expression
-\end{center}
+\subsubsubsection{5.7.2\hspace{0.2cm}std::is\_constant\_evaluated}
 
-\subsubsubsection{5.7.2\hspace{0.2cm} std::is\_constant\_evaluated}
-
-The function std::is\_constant\_evaluted determines whether the function is executed at compile time or run time. Why do we need this function from the type-traits library? In C++20, we have roughly spoken of three kinds of functions:
+函数std::is\_constant\_evaluted决定函数是在编译时执行，还是在运行时执行。为什么我们需要type-trait库中的这个函数?C++20中，我们大致介绍了三种函数:
 
 \begin{itemize}
 \item 
-consteval declared functions run at compile time: consteval int alwaysCompiletime();
+consteval声明函数在编译时运行:consteval int alwaysCompiletime();
 
 \item 
-constexpr declared functions can run at compile time or run time: constexpr int itDepends();
+constexpr声明的函数可以在编译时或运行时运行；constexpr int itDepends();
 
 \item 
-usual functions run at run time: int alwaysRuntime();
+一般的函数在运行时运行:int alwaysRuntime();
 \end{itemize}
 
-Now, I have to write about the complicated case: constexpr. A constexpr function can run at compile time or run time. Sometimes these functions should behave differently, depending on whether the function is executed at compile time or run time. A constexpr function such as getSum has the potential to run at compile time.
+现在，我要写一个复杂的例子:constexpr函数可以在编译时或运行时运行。有时这些函数的行为应该不同，这取决于函数是在编译时执行，还是在运行时执行。像getSum这样的constexpr函数有可能就在编译时运行。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-A constexpr-declared function
+\textbf{使用constexr的函数声明}
 \begin{lstlisting}[style=styleCXX]
 constexpr int getSum(int l, int r) {
 	return l + r;
 }
 \end{lstlisting}
 
-How can we be sure that the function is executed at compile time? Essentially, there are three possibilities.
+如何确定函数在编译时执行?有三种可能。
 
 \begin{enumerate}
 \item 
-A constexpr function is executed at compile time:
+constexpr函数在编译时执行:
 \begin{itemize}
 \item 
-The function is used in a so-called constant-evaluated context. A constant-evaluated context could be inside a constexpr function or a static\_assert.
+该函数用于常量求值上下文中。常量求值上下文可以在constexpr函数或static\_assert中使用。
 
 \item 
-The client of the function explicitly wants to have the result at compile time: constexpr auto res = getSum(2000, 11). Now, getSum() has to run at compile time.
+函数显式地希望在编译时得到结果:constexpr auto res = getSum(2000,11)。现在，getSum()必须在编译时运行.
 \end{itemize}
 
 \item 
-A constexpr function can only be performed at run time if the arguments are not constexpr. This would be the case if the function getSum(a, 11) is invoked with a variable, which was not declared as constexpr : int a = 2000.
+若参数不是constexpr，则只能在运行时执行constexpr函数。函数getSum(a, 11)用一个变量调用，若这个变量没有声明为constexpr: int a = 2000，就会出现这种情况。
 
 \item 
-A constexpr function can be executed at compile time or run time when neither rule 1 nor rule 2 applies. In this case, both options are valid and the decision is up to the compiler.
+规则1和规则2都不适用时，就可以在编译时或运行时执行constexpr函数。所以，两个选项都是有效的，而这个决策则交由编译器完成。
 \end{enumerate}
 
-Exactly in point 3, the power of std::is\_constant\_evaluated kicks in. You can detect if the program runs at compile time or run time and perform different operations. \href{https://en.cppreference.com/w/cpp/types/is_constant_evaluated}{cppreference.com/is\_constant\_evaluted} shows a smart use case. At compile time, you calculate the power of two numbers manually; at run time, you use std::pow.
+正是在第3点，使得std::is\_constant\_evaluate的功能开始发挥作用。可以检测程序是在编译时运行，还是在运行时运行，并执行不同的操作。\href{https://en.cppreference.com/w/cpp/types/is_constant_evaluated}{cppreference.com/is\_constant\_evaluated}显示了一个不过的用例。在编译时，手动计算两个数字的幂;在运行时，使用std::pow。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Executing different code at compile time and run time
+\textbf{编译时和运行时执行不同的代码}
 \begin{lstlisting}[style=styleCXX]
 // constantEvaluated.cpp
 
@@ -165,13 +161,13 @@ int main() {
 }
 \end{lstlisting}
 
-There is one interesting observation I want to share. It is possible to use std::is\_constant\_evaluated in a consteval declared function or in a function that can only run at run time. Of course, the result of these calls is always true or false.
+我想分享一个有趣的观察结果。可以在consteval声明的函数，或只能在运行时运行的函数中使用std::is\_constant\_evaluate。当然，这些调用的结果总是true或false。
 
-\subsubsubsection{5.7.3\hspace{0.2cm} std::source\_location}
+\subsubsubsection{5.7.3\hspace{0.2cm}std::source\_location}
 
-std::source\_location represents information about the source code. This information includes file names, line numbers, and function names. The information is very valuable when you need information about the call site such as for debugging, logging, or testing purposes. The class std::source\_location is the better alternative than the predefined C++11 macros \_\_FILE\_\_ and \_\_LINE\_\_ and should be used instead.
+std::source\_location表示源代码的信息。这些信息包括文件名、行号和函数名。当需要关于调用站点的信息时，例如：用于调试、日志记录或测试目的时，这些信息非常有价值。类std::source\_location是比C++11宏\_\_FILE\_\_和\_\_LINE\_\_更好的选择，推荐使用。
 
-std::source\_location can give you the following information.
+std::source\_location可以给你以下信息。
 
 \begin{center}
 std::source\_location src
@@ -180,23 +176,23 @@ std::source\_location src
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{Function}                & \textbf{Description}                      \\ \hline
-std::source\_location::current() & Creates a new source\_location object src \\
-src.line()                       & Returns the line number                   \\
-src.column()                     & Returns the column number                 \\
-src.file\_name()                 & Returns the file name                     \\
-src.function\_name()             & Returns the function name                
+\textbf{函数}                & \textbf{描述}                      \\ \hline
+std::source\_location::current() & 创建一个source\_location对象src \\
+src.line()                       & 返回行号                   \\
+src.column()                     & 返回列号                 \\
+src.file\_name()                 & 返回文件名                     \\
+src.function\_name()             & 返回函数名                
 \end{tabular}
 \end{table}
 
-The call std::source\_location::current() creates a new source location object src that represents the information of the call site. At the end of 2020, no C++ compiler supports std::source\_location. Consequently, the following program sourceLocation.cpp is from \href{https://en.cppreference.com/w/cpp/utility/source_location}{cppreference.com/source\_location}.
+使用std::source\_location::current()创建一个新的源位置对象src，该对象表示相应调用点的信息。在2020年底，没有C++编译器支持std::source\_location。因此，下面的程序sourcellocation.cpp来自\href{https://en.cppreference.com/w/cpp/utility/source_location}{cppreference.com/source\_location}。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Displaying information about the call site with std::source\_location
+\textbf{使用std::source\_location显示有关调用点的信息}
 \begin{lstlisting}[style=styleCXX]
 // sourceLocation.cpp
- // from cppreference.com
+// from cppreference.com
 
 #include <iostream>
 #include <string_view>
@@ -217,19 +213,19 @@ int main()
 }
 \end{lstlisting}
 
-The output of the program is part of its source code.
+程序的输出是其源代码的一部分。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 
 \begin{itemize}
 \item 
-std::bind\_front is the easier-to-use variant for std::bind (C++11). In constrast to std::bind, std::bind\_front does not enable the rearranging of its arguments.
+std::bind\_front是std::bind(C++11)变体，可能比std::bind更容易使用。与std::bind不同，std::bind\_front不允许对其参数进行重新排列。
 
 \item 
-The function std::is\_constant\_evaluted determines whether the function is executed at compile time or run time.
+函数std::is\_constant\_evaluted决定函数是在编译时执行，还是在运行时执行。
 
 \item 
-std::source\_location represents information about the source code. This information includes file names, line numbers, and function names, and is highly valuable for debugging, logging, or testing.
+std::source\_location表示源代码的信息。此信息包括文件名、行号和函数名，对于调试、日志记录或测试非常有用。
 \end{itemize}
 
 \end{tcolorbox}

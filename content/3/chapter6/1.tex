@@ -1,34 +1,34 @@
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter6/images/2.png}\\
-Cippi waters the flowers
+Cippi在浇花
 \end{center}
 
-Coroutines are functions that can suspend and resume their execution while keeping their state. The evolution of functions in C++ goes one step further.
+协程是可以在保持其状态的同时，暂停和恢复其执行的函数。C++中函数的发展又向前迈进了一步。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={The Challenge of Understanding Coroutines}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={挑战：理解协程}]
 	
-It was quite a challenge for me to understand coroutines. I strongly suggest that you should not read the sections in the chapter in sequence. Skip in your first iteration the sections “The Framework”, and “The Workflow”. Furthermore, read the case studies “Variations of Futures”, “Modification and Generalization of a Generator”, and “Various Job Workflows”. Reading, studying, and playing with the provided examples should give you an initial intuition need for you to actually dive into details and the workflow of coroutines.
+对我来说，理解协程是一个相当大的挑战。我强烈建议不要按顺序阅读本章后续的章节。在第一次阅读中跳过“框架”和“工作流”部分。此外，阅读案例研究“Future的变化”，“生成器的修改和泛化”，以及“不同的工作流”。阅读、研究和使用所提供的示例，应该会让您对协例的细节和工作流有初步和直觉了解。
 	
 \end{tcolorbox}
 
-What I present in this section as a new idea in C++20 is quite old. The term coroutine was coined by \href{https://en.wikipedia.org/wiki/Melvin_Conway}{Melvin Conway}. He used it in his publication on compiler construction in 1963. \href{https://en.wikipedia.org/wiki/Donald_Knuth}{Donald Knuth} called procedures a special case of coroutines. Sometimes, it just takes a while to get your ideas accepted.
+这一节中到的C++20中的新思想，其实相当古老。协程这个术语是由\href{https://en.wikipedia.org/wiki/Melvin_Conway}{Melvin Conway}创造，他在1963年关于编译器构造的出版物中使用了这个词。\href{https://en.wikipedia.org/wiki/Donald_Knuth}{Donald Knuth}将程序称为协程的一种特殊情况。有时候，需要一段时间来接受这样的设定。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter6/images/3.png}\\
-Functions versus Coroutines
+\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/3.png}\\
+函数与协程
 \end{center}
 
-While you can only call a function and return from it, you can call a coroutine, suspend and resume it, and destroy a suspended coroutine.
+(单线程中)调用函数只能等待其返回，但自使用协程时，可以将其挂起，之后再恢复它，并且可以销毁一个处于挂起状态的协程。
 
-With the new keywords co\_await and co\_yield, C++20 extends the execution of C++ functions with two new concepts.
+C++20使用新的关键字co\_await和co\_yield, 扩展了C++函数的执行方式。
 
-Thanks to co\_await expression it is possible to suspend and resume the execution of the expression. If you use co\_await expression in a function func, the call auto getResult = func() does not block if the result of the function is not available. Instead of resource-consuming blocking, you have resource-friendly waiting.
+因为co\_await表达式，才有可能暂停和恢复表达式的执行。在函数func中使用co\_await表达式，若函数的结果不可用，调用auto getResult = func()时不会阻塞。这里的阻塞，不是消耗资源的忙等，而是资源友好的等待。
 
-co\_yield expression supports generator functions. The generator function returns a new value each time you call it. A generator function is a kind of data stream from which you can pick values. The data stream can be infinite. Therefore, we are at the center of lazy evaluation with C++.
+co\_yield表达式支持生成器函数。每次调用生成器函数时，都会返回一个新值。生成器函数是一种数据流，可以从中选择值，数据流可以是无限的。这就是C++惰性求值的基础。
 
-\subsubsubsection{6.1.1\hspace{0.2cm} A Generator Function}
+\subsubsubsection{6.1.1\hspace{0.2cm}生成器函数}
 
-The following program is as simple as possible. The function getNumbers returns all integers from begin to end, incremented by inc. Value begin has to be smaller than end, and inc has to be positive.
+下面的程序非常简单。函数getNumbers会对范围内的整数加上对应的inc，并放在vector中返回。begin值必须小于end值，inc值必须为正。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -67,20 +67,20 @@ int main() {
 }
 \end{lstlisting}
 
-Of course, I am reinventing the wheel with getNumbers, because that job could be done with \href{http://en.cppreference.com/w/cpp/algorithm/iota}{std::iota}.
+这里，我用getNumbers重新发明了轮子，因为这项工作可以用\href{http://en.cppreference.com/w/cpp/algorithm/iota}{std::iota}完成。
 
-For completeness, here is the output.
+下面是输出。
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter6/images/3.png}\\
-A generator function
+\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/4.png}\\
+生成器函数
 \end{center}
 
-Two observations of the program greedyGenerator.cpp are essential. On the one hand, the vector numbers in line 8 always gets all values. This holds even if I’m only interested in the first 5 elements of a vector with 1000 elements. On the other hand, it’s quite easy to transform the function getNumbers into a lazy generator. The following program is intentionally not complete. The definition of the generator is still missing.
+我对greedyGenerator.cpp有两个观察需要分享。一方面，第8行中的vector总会得到所有的值。即使只对一个有1000个元素容器的前5个元素感兴趣，这也是成立的。另一方面，将函数getNumbers转换为惰性生成器非常容易。以下程序是有意不完整显示的，这里生成器的定义仍然处于缺失状态。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-A lazy generator function
+\textbf{惰性生成器函数}
 \begin{lstlisting}[style=styleCXX]
 // lazyGenerator.cpp
 
@@ -111,25 +111,25 @@ int main() {
 }
 \end{lstlisting}
 
-While the function getNumbers in the file greedyGenerator.cpp returns a std::vector<int>, the coroutine generatorForNumbers in lazyGenerator.cpp returns a generator. The generator numbers in line 17 or generatorForNumbers(0, 5) in line 23 returns a new number on request. The range-based for loop triggers the query. Precisely, the query of the coroutine returns the value i via co\_yield i and immediately suspends its execution. If a new value is requested, the coroutine resumes its execution exactly at that place.
+getNumbers函数返回一个std::vector<int>(greedyGenerator.cpp)，而协程generatorForNumbers会返回一个生成器(lazyGenerator.cpp)。第17行中的生成器数字或第23行中的generatorForNumbers(0,5)在请求时返回一个新数字。基于范围的for循环触发查询，准确地说，协程的查询通过co\_yield i返回值i，并立即暂停其执行。若请求了一个新值，协程将在该位置恢复执行。
 
-The expression generatorForNumbers(0, 5) in line 23 is a just-in-place use of a generator. I want to stress one point explicitly. The coroutine generatorForNumbers creates an infinite data stream because the for loop in line 8 has no end condition. This is fine if I only ask for a finite number of values, such as in line 20. This does not hold for line 23, since there is no end condition. Therefore, the expression runs forever.
+第23行中的表达式generatorForNumbers(0,5)是生成器的立即使用方式。我想明确强调一点。协程生成器fornumbers创建了一个无限数据流，因为第8行中的for循环没有结束条件。若我只要求有限数量的值，但这对于第23行并不适用，因为没有结束条件。因此，表达式会持续运行。
 
-\subsubsubsection{6.1.2\hspace{0.2cm} Characteristics}
+\subsubsubsection{6.1.2\hspace{0.2cm}特征}
 
-Coroutines have a few unique characteristics.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{6.1.2.1\hspace{0.2cm} Typical Use Cases}
-
-Coroutines are the usual way to write \href{https://en.wikipedia.org/wiki/Event-driven_programming}{event-driven applications}, which can be simulations, games, servers, user interfaces, or even algorithms. Coroutines are also typically used for \href{https://en.wikipedia.org/wiki/Computer_multitasking}{cooperative multitasking}. The key to cooperative multitasking is that each task takes as much time as it needs, but avoids sleeping or waiting, and instead allows some other task to run. Cooperative multitasking stands in contrast to pre-emptive multitasking, for which we have a scheduler that decides how long each task gets the CPU.
-
-There are different kinds of coroutines.
+协程有一些独有的特征。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.2.2\hspace{0.2cm} Underlying Concepts}
+\textbf{6.1.2.1\hspace{0.2cm}典型用例}
+
+协程是编写\href{https://en.wikipedia.org/wiki/Event-driven_programming}{事件驱动应用}的常用方法，可以是模拟、游戏、服务器、用户界面，甚至算法。协程通常也用于\href{https://en.wikipedia.org/wiki/Computer_multitasking}{协作多任务处理}。协作多任务处理的关键是，每个任务都需要尽可能多的时间，但避免休眠或等待，而是允许其他任务运行。合作多任务与抢占式多任务相反，抢占式多任务有一个调度程序，需要决定每个任务占用CPU的时间。
+
+当然，也有各种种类的协程。
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{6.1.2.2\hspace{0.2cm}基础概念}
 
 Coroutines in C++20 are asymmetric, first-class, and stackless.
 
@@ -141,7 +141,7 @@ A stackless coroutine can suspend and resume the top-level coroutine. The execut
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.2.3\hspace{0.2cm} Design Goals}
+\textbf{6.1.2.3\hspace{0.2cm}设计目的}
 
 Gor Nishanov describes in proposal \href{https://isocpp.org/files/papers/N4402.pdf}{N4402} the design goals of coroutines.
 

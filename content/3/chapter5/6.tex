@@ -81,10 +81,6 @@ Hello, C++20!
 Hello
 \end{tcblisting}
 
-\begin{center}
-格式化输出
-\end{center}
-
 这三个格式化函数中最有趣的部分是格式化字符串的部分("Hello, C++{}!\verb|\|n")。
 
 \subsubsubsection{5.6.1\hspace{0.2cm}格式化字符串}
@@ -138,26 +134,26 @@ std::formatter及其特化定义了参数类型的具体格式。
 
 \begin{itemize}
 \item 
-Basic types and std::string: \href{https://en.cppreference.com/w/cpp/utility/format/formatter#Standard_format_specification}{standard format specification} based on \href{ttps://docs.python.org/3/library/stdtypes.html#str.format}{Python’s format specification}
+基于\href{ttps://docs.python.org/3/library/stdtypes.html#str.format}{Python的格式规范}的基本类型和std::string: \href{https://en.cppreference.com/w/cpp/utility/format/formatter#Standard_format_specification}{标准格式规范}
 
 \item 
-Chrono types: \href{ttps://en.cppreference.com/w/cpp/chrono/system_clock/formatter#Format_specification}{Chrono format specification}
+chrono类型:\href{ttps://en.cppreference.com/w/cpp/chrono/system_clock/formatter#Format_specification}{Chrono格式规范}
 
 \item 
-Other formattable types: User-defined std::formatter specialization
+其他可格式化的类型:用户定义的std::formatter特化
 \end{itemize}
 
-I will use the next sections to fill in the theory with practice. Let me start with the argument id and continue with the format specification.
+我将在下一节中用实践来充实理论。先从参数id开始，然后继续讨论格式规范。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.6.1.1\hspace{0.2cm} Argument ID}
+\textbf{5.6.1.1\hspace{0.2cm}参数ID}
 
-Thanks to the argument id, you can reorder the arguments or address particular arguments.
+有了参数id，就可以对参数重新排序或处理特定的参数。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Using the argument id
+\textbf{使用参数id}
 \begin{lstlisting}[style=styleCXX]
 // formatArgumentID.cpp
 
@@ -182,9 +178,9 @@ int main() {
 }
 \end{lstlisting}
 
-Line 11 displays the argument in the given order. On the contrary line 13 reorders the first and second argument, line 15 shows the first argument twice, and line 17 ignores the second argument.
+第11行按给定顺序显示参数。相反，第13行重新排序了第一个和第二个参数，第15行显示了第一个参数两次，第17行忽略了第二个参数。
 
-For completeness, here is the output of the program:
+下面是程序的输出:
 
 \begin{tcblisting}{commandshell={}}
 Hello World: 2020!
@@ -193,56 +189,49 @@ Hello Hello World: 2020!
 Hello: 2020!
 \end{tcblisting}
 
-\begin{center}
-Applying the argument id
-\end{center}
-
-Applying the argument id with the format specification makes formatting of text in C++20 very powerful.
+在格式规范中使用参数id使得C++20中的文本格式化功能更加强大了。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.6.1.2\hspace{0.2cm} Format Specification}
+\textbf{5.6.1.2\hspace{0.2cm}格式规范}
 
-I’m not going to present the formal format specification for basic types, string types, or chrono types. For basic types and std::string, read the full details here: \href{https://en.cppreference.com/w/cpp/utility/format/formatter#Standard_format_specification}{standard format specification}. Accordingly, you can find the details of chrono types here: \href{https://en.cppreference.com/w/cpp/chrono/system_clock/formatter#Format_specification}{chrono format specification}.
+我不打算介绍基本类型、字符串类型或计时类型的正式格式规范。对于基本类型和std::string，请阅读此处的完整细节:\href{https://en.cppreference.com/w/cpp/utility/format/formatter#Standard_format_specification}{标准格式规范}。因此，可以在这里找到chrono类型的详细信息:\href{https://en.cppreference.com/w/cpp/chrono/system_clock/formatter#Format_specification}{chrono格式规范}。
 
-Rather, I present the simplified format specification for basic types and string types.
+相反，我会给出了基本类型和字符串类型的简化格式规范。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Simplified format specification for basic types and string types
 \begin{lstlisting}[style=styleCXX]
 fill_align(opt) sign(opt) #(opt) 0(opt) width(opt) precision(opt) type(opt)
 \end{lstlisting}
 
-All parts are optional (opt). The next few sections present the parts of this format specification.
+所有部分都是可选的。接下来的几节将介绍该格式规范的各个部分。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.6.1.2.1\hspace{0.2cm} Fill Character and Alignment}
+\textbf{5.6.1.2.1\hspace{0.2cm}填充和对齐}
 
-The fill character is optional (any character except \{ or \}) and is followed by an alignment specification.
+填充字符是可选的(除\{或\}外的其他字符)，后面跟着一个对齐规范。
 
 \begin{itemize}
 \item 
-Fill character: by default, space is used
+填充字符:默认使用空格
 
 \item 
-Alignment:
+对齐:
 \begin{itemize}
 \item 
-<: left (default for non-numbers)
+<: 左(默认为非数字)
 
 \item 
->: right (default for numbers)
+>: 右(默认为数字)
 
 \item 
-\^{}: center
+\^{}: 中间
 \end{itemize}
 \end{itemize}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Applying the fill character and alignment
+\textbf{使用填充字符和对齐}
 \begin{lstlisting}[style=styleCXX]
 // formatFillAlign.cpp
 
@@ -278,32 +267,26 @@ x*****
 true
 \end{tcblisting}
 
-\begin{center}
-Applying the fill character and alignment
-\end{center}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.6.1.2.2\hspace{0.2cm} Sign, \#, and 0}
+\textbf{5.6.1.2.2\hspace{0.2cm}正负号，\#和0}
 
-The sign, \#, and 0 character is only valid when an integer or floating-point type is used.
+正负号、\#和0字符仅在使用整数或浮点类型时有效。
 
-The sign can have the following values:
+正负号可以有以下值:
 
 \begin{itemize}
 \item 
-+: sign is used for zero and positive numbers
++: 用于零和正数
 
 \item 
--: sign is only used for negative numbers (default)
+-: 仅用于负数(默认)
 
 \item 
-space: leading space is used for non-negative numbers and a minus sign for negative numbers
+空格:填充空格表示非负数，负号表示负数
 \end{itemize}
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Applying the sign character
 \begin{lstlisting}[style=styleCXX]
 // formatSign.cpp
 
@@ -331,21 +314,18 @@ int main() {
 -1,-1,-1,-1
 \end{tcblisting}
 
-\begin{center}
-Applying the sign character
-\end{center}
 
-The \# causes the alternate form:
+\#会形成另一种形式:
 
 \begin{itemize}
 \item 
-For integer types, the prefix 0b, 0, or 0x is used for binary, octal, or hexadecimal presented types
+对于整数类型，前缀0b、0或0x用于二进制、八进制或十六进制表示的类型
 
 \item 
-For floating-point types, a decimal point is always used
+对于浮点类型，总是使用小数点
 
 \item 
-0: pads with leading zeros
+0:使用0填充
 \end{itemize}
 
 \begin{lstlisting}[style=styleCXX]
@@ -383,28 +363,25 @@ int main() {
 \end{tcblisting}
 
 \begin{center}
-Applying the \# and the 0 characters
+使用\#和0字符
 \end{center}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.6.1.2.3\hspace{0.2cm} Width and Precision}
+\textbf{5.6.1.2.3\hspace{0.2cm}宽度和精度}
 
-You can specify the width and the precision of your type. The width specifier can be applied to numbers and the precision to floating-point numbers and strings. For floating-point types, the precision specifies the formatting precision; for strings, the precision specifies how many characters are used and so, ultimately trimming the string. It does not affect a string if the precision is greater than the length of the string.
+可以指定类型的宽度和精度。宽度说明符可应用于数字，精度可应用于浮点数和字符串。对于浮点类型，精度指定为格式化精度;对于字符串，精度指定使用多少字符，从而最终修整字符串。若精度大于字符串的长度，则不会影响字符串。
 
 \begin{itemize}
 \item 
-width: you can use either a positive decimal number or a replacement field (\{\} or \{n\}). When given, n specifies the minimum width.
+宽度:可以使用正十进制数或替换字段(\{\}或\{n\})，n指定的是最小宽度。
 
 \item 
-precision: you can use a period (.) followed by either a non-negative decimal number or a replacement field.
+精度:可以使用句点(.)后跟非负十进制数或替换字段。
 \end{itemize}
 
-A few examples should help you grasp the basics:
+以下几个例子有助于了解这些知识:
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Applying the width and precision specifier
 \begin{lstlisting}[style=styleCXX]
 // formatWidthPrecision.cpp
 
@@ -447,74 +424,83 @@ int main() {
 }
 \end{lstlisting}
 
-The w character in the source code stands for the width; similarly, the p character for the precision. I have a few interesting observations about the program. When you specify the width with a replacement field (line 14), no extra spaces are added. When you specify a precision higher than the length of the displayed double (lines 26 and 27), the length of the displayed value reflects the precision. This observation does not hold for a string (lines 35 and 36).
+源码中的w字符代表宽度，p字符表示精度。当使用替换字段指定宽度时(第14行)，不会添加额外的空格。当指定的精度高于double的长度(第26行和第27行)时，显示值的长度会反映精度。不过，这个观察结果并不适用于字符串(第35和36行)。
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter5/images/30.png}\\
-Applying the width and precision specifiers
+\includegraphics[width=0.8\textwidth]{content/3/chapter5/images/30.png}\\
+使用宽度和精度说明符
 \end{center}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.6.1.2.4\hspace{0.2cm} Type}
+\textbf{5.6.1.2.4\hspace{0.2cm}类型}
 
-In general, the compiler deduces the type of the value used. But sometimes, you want to specify the type. These are the most important type specifications:
+通常，编译器会推断所使用值的类型。但有时，需要指定类型。以下是最重要的类型规范:
 
 \begin{itemize}
 \item 
-Strings: s
+字符串: s
 
 \item 
-Integers:
+整型:
 \begin{itemize}
 \item 
-b: binary format
+b: 二进制格式
 
 \item 
-B: same as b but base Prefix is 0B
+B: 与b相同，但前缀是0B
 
 \item 
-d: decimal format
+d: 十进制格式
 
 \item 
-o: octal format
+o: 八进制格式
 
 \item 
-x: hexadecimal format
+x: 十六进制格式
 
 \item 
-X: same as x, but base prefix is 0X
+X: 与x相同，但前缀是0X
 \end{itemize}
 
 \item 
-char and wchar\_t:
+char和wchar\_t:
 \begin{itemize}
 \item 
-b, B, d, o, x, X: such as integers
+b, B, d, o, x, X: 和整型一样
 \end{itemize}
 
 \item 
 bool:
 \begin{itemize}
 \item 
-s: true or false
+s: true或false
 
 \item 
-b, B, d, o, x, X: such as integers
+b, B, d, o, x, X: 和整型一样
 \end{itemize}
 
 \item 
-Floating-point:
-https://en.cppreference.com/w/cpp/utility/format/formatter
+浮点:
+\begin{itemize}
+\item 
+e: 指数格式
+
+\item 
+E: 和e一样，但是指数用E
+
+\item 
+f, F: 定点格式，精度为6
+
+\item 
+g, G: 精度6，指数用E
+\end{itemize}
 \end{itemize}
 
-When you don’t specify the type, the values are displayed as follows. A string is displayed as a string, an integer in decimal format, a character as a character, and a floating-point value with \href{https://en.cppreference.com/w/cpp/utility/to_chars}{std::to\_chars}.
+若不指定类型，则显示如下所示。字符串显示为字符串，十进制格式的整数，字符显示为字符，浮点值显示为\href{https://en.cppreference.com/w/cpp/utility/to_chars}{std::to\_chars}。
 
-Thanks to the type specifiers, you can easily display an int in a different number system.
+有了类型说明符，就可以在不同的数字系统中轻松地显示int了。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Applying the type specifier
 \begin{lstlisting}[style=styleCXX]
 // formatType.cpp
 
@@ -542,61 +528,54 @@ octal:       3744
 hexadecimal: 7e4
 \end{tcblisting}
 
-\begin{center}
-Applying the type specifier
-\end{center}
+目前为止，我已经格式化了基本类型和字符串。此外，还可以格式化自定义的类型。
 
-So far, I’ve formatted basics types and strings. Additionally, you can format user-defined types.
+\subsubsubsection{5.6.2\hspace{0.2cm}自定义的类型}
 
-\subsubsubsection{5.6.2\hspace{0.2cm} User-Defined Types}
-
-To format a user-defined type, I have to specialize the class \href{https://en.cppreference.com/w/cpp/utility/format/formatter}{std::formatter} for my user-defined type. This means, in particular, I have to implement the member functions parse and format.
+要格式化自定义类型，必须为自定义类型特化类\href{https://en.cppreference.com/w/cpp/utility/format/formatter}{std::formatter}。所以，我必须实现成员函数的parse和format。
 
 \begin{itemize}
 \item 
 parse:
 \begin{itemize}
 \item 
-Accepts the parse context
+接受parse上下文
 
 \item 
-Parses the parse context
+解析parse上下文
 
 \item 
-Returns an iterator to the end of the format specification
+返回格式规范末尾的迭代器
 
 \item 
-Throws a std::format\_error in case of an error
+若发生错误，抛出std::format\_error
 \end{itemize}
 
 \item 
 format:
 \begin{itemize}
 \item 
-Gets the value t, which should be formatted, and the format context fc
+获取应该格式化的值t和格式上下文fc
 
 \item 
-Formats t according to the format context
+根据格式上下文进行格式化
 
 \item 
-Writes the output to fc.out()
+将输出写入到fc.out()
 
 \item 
-Returns an iterator that represents the end of the output
+返回一个表示输出结束的迭代器
 \end{itemize}
 \end{itemize}
 
-Let me put the theory into practice and format a std::vector.
+来把理论应用到实践中吧，先来格式化std::vector。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{5.6.2.1\hspace{0.2cm} Formatting a std::vector}
+\textbf{5.6.2.1\hspace{0.2cm}格式化std::vector}
 
-My first specialization of the class std::formatter is as easy as possible. I specify a format specification used for each element of the container.
+我对std::formatter类的第一个特化非常简单，为容器的每个元素指定了格式规范。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Applying the format specification to the elements of a std::vector
 \begin{lstlisting}[style=styleCXX]
 // formatVector.cpp
 
@@ -647,20 +626,17 @@ int main() {
 }
 \end{lstlisting}
 
-The specialization for std::vector (line 8) has the member functions parse (line 13) and format (line 20). parse essentially creates the formatString which is applied to each element of the std::vector (lines 24 and 25). The parse context ctx (line 13) contains the characters between the colon (:) and the closing curly brace (\}). On end, the function returns an iterator to the closing curly brace (\}). The job of the member function format is more interesting. The format context returns the output iterator. Thanks to the output iterator and the function \href{https://en.cppreference.com/w/cpp/utility/format/format_to}{std::format\_to}, the elements of a std::vector are nicely displayed.
+std::vector(第8行)的特化有成员函数parse(第13行)和format(第20行)。parse实际上创建了formatString，应用于std::vector的每个元素(第24和25行)。解析上下文ctx(第13行)包含冒号(:)和右大括号(\})之间的字符。最后，函数返回一个指向右大括号(\})的迭代器。成员函数format的工作方式更有趣，格式上下文会返回输出迭代器。有了输出迭代器和函数\href{https://en.cppreference.com/w/cpp/utility/format/format_to}{std::format\_to}， std::vector的元素就能很好地显示出来了。
 
-The elements of the std::vector (line 35) are formatted in a few ways. Line 36 displays the number, line 37 writes a sign before each number, line 38 aligns them to 3 characters and uses the 0 as a fill character. Line 39 displays them in binary format. The remaining two lines output each string of the std::vector. Finally, line 45 truncates each string to three characters.
+vector(第35行)的元素有几种格式化方式。第36行显示数字，第37行在每个数字之前写一个符号，第38行将其以3个字符的长度对齐，并使用0填充。第39行以二进制格式显示它们。剩下的两行输出std::vector的每个字符串。最后，第45行将每个字符串截断为三个字符。
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter5/images/1-8.png}\\
-Applying the format specification to the elements of a std::vector
+\includegraphics[width=0.8\textwidth]{content/3/chapter5/images/1-8.png}\\
+将格式规范应用于std::vector的元素
 \end{center}
 
-When the std::vector becomes bigger, I want to add a linebreak. For this use case, I extended the syntax of the format specification.
+当std::vector元素越来越多的时候，我想添加一个换行符。对于这个用例，我扩展了格式规范的语法。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Layouting the elements of a std::vector
 \begin{lstlisting}[style=styleCXX]
 // formatVectorLinebreak.cpp
 
@@ -725,28 +701,28 @@ int main() {
 }
 \end{lstlisting}
 
-Here is how it works. I support an optional | followed by a number to the format specification. The number tells if a line break should be introduced. I search for the optional | symbol and the closing curly brace \}. For robustness reasons, I start in lines 21 and 22 from the end. Thanks to the index of the | symbol and the index of the \}, I can create the strings systemFormatString and useFormatString (lines 24 to 29). The member function format uses the systemFormatString and applies it to each element of the vector. I make a line break when (i \% lineBreak == 0) holds (line 41).
+下面是它的工作原理。我支持一个可选的|，后面跟着一个数字的格式规范。这个数字表示是否应该引入换行符。我搜索可选的|符号和右大括号\}。出于对程序鲁棒性的考虑，第21和22行查找最后一个符号。有了|和\}的索引，就可以创建字符串systemFormatString和useFormatString(第24至29行)。成员函数格式使用systemFormatString，并将其应用于vector的每个元素。当满足(i \% lineBreak == 0)条件(第41行)时，就进行换行。
 
-Line 53 displays 20 elements in a row and makes a line break. I can do better. The format specification \{: |20\} (line 55) puts a space before each number. Additionally, line 57 aligns each element to four characters. Finally, the last line displays 8 numbers per line, aligns each element to 8 characters, and displays them: {:10b|8}.
+第53行显示一行中有20个元素，并使用换行符，当然可以做得更好。格式规范为\{:|20\}(第55行)在每个数字前加一个空格。另外，第57行将每个元素对齐为四个字符。最后一行每行显示8个数字，将元素以8个字符对齐，并显示:\{:10b|8\}。
 
-The screenshot shows the readable formated elements of the std::vector.
+屏幕截图显示了std::vector的可读格式化元素。
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter5/images/31.png}\\
-Applying the format specification and a line break to the elements of a std::vector
+\includegraphics[width=1.0\textwidth]{content/3/chapter5/images/31.png}\\
+将格式规范和换行符应用于std::vector的元素
 \end{center}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 	
 \begin{itemize}
 \item 
-The formatting library offers a secure and expandable alternative to the printf family and extends the I/O streams.
+格式化库提供了替换printf类函数的安全且可扩展的方案，并扩展了I/O流。
 
 \item 
-The format specification allows you to specify fill letters and text alignment, set the sign, specify the width and the precision of numbers, and specify the data type.
+格式规范允许定填充字母和文本对齐、设置符号、指定数字的宽度和精度，以及指定数据类型。
 
 \item 
-Thanks to the functions parse and format, the formatting of a user-defined type can be tailored to your needs.
+因为有了parse和format函数，所以自定义类型的格式可以根据需要进行调整。
 \end{itemize}
 	
 \end{tcolorbox}
