@@ -7,7 +7,7 @@ Cippi在浇花
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={挑战：理解协程}]
 	
-对我来说，理解协程是一个相当大的挑战。我强烈建议不要按顺序阅读本章后续的章节。在第一次阅读中跳过“框架”和“工作流”部分。此外，阅读案例研究“Future的变化”，“生成器的修改和泛化”，以及“不同的工作流”。阅读、研究和使用所提供的示例，应该会让您对协例的细节和工作流有初步和直觉了解。
+对我来说，理解协程是一个相当大的挑战。我强烈建议不要按顺序阅读本章后续的章节。在第一次阅读中跳过“6.1.3 框架”和“6.1.5 工作流”部分。此外，阅读案例研究“7.2 Future的变化”，“7.3 生成器的修改和泛化”，以及“7.4 不同的工作流”。阅读、研究和使用所提供的示例，应该会让您对协例的细节和工作流有初步和直觉了解。
 	
 \end{tcolorbox}
 
@@ -131,70 +131,70 @@ getNumbers函数返回一个std::vector<int>(greedyGenerator.cpp)，而协程gen
 \noindent
 \textbf{6.1.2.2\hspace{0.2cm}基础概念}
 
-Coroutines in C++20 are asymmetric, first-class, and stackless.
+C++20中的协程是不对称的、头等的、无堆栈的。
 
-The workflow of an asymmetric coroutine goes back to the caller. This does not hold for a symmetric coroutine. A symmetric coroutine can delegate its workflow to another coroutine.
+非对称协程的工作流程会直接返回至调用方。这并不适用于对称协程。对称协程可以将其工作流委托给另一个协程。
 
-First-class coroutines are similar to first-class functions, since coroutines behave like data. Behaving like data means that you can use them as arguments to or return values from functions, or store them in a variable.
+头等协程类似于头等函数，因为协程的行为类似于数据。所以，可以将它们用作函数的参数或从函数返回值，或将它们存储在变量中。
 
-A stackless coroutine can suspend and resume the top-level coroutine. The execution of the coroutine and the yielding from the coroutine comes back to the caller. The coroutine stores its state for resumption separate from the stack. Stackless coroutines are often called resumable functions.
+无堆栈协程可以挂起和恢复顶层协程。协程的执行和协程的让步返回给调用方，协程将其恢复状态与堆栈分开存储。无堆栈协程通常称为可恢复函数。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{6.1.2.3\hspace{0.2cm}设计目的}
 
-Gor Nishanov describes in proposal \href{https://isocpp.org/files/papers/N4402.pdf}{N4402} the design goals of coroutines.
+Gor Nishanov在提案\href{https://isocpp.org/files/papers/N4402.pdf}{N4402}中描述了协程的设计目的。
 
-Coroutines should
+协程应该是
 
 \begin{itemize}
 \item 
-be highly scalable (to billions of concurrent coroutines)
+高度可扩展(可并发数十亿个协程)
 
 \item 
-have highly efficient resume and suspend operations comparable in cost to the overhead of a function
+具有高效的恢复和暂停操作，并且成本与功能的开销相当
 
 \item 
-seamlessly interact with existing facilities with no overhead
+与现有设施无缝交互，没有开销
 
 \item 
-have open-ended coroutine machinery allowing library designers to develop coroutine libraries exposing various high-level semantics such as generators, \href{https://tour.golang.org/concurrency/1}{goroutines}, tasks and more
+开放的协程机制允许库设计者开发协程库，公开各种高级语义，如生成器、\href{https://tour.golang.org/concurrency/1}{goroutines}、任务等
 
 \item 
-usable in environments where exceptions are forbidden or not available
+可用于禁止异常或不可用的环境
 \end{itemize}
 
-Due to the design goals of scalability and seamless interaction with existing facilities, the coroutines are stackless. In contrast, a stackful coroutine reserves a default stack of 1MB on Windows, and 2MB on Linux.
+因为可扩展性和与现有设施的无缝交互的设计目标，所以协程是无堆栈的。相反，堆栈协程在Windows上会有1MB大小的默认堆栈，在Linux上有2MB大小的默认堆栈。
 
-There are four ways for a function to become a coroutine.
+一个函数有四种方式成为协程。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.2.4\hspace{0.2cm} Becoming a Coroutine}
+\textbf{6.1.2.4\hspace{0.2cm}成为协程}
 
-A function becomes a coroutine if it uses
+若函数使用了协程，就成为了协程
 
 \begin{itemize}
 \item 
-co\_return, or
+co\_return, 或
 
 \item 
-co\_await, or
+co\_await, 或
 
 \item 
-co\_yield, or a
+co\_yield, 或
 
 \item 
-co\_await expression in a range-based for loop.
+基于范围的for循环中的co\_await表达式。
 \end{itemize}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={Distinguish Between the Coroutine Factory and the Coroutine Object}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={协程工厂和协程对象的区别}]
 	
-The term coroutine is often used for two different aspects of coroutines: the function invoking co\_return, co\_await, or co\_yield, and the coroutine object. Using one term for two different coroutine aspects may puzzle you (such as it did me). Let me clarify both terms.
+协程这个术语通常用于两个不同方面:调用co\_return、co\_await或co\_yield的函数，以及协程对象。用一个术语表示两个不同的协程方面可能会让读者感到困惑(就像我一样)。先来了解一下这两个术语。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-A simple coroutine producing 2021
+\textbf{生成2021的协程}
 \begin{lstlisting}[style=styleCXX]
 MyFuture<int> createFuture() {
 	co_return 2021;
@@ -208,60 +208,57 @@ int main() {
 }
 \end{lstlisting}
 
-This straightforward example has a function createFuture and returns an object of type MyFuture<int>. Both are called coroutines. To be specific, the function createFuture is a coroutine factory that returns a coroutine object. The coroutine object is a resumable object that implements the framework to model a specific behavior. I present in the section co\_return the implementation and the use of this straightforward coroutine.
+例子中有一个createFuture函数，返回一个MyFuture<int>类型的对象，两者都称为协程。具体来说，createFuture函数是一个返回协程对象的协程工厂。协程对象是一个可恢复的对象，实现了对特定行为建模的框架。我在co\_return一节中会介绍这个简单的协程的实现和使用方法。
 	
 \end{tcolorbox}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.2.4.1 \hspace{0.2cm} Restrictions}
+\textbf{6.1.2.4.1 \hspace{0.2cm}限制}
 
-Coroutines cannot have return statements or placeholder return types. This holds for unconstrained placeholders (auto), and constrained placeholders (concepts).
+协程不能有返回语句或占位符返回类型，这适用于无约束占位符(auto)和有约束占位符(concepts)。
 
-Additionally, functions having \href{https://en.cppreference.com/w/cpp/language/variadic_arguments}{variadic arguments}, constexpr functions, consteval functions, constructors, destructors, and the main function cannot be coroutines.
+此外，具有\href{https://en.cppreference.com/w/cpp/language/variadic_arguments}{可变参数}、constexpr函数、consteval函数、构造函数、析构函数和main函数的函数不能是协程。
 
-\subsubsubsection{6.1.3\hspace{0.2cm} The Framework}
+\subsubsubsection{6.1.3\hspace{0.2cm}架构}
 
-The framework for implementing coroutines consists of more than 20 functions, some of which you must implement and some of which you may overwrite. Therefore, you can tailor the coroutine to your needs.
+实现协程的框架由20多个函数组成，其中一些必须实现，一些可以重载。因此，可以根据需要定制协程。
 
-A coroutine is associated with three parts: the promise object, the coroutine handle, and the coroutine frame. The client gets the coroutine handle to interact with the promise object, which keeps its state in the coroutine frame.
+协程有三个重要部分:promise对象、协程句柄和协程帧。用户获得的协程句柄，可以与promise对象交互，promise对象将其状态保存在协程帧中。
 
 \begin{center}
-Promise object
+Promise对象
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{Member Function}  & \textbf{Description}                                 \\ \hline
-Default constructor       & A promise must be default constructible.             \\
-initial\_suspend()        & Determines if the coroutine suspends before it runs. \\
-final\_suspend noexcept() & Determines if the coroutine suspends before it ends. \\
-unhandled\_exception()    & Called when an exception happens.                    \\
-get\_return\_object()     & Returns the coroutine object (resumable object).     \\
-return\_value(val)        & Is invoked by co\_return val.                        \\
-return\_void()            & Is invoked by co\_return.                            \\
-yield\_value(val)         & Is invoked by co\_yield val.                        
+\textbf{成员函数}  & \textbf{描述}                                 \\ \hline
+默认构造函数       & Promise必须是默认可构造的。             \\
+initial\_suspend()        & 确定协程在运行前是否挂起。 \\
+final\_suspend noexcept() & 确定协程在结束前是否挂起。 \\
+unhandled\_exception()    & 发生异常时使用。                    \\
+get\_return\_object()     & 返回协程对象(可恢复对象)。     \\
+return\_value(val)        & 等价于co\_return val。                        \\
+return\_void()            & 等价于co\_return。                            \\
+yield\_value(val)         & 等价于co\_yield val。                        
 \end{tabular}
 \end{table}
 
-The compiler automatically invokes these functions during its execution of the coroutine. The section workflow presents this workflow in detail.
+编译器在执行协程期间自动调用这些函数。
 
-The function get\_return\_object returns a resumable object that the client uses to interact with the coroutine. A promise needs at least one of the member functions return\_value, return\_void, or yield\_value. You don’t need to define the member functions return\_value or return\_void if your coroutine never ends.
+函数get\_return\_object返回调用端，用来与协程交互的可恢复对象。promise至少需要一个成员函数return\_value、return\_void或yield\_value。若协程永不结束，则不需要定义成员函数return\_value或return\_void。
 
-The three functions yield\_value, initial\_suspend, and final\_suspend return awaitables. An Awaitable is something that you can await on. The awaitable determines if the coroutine pauses or not.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{6.1.3.2\hspace{0.2cm} Coroutine Handle}
-
-The coroutine handle is a non-owning handle to resume or destroy the coroutine frame from the outside. The coroutine handle is part of the resumable function.
-
-The following code snippet shows a simple Generator having a coroutine handle coro.
+这三个函数yield\_value、initial\_suspend和final\_suspend返回可等待对象。可等待对象表示需要对其行为进行等待的对象。并且，可等待属性决定协程是否可以暂停。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-A coroutine handle
+\textbf{6.1.3.2\hspace{0.2cm}协程句柄}
+
+协程句柄是一个非自有句柄，用于从外部恢复或销毁协程帧。协程句柄是可恢复函数的一部分。
+
+下面的代码段展示了一个具有协程句柄coro的简单Generator对象。
+
 \begin{lstlisting}[style=styleCXX]
 template<typename T>
 struct Generator {
@@ -286,11 +283,11 @@ struct Generator {
 }
 \end{lstlisting}
 
-The constructor (line 7) gets the coroutine handle to the promise that has type \href{https://en.cppreference.com/w/cpp/coroutine/coroutine_handle}{std::coroutine\_handle<promise\_type>}. The member functions next (line 16) and getValue (line 13) allow a client to resume the promise (gen.next()) or ask for its value (gen.getValue()) using the coroutine handle.
+构造函数(第7行)获取类型为\href{https://en.cppreference.com/w/cpp/coroutine/coroutine_handle}{std::coroutine\_handle<promise\_type>}的promise的协程句柄。成员函数next(第16行)和getValue(第13行)允许调用端使用协程句柄恢复promise(gen.next())或获取它的值(gen.getValue())。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Invoking a coroutine
+\textbf{调用协程}
 \begin{lstlisting}[style=styleCXX]
 Generator<int> coroutineFactory(); // function that returns a coroutine object
 
@@ -299,101 +296,98 @@ gen.next();
 auto result = gen.getValue();
 \end{lstlisting}
 
-Internally, both functions trigger the coroutine handle coro (line 8) to
+在内部，两个函数都会使用协程句柄coro(第8行)
 
 \begin{itemize}
 \item 
-resume the coroutine: coro.resume() (line 17) or coro();
+恢复协程:coro.resume()(第17行)或coro();
 
 \item 
-destroy the coroutine: coro.destroy() (line 11);
+销毁协程:coro.destroy()(第11行);
 
 \item 
-check the state of the coroutine: coro (line 11).
+检查协程的状态:coro(第11行)。
 \end{itemize}
 
-The coroutine is automatically destroyed when its function body ends. The call coro only returns true at its final suspension point.
+协程在其函数体结束时自动销毁，调用coro会在其最终挂起点返回true。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={The resumable object requires an inner type promise\_type}]
-A resumable object such as Generator must have an inner type promise\_type. Alternatively, you can specialize \href{https://en.cppreference.com/w/cpp/coroutine/coroutine_traits}{std::coroutine\_traits} on Generator and define a public member promise\_type in it: std::coroutine\_traits<Generator>.
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={可恢复对象需要内部类型promise\_type}]
+可恢复对象(例如：Generator)必须有一个内部类型promise\_type。或者，可以特化Generator上的\href{https://en.cppreference.com/w/cpp/coroutine/coroutine_traits}{std::coroutine\_traits}，并在其中定义一个公共成员promise\_type: std::coroutine\_traits<Generator>。
 \end{tcolorbox}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.3.3\hspace{0.2cm} Coroutine Frame}
+\textbf{6.1.3.3\hspace{0.2cm}协程帧}
 
-The coroutine frame is an internal, typically heap-allocated state. It consists of the already mentioned promise object, the coroutine’s copied parameters, the representation of the suspension points, local variables whose lifetime ends before the current suspension point, and local variables whose lifetime exceed the current suspension point.
+协程帧是在内部使用的，通常是堆分配的状态。它由前面提到的promise对象、协程复制的参数、挂起点的表示、当前挂起点之前生命周期结束的局部变量，以及生命周期超过当前挂起点的局部变量组成。
 
-Two requirements are necessary to optimize out the allocation of the coroutine:
+优化协程的分配有两个必要条件:
 
 \begin{enumerate}
 \item 
-The lifetime of the coroutine has to be nested inside the lifetime of the caller
+协程的生存期必须嵌套在调用者的生存期内
 
 \item 
-The caller of the coroutine knows the size of the coroutine frame.
+协程的调用者知道协程帧的大小。
 
 \end{enumerate}
 
-\subsubsubsection{6.1.4\hspace{0.2cm} Awaitables and Awaiters}
+\subsubsubsection{6.1.4\hspace{0.2cm}可等待类型和具有等待模式的类型}
 
-The three functions of a promise object prom yield\_value, initial\_suspend, and final\_suspend return awaitables.
+promise对象的三个函数分别yield\_value、initial\_suspend和final\_suspend返回可等待对象。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.4.1\hspace{0.2cm} Awaitables}
+\textbf{6.1.4.1\hspace{0.2cm}可等待类型}
 
-An Awaitable is something you can await on. The awaitable determines if the coroutine pauses or not.
+可等待对象表示需要对其行为进行等待的对象。并且，可等待属性决定协程是否可以暂停。
 
-Essentially, the compiler generated the three function calls using the promise prom and the co\_await operator.
+实际上，编译器使用promise prom和co\_await操作符生成了三个函数调用。
 
 \begin{center}
-Compiler-generated function calls
+编译器生成的函数调用
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{Call}           & \textbf{Compiler generated call}   \\ \hline
+\textbf{函数调用}           & \textbf{编译器生成的调用}   \\ \hline
 yield value             & co\_await prom.yield\_value(value) \\
 prom.initial\_suspend() & co\_await prom.initial\_suspend()  \\
 prom.final\_suspend()   & co\_await prom.final\_suspend()   
 \end{tabular}
 \end{table}
 
-The co\_await operator needs an awaitable as argument. Awaitables have to implement the concept Awaitable.
+co\_await操作符需要一个可等待对象as参数。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.4.2\hspace{0.2cm} The Concept Awaitable}
+\textbf{6.1.4.2\hspace{0.2cm}可等待的概念}
 
-The concept Awaitable requires three functions.
+可等待的概念需要三个功能。
 
 \begin{center}
-The concept Awaitable
+可等待的概念
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{Function} & \textbf{Description}                                  \\ \hline
-await\_ready & \begin{tabular}[c]{@{}l@{}}Indicates if the result is ready. When it returns false,\\ await\_suspend is called.\end{tabular} \\
-await\_suspend    & Schedule the coroutine for resumption or destruction. \\
-await\_resume     & Provides the result for the co\_await exp expression.
+\textbf{函数} & \textbf{描述}                                  \\ \hline
+await\_ready & \begin{tabular}[c]{@{}l@{}}指示结果是否已准备好。当它返回false时，\\ 将调用await\_suspend。\end{tabular} \\
+await\_suspend    & 将协程调度状态改为恢复或销毁。 \\
+await\_resume     & 提供co\_await exp表达式的结果。
 \end{tabular}
 \end{table}
 
-The C++20 standard already defines two basic awaitables: std::suspend\_always, and std::suspend\_never.
+C++20标准定义了两个基本的可等待对象:std::suspend\_always和std::suspend\_never。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.4.3\hspace{0.2cm} std::suspend\_always and std::suspend\_never}
+\textbf{6.1.4.3\hspace{0.2cm}std::suspend\_always和std::suspend\_never}
 
-As its name suggests, the Awaitable suspend\_always always suspends. Therefore, the call await\_ready returns false.
+顾名思义，std::suspend\_always总是挂起。因此，调用await\_ready会返回false。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-The Awaitable std::suspend\_always
 \begin{lstlisting}[style=styleCXX]
 struct suspend_always {
 	constexpr bool await_ready() const noexcept { return false; }
@@ -402,12 +396,8 @@ struct suspend_always {
 };
 \end{lstlisting}
 
-The opposite holds for suspend\_never. It never suspends and, hence, the call await\_ready returns
-true.
+相反的情况是std::suspend\_never。它从不挂起，调用await\_ready会返回true。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-The Awaitable std::suspend\_never
 \begin{lstlisting}[style=styleCXX]
 struct suspend_never {
 	constexpr bool await_ready() const noexcept { return true; }
@@ -416,21 +406,18 @@ struct suspend_never {
 };
 \end{lstlisting}
 
-The awaitables std::suspend\_always and std::suspend\_never are the basic building blocks for functions, such as initial\_suspend and final\_suspend. Both functions are automatically executed when the coroutine is exected: initial\_suspend at the beginning and final\_suspend at the end end of the coroutine.
+可等待对象std::suspend\_always和std::suspend\_never是函数的基本构建块，例如：initial\_suspend和final\_suspend。这两个函数在协程执行时自动执行:initial\_suspend在协程的开始执行，final\_suspend在协程的结束执行6。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.4.4\hspace{0.2cm} initial\_suspend}
+\textbf{6.1.4.4\hspace{0.2cm}initial\_suspend}
 
-When the member function initial\_suspend returns std::suspend\_always, the coroutine suspends at its beginning. When returning std::suspend\_never, the coroutine does not pause.
+当成员函数initial\_suspend返回std::suspend\_always时，协程将从其开始处挂起。当返回std::suspend\_never时，协程不会暂停。
 
 \begin{itemize}
 \item 
-A lazy coroutine that pauses immediately
+立即暂停的惰性协程
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-A lazy coroutine
 \begin{lstlisting}[style=styleCXX]
 std::suspend_always initial_suspend() {
 	return {};
@@ -438,11 +425,8 @@ std::suspend_always initial_suspend() {
 \end{lstlisting}
 
 \item 
-An eager coroutine that runs immediately
+立即运行的立即协程
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-A eager coroutine
 \begin{lstlisting}[style=styleCXX]
 std::suspend_never initial_suspend() {
 	return {};
@@ -453,17 +437,14 @@ std::suspend_never initial_suspend() {
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.4.5\hspace{0.2cm} final\_suspend}
+\textbf{6.1.4.5\hspace{0.2cm}final\_suspend}
 
-When the member function final\_suspend returns std::suspend\_always, the coroutine suspends at its end. When returning std::suspend\_never, the coroutine does not pause.
+当成员函数final\_suspend返回std::suspend\_always时，协程将在结束时挂起。当返回std::suspend\_never时，协程不会暂停。
 
 \begin{itemize}
 \item 
-A lazy coroutine that pauses at its end
+结束时暂停的惰性协程
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-A lazy coroutine that finally pauses
 \begin{lstlisting}[style=styleCXX]
 std::suspend_always final_suspend noexcept noexcept noexcept noexcept() {
 	return {};
@@ -471,11 +452,8 @@ std::suspend_always final_suspend noexcept noexcept noexcept noexcept() {
 \end{lstlisting}
 
 \item 
-An eager coroutine that doesn’t pause at its end
+立即协程不会在结束时暂停
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-A eager coroutine that doesn’t pause
 \begin{lstlisting}[style=styleCXX]
 std::suspend_never final_suspend() noexcept {
 	return {};
@@ -483,65 +461,65 @@ std::suspend_never final_suspend() noexcept {
 \end{lstlisting}
 \end{itemize}
 
-So far, we have only Awaitables, but we need something to await for. Let me fill the gap and write about Awaiters.
+现在，我们只有可等待对象，但我们需要一些东西来进行等待。让我来填补空缺，就是写一篇关于Awaiters的文章。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.4.6\hspace{0.2cm} Awaiter}
+\textbf{6.1.4.6\hspace{0.2cm}Awaiter(具有等待模式的类型)}
 
-There are essentially two ways to get an Awaiter.
+有两种方法获取Awaiter。
 
 \begin{itemize}
 \item 
-A co\_await operator is defined.
+定义co\_await操作符。
 
 \item 
-The Awaitable becomes the Awaiter.
+将可等待对象变为Awaiter。
 \end{itemize}
 
-Remember, when co\_await expression is invoked, the expression is an Awaitable. Further, an expression is a call on the promise object (Awaitable): prom.yield\_value(value), prom.initial\_suspend(), or prom.final\_suspend(). For readability, I rename in the following lines promise object prom to awaitable.
+记住，当使用co\_await表达式时，该表达式是一个可等待表达式。此外，表达式是对promise对象(可等待)的调用:prom.yield\_value(value)、prom.initial\_suspend()或prom.final\_suspend()。为了可读性，我在以下几行中将promise对象prom重命名为awaitable。
 
-Now, the compiler performs the following lookup rule to get an Awaiter:
+现在，编译器执行以下查找规则来获取Awaiter:
 
 \begin{enumerate}
 \item 
-It looks for the co\_await operator on the promise object and returns an Awaiter:
+在promise对象上查找co\_await操作符，并返回一个Awaiter:
 \begin{lstlisting}[style=styleCXX]
 awaiter = awaitable.operator co_await();
 \end{lstlisting}
 
 \item 
-It looks for a freestanding co\_wait operator and returns an Awaiter:
+寻找一个独立的co\_wait操作符，并返回一个Awaiter:
 \begin{lstlisting}[style=styleCXX]
 awaiter = operator co_await();
 \end{lstlisting}
 
 \item 
-If there is no co\_wait operator defined, the Awaitable becomes the Awaiter:
+若没有定义co\_wait操作符，Awaitable就变成Awaiter:
 \begin{lstlisting}[style=styleCXX]
 awaiter = awaitable;
 \end{lstlisting}
 \end{enumerate}
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={awaiter = awaitable}]
-When you study my coroutine implementations in this chapter, you may notice that I use most of the time that an Awaitable implicitly becomes an Awaiter. Only the example to thread synchronization uses the co\_await operator to get the Awaiter.
+在本章学习我的协程实现时，可能会注意到我大部分示例都将使Awaitable隐式地变成Awaiter。只有线程同步的例子使用了co\_await操作符来获取Awaiter。
 \end{tcolorbox}
 
-After these static aspects of coroutines, I want to continue with their dynamic aspects.
+了解了协程的静态特性后，继续来看看其动态特性。
 
-\subsubsubsection{6.1.5\hspace{0.2cm} The Workflows}
+\subsubsubsection{6.1.5\hspace{0.2cm}工作流}
 
-The compiler transforms your coroutine and runs two workflows: the outer promise workflow and the inner awaiter workflow.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{6.1.5.1\hspace{0.2cm} The Promise Workflow}
-
-When you use co\_yield, co\_await, or co\_return in a function, the function becomes a coroutine, and the compiler transforms its body to something equivalent to the following lines.
+编译器转换协程，并运行两个工作流:外部promise工作流和内部awaiter工作流。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-The transformed coroutine
+\textbf{6.1.5.1\hspace{0.2cm}Promise工作流}
+
+当在一个函数中使用co\_yield、co\_await或co\_return时，这个函数就变成了协程，编译器就会把其主体转换成类似于下面这行代码的东西。
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{转换后的协程}
 \begin{lstlisting}[style=styleCXX]
 {
 	Promise prom;
@@ -557,94 +535,95 @@ FinalSuspend:
 }
 \end{lstlisting}
 
-The compiler automatically runs the transformed code using the functions of the promise object. In short, I call this workflow the promise workflow. Here are the main steps of this workflow.
+编译器使用promise对象的函数自动运行转换后的代码。简而言之，我把这个工作流称为promise工作流。下面是这个工作流的主要步骤：
 
 \begin{itemize}
 \item 
-Coroutine begins execution
-\begin{itemize}
-\item 
-allocates the coroutine frame if necessary
-
-\item 
-copies all function parameters to the coroutine frame
-
-\item 
-creates the prom object prom (line 2)
-
-\item 
-calls prom.get\_return\_object() to create the coroutine handle, and keeps it in a local variable. The result of the call will be returned to the caller when the coroutine first suspends.
-
-\item 
-calls prom.initial\_suspend() and co\_awaits its result. The promise type typically returns suspend\_never for eagerly-started coroutines or suspend\_always for lazily-started coroutines. (line 3)
-
-\item 
-the body of the coroutine is executed when co\_await prom.initial\_suspend() resumes
-\end{itemize}
-
-\item 
-Coroutine reaches a suspension point
-\begin{itemize}
-\item 
-the return object (prom.get\_return\_object()) is returned to the caller which resumed the coroutine
-\end{itemize}
-
-\item 
-Coroutine reaches co\_return
-\begin{itemize}
-\item 
-calls prom.return\_void() for co\_return or co\_return expression, where expression has type void
-
-\item 
-calls prom.return\_value(expression) for co\_return expression, where expression has non-void type.
-
-\item 
-destroys all stack-created variables
-
-\item 
-calls prom.final\_suspend() and co\_awaits its result
-\end{itemize}
-
-\item 
-Coroutine is destroyed (by terminating via co\_return an uncaught exception, or via the coroutine handle)
-\begin{itemize}
-\item 
-calls the destruction of the promise object
-
-\item 
-calls the destructor of the function parameters
-
-\item 
-frees the memory used by the coroutine frame
-
-\item 
-transfers control back to the caller
-\end{itemize}
-\end{itemize}
-
-When a coroutine ends with an uncaught exception, the following happens:
+协程开始执行
 
 \begin{itemize}
 \item 
-catches the exception and calls prom.unhandled\_exception() from the catch block
+若需要，可以分配协程帧
 
 \item 
-calls prom.final\_suspend() and co\_awaits the result (line 11)
+将所有函数参数复制到协程帧
+
+\item 
+创建prom(第2行)
+
+\item 
+调用prom.get\_return\_object()创建协程句柄，并将其保存在局部变量中。当协程第一次挂起时，调用的结果将返回给调用方。
+
+\item 
+调用prom.initial\_suspend()，并co\_await其结果。promise类型通常对急于启动的协程返回suspend\_never，对惰性启动的协程则返回suspend\_always。(第3行)
+
+\item 
+协程的主体在co\_await prom.initial\_suspend()恢复时执行
 \end{itemize}
 
-When you use co\_await expr in a coroutine, or the compiler implicitly invokes co\_await prom.initial\_suspend(), co\_await prom.final.suspend(), or co\_await prom.yield\_value(value), a second, inner awaitable workflow starts.
+\item 
+协程到达一个暂停点
+\begin{itemize}
+\item 
+返回对象(prom.get\_return\_object())返回给恢复协程的调用者
+\end{itemize}
+
+\item 
+协程达到co\_return
+\begin{itemize}
+\item 
+为co\_return或co\_return表达式调用prom.return\_void()，其中表达式类型为void
+
+\item 
+为co\_return表达式调用prom.return\_value(expression)，其中表达式具有非void类型。
+
+\item 
+销毁所有在堆栈上创建的变量
+
+\item 
+调用prom.final\_suspend()，并co\_await其结果
+\end{itemize}
+
+\item 
+销毁协程(通过co\_return一个未捕获的异常终止，或者通过协程句柄终止)
+\begin{itemize}
+\item 
+调用promise对象的销毁
+
+\item 
+调用函数参数的析构函数
+
+\item 
+释放协程帧使用的内存
+
+\item 
+将控制权转回调用方
+\end{itemize}
+\end{itemize}
+
+当协程以未捕获的异常结束时，会发生以下情况:
+
+\begin{itemize}
+\item 
+捕获异常并从捕获块调用prom.unhandled\_exception()
+
+\item 
+调用prom.final\_suspend()和co\_await(第11行)
+\end{itemize}
+
+当在协程中使用co\_await expr，或者编译器隐式调用co\_await prom.initial\_suspend()、co\_await prom.final.suspend()或co\_await prom.yield\_value(value)时，第二个内部awaiter工作流将启动。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.5.2\hspace{0.2cm} The Awaiter Workflow}
+\textbf{6.1.5.2\hspace{0.2cm}Awaiter工作流}
 
-Using co\_await expr causes the compiler to transform the code based on the functions await\_ready, await\_suspend, and await\_resume. Consequently, I call the execution of the transformed code the awaiter workflow.
+使用co\_await expr会使编译器基于await\_ready、await\_suspend和await\_resume函数来转换代码。因此，我将转换后的代码的执行称为awaiter工作流。
 
-The compiler generates approximately the following code using the awaitable. For simplicity, I ignore exception handling and describe the workflow with comments.
+编译器使用可等待方式生成大致如下的代码。为了简单起见，我忽略了异常处理，并使用注释描述了工作流。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-The generated Awaiter Workflow
+\textbf{生成的awaiter工作流}
 \begin{lstlisting}[style=styleCXX]
 awaitable.await_ready() returns false:
 
@@ -674,55 +653,51 @@ resumptionPoint:
 return awaitable.await_resume();
 \end{lstlisting}
 
-The workflow is only executed if awaitable.await\_ready() returns false (line 1). In case it returns true, the coroutine is ready and returns with the result of the call awaitable.await\_resume() (line 27).
+只有当awaitable.await\_ready()返回false(第1行)时，工作流才会执行。若返回true，协程已经准备就绪，并返回调用awaitable.await\_resume()的结果(第27行)。
 
-Let me assume that awaitable.await\_ready() returns false. First, the coroutine is suspended (line 3), and immediately the return value of awaitable.await\_suspend() is evaluated. The return type can be void (line 7), a boolean (line 12), or another coroutine handle (line 20), such as anotherCoroutineHandle. Depending on the return type, the program flow returns or another coroutine is executed.
+假设awaitable.await\_ready()返回false。首先，将协程挂起(第3行)，并立即计算awaitable.await\_suspend()的返回值。返回类型可以是void(第7行)、布尔值(第12行)或另一个协程句柄(第20行)，例如：anotherCoroutineHandle。根据返回类型，程序流返回或执行另一个协程。
 
 \begin{center}
-Return value of awaitable.await\_suspend()
+返回awaitable.await\_suspend()的值
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{Type}          & \textbf{Description}                                      \\ \hline
-void                   & The coroutine keeps suspended and returns to the caller.  \\
+\textbf{类型}          & \textbf{描述}                                      \\ \hline
+void                   & 协程保持挂起，并将运行权返回给调用者。  \\
 bool &
-\begin{tabular}[c]{@{}l@{}}bool == true: The coroutine keeps suspended and returns to the caller.\\ bool == false: The coroutine is resumed and does not return to the caller.\end{tabular} \\
-anotherCoroutineHandle & The other coroutine is resumed and returns to the caller.
+\begin{tabular}[c]{@{}l@{}}bool == true:协程保持挂起，并将运行权返回给调用者。\\ bool == false:协程恢复，运行权不返回给调用方。\end{tabular} \\
+anotherCoroutineHandle & 恢复另一个协程，并将运行权返回给调用方。
 \end{tabular}
 \end{table}
 
 
-Whats happens in case an exception is thrown? It makes a difference if the exception occurs in await\_read, await\_suspend, or await\_resume.
+若抛出异常会发生什么?若异常发生在await\_read、await\_suspend或await\_resume中，情况会有所不同。
 
 \begin{itemize}
 \item 
-await\_ready: The coroutine is not suspended, nor are the calls await\_suspend or await\_resume evaluated.
+await\_ready: 协程不会挂起，也不会计算await\_suspend或await\_resume。
 
 \item 
-await\_suspend: The exception is caught, the coroutine is resumed, and the exception rethrown.
-await\_resume is not called.
+await\_suspend: 异常捕获，协程恢复，异常重新抛出。不调用await\_resume。
 
 \item 
-await\_resume: await\_ready and await\_suspend are evaluated and all values are returned. Of course, the call await\_resume does not return a result.
+await\_resume: await\_ready和await\_suspend计算并返回所有值。当然，await\_resume的调用并不返回结果。
 \end{itemize}
 
-Let me put theory into practice.
+好了，来把理论付诸至实践吧。
 
-\subsubsubsection{6.1.6\hspace{0.2cm} co\_return}
+\subsubsubsection{6.1.6\hspace{0.2cm}co\_return}
 
-A coroutine uses co\_return as its return statement.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{6.1.6.1\hspace{0.2cm} A Future}
-
-Admittedly, the coroutine in the following program eagerFuture.cpp is the simplest coroutine I can imagine that still does something meaningful: it automatically stores the result of its invocation.
+协程使用co\_return作为返回语句。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-An eager future
+\textbf{6.1.6.1\hspace{0.2cm}Future}
+
+不可否认，下面的eagerFuture.cpp中的协程是我能想象到的最简单的协程，就算这样，它还是可以做一些有意义的事情:自动存储调用结果。
+
 \begin{lstlisting}[style=styleCXX]
 // eagerFuture.cpp
 
@@ -776,33 +751,26 @@ int main() {
 }
 \end{lstlisting}
 
-MyFuture behaves as a \href{https://en.cppreference.com/w/cpp/thread/future}{future}, which runs immediately. The call of the coroutine createFuture (line 45) returns the future, and the call fut.get (line 46) picks up the result of the associated promise.
+MyFuture的行为和\href{https://en.cppreference.com/w/cpp/thread/future}{future}很像，会立即运行。调用协程createFuture(第45行)返回future，调用fut.get(第46行)获取相关promise中的结果。
 
-There is one subtle difference to a future, the return value of the coroutine createFuture is available after its invocation. Due to the lifetime issues, the return value is managed by a std::shared\_ptr (lines 9 and 17). The coroutine always uses std::suspend\_never (lines 25, and 28) and, therefore, neither suspends before it runs nor after. This means the coroutine is executed when the function createFuture is invoked. The member function get\_return\_object (line 19) creates and stores the handle to the coroutine object, and return\_value (lines 22) stores the result of the coroutine, which was provided by co\_return 2021 (line 38). The client invokes fut.get (line 46) and uses the future as a handle to the promise. The member function get returns the result to the client (line 13).
+与future有一个微妙的区别，协程createFuture的返回值在调用后可用。由于生命周期问题，返回值由std::shared\_ptr管理(第9和17行)。协程总是使用std::suspend\_never(第25和28行)，因为在运行前后都不会挂起，所以在调用createFuture函数时可以执行协程。成员函数get\_return\_object(第19行)创建并存储协程对象的句柄，return\_value(第22行)存储协程的结果，该结果由co\_return 2021(第38行)提供。调用端使用fut.get(第46行)，并使用future作为promise的句柄。成员函数get将结果返回给调用端(第13行)。
 
 \begin{tcblisting}{commandshell={}}
 fut.get(): 2021
 \end{tcblisting}
 
-\begin{center}
-An eager future
-\end{center}
+有读者可能认为，不值得花费精力实现一个行为就像函数一样的协程。你说得没错!然而，这个简单的协程是编写各种future实现的理想起点。第7章中，可以看到更多future的变体。
 
-You may think that it is not worth the effort of implementing a coroutine that behaves just like a function. You are right! However, this simple coroutine is an ideal starting point for writing various implementations of futures. Read more about Variations of Futures in chapter case studies.
+\subsubsubsection{6.1.7\hspace{0.2cm}co\_yield}
 
-\subsubsubsection{6.1.7\hspace{0.2cm} co\_yield}
-
-Thanks to co\_yield you can implement a generator generating an infinite data stream from which you can successively query values. The return type of the generator generatorForNumbers(int begin, int inc= 1) is generator<int>, where generator internally holds a special promise p such that a call co\_yield i is equivalent to a call co\_await p.yield\_value(i). Statement co\_yield i can be called an arbitrary number of times. Immediately after each call, the execution of the coroutine is suspended.
+使用co\_yield，可以实现一个生成器，生成无限的数据流，可以连续查询值。生成器generatorForNumbers(int begin, int inc= 1)的返回类型是generator<int>，其中generator内部持有一个特殊的promise p，使得使用co\_yield i等价于使用co\_await p.yield\_value(i)。语句co\_yield i可以使用任意次。每次调用之后，协程会立即挂起。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.7.1\hspace{0.2cm} An Infinite Data Stream}
+\textbf{6.1.7.1\hspace{0.2cm}无限的数据流}
 
-The program infiniteDataStream.cpp produces an infinite data stream. The coroutine getNext uses co\_yield to create a data stream that starts at start and gives on request the next value, incremented by step.
+infiniteDataStream.cpp产生一个无限数据流。协程getNext使用co\_yield创建一个数据流，该数据流从start开始，并在请求时给出按步递增的下一个值。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-An infinite data stream
 \begin{lstlisting}[style=styleCXX]
 // infiniteDataStream.cpp
 
@@ -903,51 +871,51 @@ int main() {
 }
 \end{lstlisting}
 
-The main program creates two coroutines. The first one gen (line 79) returns the values from 0 to 10, and the second one gen2 (line 88) the values from 100 to -100. Before I dive into the workflow, thanks to the online compiler \href{https://wandbox.org/}{Wandbox}, here is the output of the program.
+主程序创建了两个协程。第一个gen(第79行)返回从0到10的值，第二个gen2(第88行)返回从100到-100的值。在深入了解工作流程之前，可以在在线编译器\href{https://wandbox.org/}{Wandbox}上尝试这段程序，下面是程序的输出。
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter6/images/5.png}\\
-An infinite data stream
+\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/5.png}\\
+无限的数据流
 \end{center}
 
-The numbers in the program infiniteDataStream.cpp stand for the steps in the first iteration of the workflow.
+infinitedatstream.cpp中的数字代表工作流第一次迭代中的步骤。
 
 \begin{enumerate}
 \item 
-creates the promise
+创建promise
 
 \item 
-calls promise.get\_return\_object() and keeps the result in a local variable
+调用promise.get\_return\_object()，并将结果保存在一个局部变量中
 
 \item 
-creates the generator
+创建生成器
 
 \item 
-calls promise.initial\_suspend(). The generator is lazy and, therefore, always suspends.
+调用promise.initial\_suspend()。生成器是惰性的，因此总是挂起。
 
 \item 
-asks for the next value and returns if the generator is consumed
+请求下一个值，若生成器已用完，则直接返回。
 
 \item 
-triggered by the co\_yield call. The next value is available thereafter.
+由co\_yield触发调用。下一个值在此之后可用。
 
 \item 
-gets the next value
+获取下一个值
 \end{enumerate}
 
-In additional iterations, only steps 5, 6, and 7 are performed.
+在其他迭代中，只执行步骤5、6和7。
 
-Section Modification and Generalization of Threads in chapter case studies discusses further improvements and modifications of the generator infiniteDataStream.cpp
+第7章中的线程的修改和泛化讨论了生成器infinitdataststream .cpp的进一步改进和修改
 
-\subsubsubsection{6.1.8\hspace{0.2cm} co\_await}
+\subsubsubsection{6.1.8\hspace{0.2cm}co\_await}
 
-co\_await eventually causes the execution of the coroutine to be suspended or resumed. The expression exp in co\_await exp has to be a so-called awaitable expression, i.e. which must implement a specific interface, consisting of the three functions await\_ready, await\_suspend, and await\_resume.
+co\_await会使协程的执行暂停或恢复。co\_await exp中的表达式exp必须是可等待的表达式，即必须实现一个特定的接口，由await\_ready、await\_suspend和await\_resume三个函数组成。
 
-A typical use case for co\_await is a server that waits for events.
+co\_await的典型用例是等待事件的服务器。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-A blocking server
+\textbf{阻塞式服务器}
 \begin{lstlisting}[style=styleCXX]
 Acceptor acceptor{443};
 while (true) {
@@ -958,13 +926,13 @@ while (true) {
 }
 \end{lstlisting}
 
-The server is quite simple because it sequentially answers each request in the same thread. The server listens on port 443 (line 1), accepts the connection (line 3), reads the incoming data from the client (line 4), and writes its answer to the client (line 6). The calls in lines 3, 4, and 6 are blocking.
+服务器非常简单，因为在同一个线程中依次回答每个请求。服务器监听443端口(第1行)，接受连接(第3行)，从客户端读取传入数据(第4行)，并将其答案写入客户端(第6行)。第3、4和6行的调用是阻塞的。
 
-Thanks to co\_await, the blocking calls can now be suspended and resumed.
+因为co\_await，所以阻塞调用现在可以挂起并恢复。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-A waiting server
+\textbf{等待式服务器}
 \begin{lstlisting}[style=styleCXX]
 Acceptor acceptor{443};
 while (true) {
@@ -975,17 +943,17 @@ while (true) {
 }
 \end{lstlisting}
 
-Before I present the challenging example of thread synchronization with coroutines, I want to start with something straightforward: starting a job on request.
+介绍使用协程进行线程同步的示例之前，我想先从一些简单的事情开始:根据请求进行启动。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.8.1\hspace{0.2cm} Starting a Job on Request}
+\textbf{6.1.8.1\hspace{0.2cm}根据请求进行启动}
 
-The coroutine in the following example is as simple as it can be. It awaits on the predefined Awaitable std::suspend\_never().
+下面示例中的协程非常简单，等待预定义的std::suspend\_never()。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Starting a job on request
+\textbf{根据请求进行启动}
 \begin{lstlisting}[style=styleCXX]
 // startJob.cpp
 
@@ -1039,7 +1007,7 @@ int main() {
 }
 \end{lstlisting}
 
-You may think that the coroutine prepareJob (line 37) is meaningless because the Awaitable always suspends. No! The function prepareJob is at least a coroutine factory using co\_await (line 38) and returning a coroutine object. The function call prepareJob() in line 45 creates the coroutine object of type Job. When you study the data type Job, you recognize that the coroutine object is immediately suspended, because the member function of the promise returns the Awaitable std::suspend\_always (line 23). This is exactly the reason why the function call job.start (line 46) is necessary to resume the coroutine (line 15). The member function final\_suspend also returns std::suspend\_always (line 27).
+有读者可能认为协程prepareJob(第37行)没有意义，因为可等待对象总是挂起。不!函数prepareJob至少是一个使用co\_await(第38行)，并返回一个协程对象的协程工厂。第45行中的函数调用prepareJob()创建了Job类型的协程对象。在了解数据类型Job时，会发现协程对象立即挂起，因为promise的成员函数返回std::suspend\_always(第23行)，这正是函数启动作业的原因。start(第46行)是恢复协程(第15行)所必需的，成员函数final\_suspend也返回std::suspend\_always(第27行)。
 
 \begin{tcblisting}{commandshell={}}
 Before job
@@ -1049,20 +1017,17 @@ After job
 \end{tcblisting}
 
 \begin{center}
-Starting a Job on Request
+根据请求进行启动
 \end{center}
 
-In the case studies’ section various job flows, I use the program startJob as a starting point for further experiments.
+在第7章的作业流部分，我将使用startJob程序作为进一步实验的案例。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.1.8.2\hspace{0.2cm} Thread Synchronization}
+\textbf{6.1.8.2\hspace{0.2cm}线程同步}
 
-It’s typical for threads to synchronize themselves. One thread prepares a work package another thread awaits. \href{https://en.cppreference.com/w/cpp/thread/condition_variable}{Condition variables}, \href{https://en.cppreference.com/w/cpp/thread}{promises and futures}, and also an \href{https://en.cppreference.com/w/cpp/atomic/atomic}{atomic boolean} can be used to create a sender-receiver workflow. Thanks to coroutines, thread synchronization is quite easy, without the inherent risks of condition variables, such as spurious wakeups and lost wakeups.
+这是典型的线程同步，一个线程准备另一个线程等待的工作包。\href{https://en.cppreference.com/w/cpp/thread/condition_variable}{条件变量}， \href{https://en.cppreference.com/w/cpp/thread}{promises和future}，以及\href{https://en.cppreference.com/w/cpp/atomic/atomic}{原子布尔类型}都可以用来创建发送方-接收方工作流。因为协程可用，所以线程同步变得非常容易，避免了条件变量的风险，比如伪唤醒和未唤醒。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Thread Synchronization
 \begin{lstlisting}[style=styleCXX]
 // senderReceiver.cpp
 
@@ -1205,50 +1170,48 @@ int main() {
 }
 \end{lstlisting}
 
-From the user’s perspective, thread synchronization with coroutines is straightforward. Let’s have a look at the program senderReceiver.cpp. The threads senderThread1 (line 119) and senderThread2 (line 130) each uses an event to send its notification,respectively, in lines 119 and 132. The function receiver in lines 102 - 109 is the coroutine, which is executed in threads receiverThread1 (line 122) and receiverThread2 (line 135). I measured the time between the beginning and the end of the coroutine and displayed it. This number shows how long the coroutine waits. The following screenshot shows the output of the program.
+从用户的角度来看，使用协程的线程同步非常简单，让我们看一下senderReceiver.cpp。线程senderThread1(第119行)和senderThread2(第130行)分别在第119行和第132行中使用一个事件发送通知。第102-109行中的函数receiver是协程，在线程receiverThread1(第122行)和receiverThread2(第135行)中执行。我统计了协程开始和结束之间的时间，并将其显示出来。这个数字显示了协程等待的时间。下面的屏幕截图显示了程序的输出。
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter6/images/6.png}\\
-Thread synchronization
+\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/6.png}\\
+线程同步
 \end{center}
 
-If you compare the class Generator in the infinite data stream with the class Event in this example, there is a subtle difference. In the first case, the Generator is the awaitable and the awaiter; in the second case, the Event uses the operator co\_await to return the awaiter. This separation of concerns into the Awaitable and the awaiter improves the structure of the code.
+若将无限数据流中的类Generator与本例中的类Event进行比较，就会发现细微的差异。第一种情况下，生成器是可等待的和待等待的;第二种情况下，事件使用操作符co\_await返回待等待的对象。这种将关注点分离为可等待对象和待等待对象的方法，改善了代码的结构。
 
-The output displays that the execution of the second coroutine takes about two seconds. The reason is that the event1 sends its notification (line 119) before the coroutine is suspended, but the event2 sends its notification after a time duration of 2 seconds (line 132).
+输出显示第二个协程的执行大约需要两秒钟。原因是event1在协程挂起之前发送了通知(第119行)，而event2在2秒(第132行)后才发送的通知。
 
-Now, I put the implementer’s hat on. The workflow of the coroutine is quite challenging to grasp. The class Event has two interesting members: suspendedWaiter and notified. Variable suspendedWaiter in line 31 holds the waiter for the signal, and notified in line 32 has the state of the notification.
+现在，切换为实现者角色。协程的工作流程确实很难掌控。类Event有两个有趣的成员:suspendedWaiter和notified。第31行中的变量suspendedWaiter保存了信号的等待器，第32行中的notify具有通知的状态。
 
-In my explanation of both workflows, I assume in the first case (first workflow) that the event notification happens before the coroutine awaits the events. For the second case (second workflow), I assume it is the other way around.
+在我对这两个工作流的解释中，假设在第一种情况下(第一个工作流)，事件通知发生在协程等待事件之前。对于第二种情况(第二个工作流)，假设正好相反。
 
-Let’s first look at event1 and the first workflow. Here, event1 sends its notification before receiverThread1 is started. The invocation event1 (line 118) triggers the method notify (lines 75 to 86). First the notification flag is set and then, the call static\_cast<Awaiter*>(suspendedWaiter.load()); loads the potential waiter. In this case, the waiter is a nullptr because it was not set before. This
+首先来看看event1和第一个工作流。这里，event1在启动receiverThread1之前发送通知。调用event1(第118行)触发notify(第75至86行)。首先设置通知标志，然后调用static\_cast<Awaiter*>(suspendedWaiter.load());装载waiter。在本例中，waiter是nullptr，因为之前没有设置，所以不会执行第84行中对waiter的以下恢复调用。随后执行函数await\_ready(第51-61行)首先检查是否有多个waiter。这种情况下，抛出std::runtime异常。该方法的关键部分是返回值。event.notification已经在notify方法中设置为true，所以协程不会挂起，而是会像正常函数一样执行。
 
-means the following resume call on the waiter in line 84 is not executed. The subsequentially performed function await\_ready (lines 51 - 61) checks first if there is more than one waiter. In this case, I throw a std::runtime exception. The crucial part of this method is the return value. event.notification was already set to true in the notify method. true means, in this case, that the coroutine is not suspended and executes such as a normal function.
+第二个工作流中，co\_await event2发生在event2发送通知之前。co\_wait event2会触发await\_ready(第51行)，与第一个工作流不同就是该事件。event.notified为false，从而使协程挂起。在这里，执行await\_suspend(第63-73行)，获取协程句柄corHandle，并将其存储在变量coroutineHandle中供后续使用(第65行)。当然，稍后的使用意味着协程恢复执行。其次，waiter存储在变量suspendedWaiter中。在之后event2.notify触发通知，执行notify(第75行)。与第一个工作流的不同之处在于条件waiter != nullptr的计算结果为true。结果是，waiter可以使用coroutineHandle来恢复协程。
 
-In the second workflow, the co\_await event2 call happens before event2 sends its notification. co\_wait event2 triggers the call await\_ready (line 51). The big difference with the first workflow is that event.notified is false. This false value causes the suspension of the coroutine. Technically, method await\_suspend (lines 63 - 73) is executed. await\_suspend gets the coroutine handle corHandle and stores it for later invocation in the variable coroutineHandle (line 65). Of course, later invocation means resumption. Second, the waiter is stored in the variable suspendedWaiter. When later event2.notify triggers its notification, method notify (line 75) is executed. The difference with the first workflow is that the condition waiter != nullptr evaluates to true. The result is that the waiter uses the coroutineHandle to resume the coroutine.
-
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 	
 \begin{itemize}
 \item 
-Coroutines are generalized functions that can pause and resume their execution while keeping their state.
+协程是通用函数，可以暂停和恢复其执行，同时保持其状态。
 
 \item 
-With C++20, we don’t get concrete coroutines, but a framework for implementing coroutines. This framework consists of more than 20 functions that you partially have to implement and partially could overwrite.
+C++20中，没有具体的协程，但有实现了协程的框架。该框架由20多个函数组成，部分函数必须实现，部分函数可以重载。
 
 \item 
-With the new keywords co\_await and co\_yield, C++20 extends the execution of C++ functions with two new concepts.
+添加了新的关键字co\_await和co\_yield, C++20用两个新概念扩展了C++函数的执行方式。
 
 \item 
-Thanks to co\_await expression it is possible to suspend and resume the execution of the expression. If you use co\_await expression in a function func, the call auto getResult = func() does not block if the function’s result is not available. Instead of resource-consuming blocking, you have resource-friendly waiting.
+有了co\_await表达式，才有可能暂停和恢复表达式的执行。在函数func中使用co\_await表达式，若函数的结果不可用，使用auto getResult = func()是不会阻塞。并且，等待也不是消耗资源的忙等，而是资源友好的等待。
 
 \item 
-co\_yield empowers you to write infinite data streams.
+co\_yield能够创建无限的数据流。
 
 \end{itemize}
 
 \end{tcolorbox}
 
-
+\newpage
 
 
 

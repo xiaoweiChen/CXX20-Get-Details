@@ -1,5 +1,5 @@
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter6/images/7.png}\\
+\includegraphics[width=0.3\textwidth]{content/3/chapter6/images/7.png}\\
 Cippi studies the atomics
 \end{center}
 
@@ -78,7 +78,7 @@ Variable exp (line 42) is the expensive-to-copy object. For performance reasons,
 In the end, the exp.counter (line 44) should have an approximate value of 1500 because ten threads increment on average 150 times. Executing the program on the \href{https://wandbox.org/}{Wandbox online compiler} gives me a surprising result.
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter6/images/8.png}\\
+\includegraphics[width=0.3\textwidth]{content/3/chapter6/images/8.png}\\
 Surprise with an atomic reference
 \end{center}
 
@@ -112,7 +112,7 @@ int main() {
 The increment operation in line 13 does not address the reference ref (line 11). The value of ref is not changed.
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter6/images/9.png}\\
+\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/9.png}\\
 Copying the reference
 \end{center}
 
@@ -172,7 +172,7 @@ int main() {
 Now, the value of counter is as expected:
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter6/images/10.png}\\
+\includegraphics[width=0.3\textwidth]{content/3/chapter6/images/10.png}\\
 The expected result with std::atomic\_ref
 \end{center}
 
@@ -353,7 +353,7 @@ The correctness argument is probably the most important one. Why? The answer lie
 \textbf{6.2.2.1\hspace{0.2cm} A thread-safe singly-linked list}
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/11.png} \\
+\includegraphics[width=1.0\textwidth]{content/3/chapter6/images/11.png} \\
 The expected result with std::atomic\_ref
 \end{center}
 
@@ -484,7 +484,7 @@ int main() {
 The program has two child threads: t1 and t2. They get their payload prepareWork and completeWork in lines 40 and 41. The function prepareWork (line 14) notifies that it is done with the preparation of the work: condVar.notify\_one(). While holding the lock, thread t2 is waiting for its notification: condVar.wait(lck, []\{ return not myVec.empty(); \}). The waiting thread always performs the same steps. When awoken, it checks the predicate while holding the lock ([]\{ return not myVec.empty();). If the predicate does not hold, it puts itself back to sleep. If the predicate holds, it continues with its work. In the concrete workflow, the sending thread puts the initial values into the std::vector (line 18), which the receiving thread completes (line 29).
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/12.png}\\
+\includegraphics[width=1.0\textwidth]{content/3/chapter6/images/12.png}\\
 Thread synchronization with condition variables
 \end{center}
 
@@ -712,7 +712,7 @@ std::atomic, introduced in C++11, gets various improvements in C++20. You can sp
 	
 \end{tcolorbox}
 
-
+\newpage
 
 
 
