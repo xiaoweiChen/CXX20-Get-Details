@@ -1,27 +1,27 @@
 \begin{center}
 \includegraphics[width=0.3\textwidth]{content/3/chapter6/images/7.png}\\
-Cippi studies the atomics
+Cippi在研究原子
 \end{center}
 
-Atomics receives a few important extensions in C++20. Probably the most important ones are atomic references and atomic smart pointers.
+C++20中，原子操作和类型得到了一些重要的扩展。可能最重要的是原子引用和原子智能指针。
 
 \subsubsubsection{6.2.1\hspace{0.2cm} std::atomic\_ref}
 
-The class template std::atomic\_ref applies atomic operations to the referenced object.
+类模板std::atomic\_ref可对引用的对象进行原子操作。
 
-Concurrent writing and reading of an atomic object ensures that there is no data race. The lifetime of the referenced object must exceed the lifetime of the atomic\_ref. When any atomic\_ref is accessing an object, all other accesses to the object must use an atomic\_ref. In addition, no subobject of the atomic\_ref-accessed object may be accessed by another atomic\_ref.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{6.2.1.1\hspace{0.2cm} Motivation}
-
-Stop. You may think that using a reference inside an atomic would do the job. Unfortunately not.
-
-In the following program, I have a class ExpensiveToCopy, which includes a counter. The counter is concurrently incremented by a few threads. Consequently, counter has to be protected.
+原子对象的并发写入和读取可避免数据竞争。引用对象的生命周期必须超过atomic\_ref的生命周期。当atomic\_ref正在访问一个对象时，对该对象的所有其他访问必须使用atomic\_ref。此外，atomic\_ref访问对象的子对象不能被另一个atomic\_ref访问。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Using an atomic reference
+\textbf{6.2.1.1\hspace{0.2cm}动机}
+
+等一下！您可能认为在原子中使用引用就可以完成这项工作，但事实并不是这样。
+
+下面的程序中，实现了一个ExpensiveToCopy类，它包括一个计数器。计数器并发递增几个线程。因此，counter必须得到保护。
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{使用原子引用}
 \begin{lstlisting}[style=styleCXX]
 // atomicReference.cpp
 
@@ -73,20 +73,20 @@ int main() {
 }
 \end{lstlisting}
 
-Variable exp (line 42) is the expensive-to-copy object. For performance reasons, the function count (line 22) takes exp by reference. Function count initializes the std::atomic<int> with exp.counter (line 25). The following lines create 10 threads (line 27), each performing the lambda expression, which takes counter by reference. The lambda expression gets a random number between 100 and 200 (line 29) and increments the counter exactly as often. The function getRandom (line 13) starts with an initial seed and creates via the random-number generator \href{https://en.wikipedia.org/wiki/Mersenne_Twister}{Mersenne Twister} a uniform distributed number between 100 and 200.
+变量exp(第42行)是复制成本较高的对象。出于对性能的考虑，函数count(第22行)通过引用获取exp。函数count使用exp.counter初始化std::atomic<int>(第25行)。下面的代码行创建了10个线程(第27行)，每个线程执行Lambda表达式，该表达式通过引用接受counter。Lambda表达式获得100到200之间的随机数(第29行)，并以相同的频率递增计数器。函数getRandom(第13行)从初始种子开始，并通过随机数生成器\href{https://en.wikipedia.org/wiki/Mersenne_Twister}{马特赛特旋转演算法}创建一个在100到200之间的均匀分布数。
 
-In the end, the exp.counter (line 44) should have an approximate value of 1500 because ten threads increment on average 150 times. Executing the program on the \href{https://wandbox.org/}{Wandbox online compiler} gives me a surprising result.
+最后，exp.counter(第44行)的近似值应该是1500，因为10个线程平均增加150倍。\href{https://wandbox.org/}{Wandbox在线编译器}上执行程序会给我一个令人惊讶的结果。
 
 \begin{center}
 \includegraphics[width=0.3\textwidth]{content/3/chapter6/images/8.png}\\
-Surprise with an atomic reference
+令人惊讶的原子引用
 \end{center}
 
-The counter is 0. What is happening? The issue is in line 25. The initialization in the expression std::atomic<int> counter{exp.counter} creates a copy. The following small program exemplifies the issue.
+计数器为0。发生了什么?问题在第25行。表达式std::atomic counter\{exp. counter\}创建一个副本。下面的小程序说明了这个问题。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Copying the reference
+\textbf{复制引用}
 \begin{lstlisting}[style=styleCXX]
 // atomicRefCopy.cpp
 
@@ -109,18 +109,18 @@ int main() {
 }
 \end{lstlisting}
 
-The increment operation in line 13 does not address the reference ref (line 11). The value of ref is not changed.
+第13行中的增量操作没有处理引用引用(第11行)。ref的值没有改变。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/9.png}\\
-Copying the reference
+\includegraphics[width=0.5\textwidth]{content/3/chapter6/images/9.png}\\
+复制引用
 \end{center}
 
-Replacing the std::atomic<int> with std::atomic\_ref<int> solves the issue.
+将std::atomic<int>替换为std::atomic\_ref<int>可以解决这个问题。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Using a std::atomic\_ref
+\textbf{使用std::atomic\_ref}
 \begin{lstlisting}[style=styleCXX]
 // atomicRef.cpp
 
@@ -169,18 +169,18 @@ int main() {
 }
 \end{lstlisting}
 
-Now, the value of counter is as expected:
+现在，counter的值和预期的一样:
 
 \begin{center}
 \includegraphics[width=0.3\textwidth]{content/3/chapter6/images/10.png}\\
-The expected result with std::atomic\_ref
+使用std::atomic\_ref的结果
 \end{center}
 
-In keeping with \href{https://en.cppreference.com/w/cpp/atomic/atomic}{std::atomic}, type std::atomic\_ref can be specialized and supports specializations for the built-in data types.
+为了与\href{https://en.cppreference.com/w/cpp/atomic/atomic}{std::atomic}保持一致，类型std::atomic\_ref也可以特化，并支持内置数据类型的特化。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.2.1.2\hspace{0.2cm} Specializations of std::atomic\_ref}
+\textbf{6.2.1.2\hspace{0.2cm}std::atomic\_ref的特化}
 
 You can specialize std::atomic\_ref for user-defined types, use partial specializations for pointer types, or full specializations for arithmetic types such as integral or floating-point types.
 
