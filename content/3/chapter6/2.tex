@@ -182,13 +182,13 @@ int main() {
 \noindent
 \textbf{6.2.1.2\hspace{0.2cm}std::atomic\_ref的特化}
 
-You can specialize std::atomic\_ref for user-defined types, use partial specializations for pointer types, or full specializations for arithmetic types such as integral or floating-point types.
+可以将std::atomic\_refte特化为自定义的类型，对指针类型使用偏特化，对算术类型(如整型或浮点型)使用全特化。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.2.1.2.1\hspace{0.2cm} Primary Template}
+\textbf{6.2.1.2.1\hspace{0.2cm}主模板}
 
-The primary template std::atomic\_ref can be instantiated with a \href{https://en.cppreference.com/w/cpp/types/is_trivially_copyable}{TriviallyCopyable} type T.
+主模板std::atomic\_ref可以用\href{https://en.cppreference.com/w/cpp/types/is_trivially_copyable}{TriviallyCopyable}类型T实例化。
 
 \begin{lstlisting}[style=styleCXX]
 struct Counters {
@@ -202,105 +202,101 @@ std::atomic_ref<Counters> cnt(counter);
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.2.1.2.2\hspace{0.2cm} Partial Specializations for Pointer Types}
+\textbf{6.2.1.2.2\hspace{0.2cm}指针类型的偏特化}
 
-The standard provides partial specializations for a pointer type: std::atomic\_ref<T*>.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{6.2.1.2.3\hspace{0.2cm} Specializations for Arithmetic Types}
-
-The standard provides specialization for the integral and floating-point types: std::atomic\_ref<arithmetic type>.
-
-\begin{itemize}
-\item 
-Character types: char, char8\_t (C++20), char16\_t, char32\_t, and wchar\_t
-
-\item 
-Standard signed-integer types: signed char, short, int, long, and long long
-
-\item 
-Standard unsigned-integer types: unsigned char, unsigned short, unsigned int, unsigned long, and unsigned long long
-
-\item 
-Additional integer types, defined in the header \href{http://en.cppreference.com/w/cpp/header/cstdint}{<cstdint>}:
-\begin{itemize}
-\item 
-int8\_t, int16\_t, int32\_t, and int64\_t (signed integer with exactly 8, 16, 32, and 64 bits)
-
-\item 
-uint8\_t, uint16\_t, uint32\_t, and uint64\_t (unsigned integer with exactly 8, 16, 32, and 64 bits)
-
-\item 
-int\_fast8\_t, int\_fast16\_t, int\_fast32\_t, and int\_fast64\_t (fastest signed integer with at least 8, 16, 32, and 64 bits)
-
-\item 
-uint\_fast8\_t, uint\_fast16\_t, uint\_fast32\_t, and uint\_fast64\_t (fastest unsigned integer with at least 8, 16, 32, and 64 bits)
-
-\item 
-int\_least8\_t, int\_least16\_t, int\_least32\_t, and int\_least64\_t (smallest signed integer with at least 8, 16, 32, and 64 bits)
-
-\item 
-uint\_least8\_t, uint\_least16\_t, uint\_least32\_t, and uint\_least64\_t (smallest unsigned integer with at least 8, 16, 32, and 64 bits)
-
-\item 
-intmax\_t, and uintmax\_t (maximum signed and unsigned integer)
-
-\item 
-intptr\_t, and uintptr\_t (signed and unsigned integer for holding a pointer)
-\end{itemize}
-
-\item 
-Standard floating-point types: float, double, and long double
-\end{itemize}
+标准为指针类型提供了偏特化:std::atomic\_ref<T*>。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.2.1.2.4\hspace{0.2cm} All Atomic Operations}
+\textbf{6.2.1.2.3\hspace{0.2cm}算术类型的特化}
 
-First, here is the list of all operations on atomic\_ref.
+该标准为整型和浮点型提供了特化:
 
-\begin{center}
-All operations on atomic\_ref
-\end{center}
+\begin{itemize}
+\item 
+字符类型:char、char8\_t(C++20)、char16\_t、char32\_t和wchar\_t
+
+\item 
+标准有符号整型类型:有符号char、short、int、long和long long
+
+\item 
+标准的无符号整型类型:unsigned char、unsigned short、unsigned int、unsigned long和unsigned long
+
+\item 
+头文件\href{http://en.cppreference.com/w/cpp/header/cstdint}{<cstdint>}中定义的其他整数类型:
+\begin{itemize}
+\item 
+int8\_t, int16\_t, int32\_t和int64\_t (8,16,32和64位有符号整数)
+
+\item 
+uint8\_t, uint16\_t, uint32\_t和uint64\_t (8,16,32和64位无符号整数)
+
+\item 
+int\_fast8\_t, int\_fast16\_t, int\_fast32\_t和int\_fast64\_t (8,16,32和64位的快速有符号整数)
+
+\item 
+uint\_fast8\_t, uint\_fast16\_t, uint\_fast32\_t和uint\_fast64\_t(8,16,32和64位快速无符号整数)
+
+\item 
+int\_least8\_t, int\_least16\_t, int\_least32\_t和int\_least64\_t (8,16,32和64位的最小有符号整数)
+
+\item 
+uint\_least8\_t, uint\_least16\_t, uint\_least32\_t和uint\_least64\_t (8,16,32和64位的最小无符号整数)
+
+\item 
+intmax \_t和uintmax\_t (最大有符号整数和无符号整数)
+
+\item 
+intptr\_t和uintptr\_t (有符号和无符号整数，用于保存指针)
+\end{itemize}
+
+\item 
+标准浮点类型:浮点型、双精度浮点型和长双精度浮点型
+\end{itemize}
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{6.2.1.2.4\hspace{0.2cm}原子操作}
+
+首先，下面是atomic\_ref的操作列表。
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{Function} & \textbf{Description}                                                             \\ \hline
-is\_lock\_free    & Checks if the atomic\_ref object is lock-free.                                   \\
-load              & Atomically returns the value of the referenced object.                           \\
-store             & Atomically replaces the value of the referenced object with a non-atomic.        \\
-exchange          & Atomically replaces the value of the referenced object with the new value.       \\
+\textbf{函数} & \textbf{描述}                                                             \\ \hline
+is\_lock\_free    & 检查atomic\_ref对象是否无锁。                                   \\
+load              & 原子地返回引用对象的值。                           \\
+store             & 原子地用非原子值替换引用对象的值。        \\
+exchange          & 原子地用新值替换引用对象的值。       \\
 \begin{tabular}[c]{@{}l@{}}compare\_exchange\_strong\\ compare\_exchange\_weak\end{tabular} &
-Atomically compares and eventually exchanges the value of the referenced object. \\
+原子地比较并最终交换引用对象的值。 \\
 \begin{tabular}[c]{@{}l@{}}fetch\_add, += \\ fetch\_sub, -=\end{tabular} &
 Atomically adds (subtracts) the value to (from) the referenced object. \\
 \begin{tabular}[c]{@{}l@{}}fetch\_or, |= \\ fetch\_and, \&= \\ fetch\_xor, \textasciicircum{}=\end{tabular} &
-Atomically performs bitwise (AND, OR, and XOR) operation on the referenced object. \\
-++, --            & Increments or decrements (either pre- and post-increment) the referenced object. \\
+对引用的对象原子地执行按位(AND、OR和XOR)操作。 \\
+++, --            & 递增或递减(递增前或递增后)引用对象。 \\
 \begin{tabular}[c]{@{}l@{}}notify\_one \\ notify\_all\end{tabular} &
-\begin{tabular}[c]{@{}l@{}}Unblocks all atomic wait operations.\\ Unblocks one atomic wait operation.\end{tabular} \\
+\begin{tabular}[c]{@{}l@{}}解除阻塞所有原子等待操作。\\ 解除单个原子等待操作。\end{tabular} \\
 wait &
-\begin{tabular}[c]{@{}l@{}}Blocks until it is notified. \\ Compares itself with the old value to protect against spurious wakeups and lost wakeups. \\ If the value is different from the old value, returns.\end{tabular}
+\begin{tabular}[c]{@{}l@{}}阻塞直到得到通知。 \\将自身与旧值进行比较，以防止为唤醒和未唤醒。 \\ 若该值与旧值不同，则直接返回。\end{tabular}
 \end{tabular}
 \end{table}
 
 
-The composite assignment operators (+=, -=, |=, \&=, or \^{}=) return the new value; the fetch variations return the old value.
+复合赋值运算符(+=，-=，|=，\&=，或\^{}=)返回新值;fetch方式返回旧值。
 
-Each function supports an additional memory-ordering argument. The default for the memoryordering argument is std::memory\_order\_seq\_cst, but you can also use std::memory\_order\_relaxed, std::memory\_order\_consume, std::memory\_order\_acquire, std::memory\_order\_release, or std::memory\_order\_acq\_rel. The compare\_exchange\_strong and compare\_exchange\_weak methods can be parameterized with two memory orderings, one for the success case, the other for the failure case. Both calls perform an atomic exchange if equal and an atomic load if not. They return true in the success case, otherwise false. If you only explicitly provide one memory ordering, it is used for both the success and the failure case. Here are the details for \href{https://en.cppreference.com/w/cpp/atomic/memory_order}{memory ordering}.
+每个函数都支持一个内存序参数，其默认值是std::memory\_order\_seq\_cst，也可以使用std::memory\_order\_relax，std::memory\_order\_consume，std::memory\_order\_acquire，std::memory\_order\_release或std::memory\_order\_acq\_rel。compare\_exchange\_strong和compare\_exchange\_weak方法有两个内存序参数，一个用于成功情况，另一个用于失败情况。两个调用若相等则执行原子交换，不相等则执行原子加载。在成功的情况下，返回true，否则返回false。若只显式地提供一种内存序，则成功和失败的情况都使用这个内存序。下面是\href{https://en.cppreference.com/w/cpp/atomic/memory_order}{内存序}的详细信息。
 
-Of course, not all operations are available for all types referenced by std::atomic\_ref. The table shows the list of all atomic operations, depending on the type referenced by std::atomic\_ref.
+当然，并不是所有操作都适用于std::atomic\_ref引用的所有类型。该表显示了所有原子操作的列表，具体取决于std::atomic\_ref引用的类型。
 
 \begin{center}
-All atomic operations, depending on the type referenced by std::atomic\_ref
+所有原子操作，取决于std::atomic\_ref引用的类型
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{lllll}
-\textbf{Function} &
+\textbf{函数} &
 \textbf{atomic\_ref\textless{}T\textgreater{}} &
 \textbf{atomic\_ref\textless{}integral\textgreater{}} &
 \textbf{atomic\_ref\textless{}floating\textgreater{}} &
@@ -323,113 +319,106 @@ wait                            & yes & yes & yes & yes
 \end{tabular}
 \end{table}
 
-\subsubsubsection{6.2.2\hspace{0.2cm} Atomic Smart Pointer}
+\subsubsubsection{6.2.2\hspace{0.2cm}原子智能指针}
 
-A \href{https://en.cppreference.com/w/cpp/memory/shared_ptr}{std::shared\_ptr} consists of a control block and its resource. The control block is thread-safe, but access to the resource is not. This means modifying the reference counter is an atomic operation and you have the guarantee that the resource is deleted exactly once. These are the guarantees std::shared\_ptr gives you.
+\href{https://en.cppreference.com/w/cpp/memory/shared_ptr}{std::shared\_ptr}是由一个控制块及其资源组成。控制块是线程安全的，但对资源的访问不是。所以修改引用计数器是一个原子操作，从而可以保证资源只删除一次。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={The Importance of being Thread-Safe}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={线程安全的重要性}]
 	
-I want to take a short detour to emphasize how important it is that the std::shared\_ptr has well-defined multithreading semantics. At first glance, use of a std::shared\_ptr does not appear to be a sensible choice for multithreaded code. It is by definition shared and mutable and is the ideal candidate for non-synchronized read and write operations and hence for undefined behavior. On the other hand, there is the guideline in modern C++: Don’t use raw pointers. This means, consequently, that you should use smart pointers in multithreaded programs.
+先来强调一下，std::shared\_ptr具有定义良好的多线程语义非常重要。乍一看，对于多线程代码来说，使用std::shared\_ptr似乎不是一个明智的选择。根据定义，它是共享和可变的，是非同步读写操作的理想候选对象，所以是未定义行为的理想候选对象。另一方面，现代C++中有一条准则:不要使用原始指针。因此，开发者应该在多线程程序中使用智能指针。
 	
 \end{tcolorbox}
 
-The proposal \href{http://wg21.link/n4162}{N4162} for atomic smart pointers directly addresses the deficiencies of the current implementation. The deficiencies boil down to these three points: consistency, correctness, and performance.
+提案\href{http://wg21.link/n4162}{N4162}直接解决了当前所面临的问题。这些问题可以归结为三点:一致性、正确性和性能。
 
 \begin{itemize}
 \item 
-Consistency: the atomic operations for std::shared\_ptr are the only atomic operations for a non-atomic data type.
+一致性:std::shared\_ptr的原子操作是非原子数据类型的唯一原子操作。
 
 \item 
-Correctness: the use of the global atomic operations is quite error-prone because the correct usage is based on discipline. It is easy to forget to use an atomic operation - such as using ptr = localPtr instead of std::atomic\_store(\&ptr, localPtr). The result is undefined behavior because of a data race. If we used an atomic smart pointer instead, the type system would not allow it.
+正确性:全局原子操作的使用很容易出错，正确的使用方式是基于规则的。很容易忘记使用原子操作——例如：使用ptr = localPtr，而不是std::atomic\_store(\&ptr, localPtr)。由于数据竞争，从而导致未定义的行为。若使用原子智能指针，类型系统将不允许这样做。
 
 \item 
-Performance: the atomic smart pointers have a big advantage compared to the free atomic\_* functions. The atomic versions are designed for the special use case and can internally have a std::atomic\_flag as a kind of cheap \href{https://en.wikipedia.org/wiki/Spinlock}{spinlock}. Designing the non-atomic versions of the pointer functions to be thread-safe would be overkill where they are used in a single-threaded scenario. They would have a performance penalty.
+性能:原子智能指针与自atomic\_*函数相比有很大的优势。原子版本是为特殊用例设计的，可以在内部有一个std::atomic\_flag作为一种廉价的\href{https://en.wikipedia.org/wiki/Spinlock}{自旋锁}。没必要将指针函数的非原子版本设计为线程安全的，因为在单线程场景中使用原子操作是多余的，并且还会有性能惩罚。
 \end{itemize}
 
-The correctness argument is probably the most important one. Why? The answer lies in the proposal. The proposal presents a thread-safe singly-linked list that supports insertion, deletion, and searching of elements. This singly-linked list is implemented in a lock-free way.
+正确性可能是最重要的一个。为什么?答案就在提案中。该建议提供了线程安全的单链表，支持元素的插入、删除和搜索。并且，这个单链表以无锁的方式实现。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.2.2.1\hspace{0.2cm} A thread-safe singly-linked list}
+\textbf{6.2.2.1\hspace{0.2cm}线程安全的单链表}
 
 \begin{center}
 \includegraphics[width=1.0\textwidth]{content/3/chapter6/images/11.png} \\
-The expected result with std::atomic\_ref
+使用std::atomic\_ref的预期结果
 \end{center}
 
-All changes that are required to compile the program with a C++11 compiler are marked in red. The implementation with atomic smart pointers is a lot easier and hence less error-prone. C++20’s type system does not permit using a non-atomic operation on an atomic smart pointer.
+C++11编译器编译程序所需的所有更改，都用红色标记。使用原子智能指针的实现要容易得多，并且不容易出错。C++20的类型系统不允许在原子智能指针上使用非原子操作。
 
-The proposal \href{http://wg21.link/n4162}{N4162} proposed the new types std::atomic\_shared\_ptr and std::atomic\_weak\_ptr as atomic smart pointers. By merging them in the mainline ISO C++ standard, they became partial template specialization of std::atomic, namely std::atomic<std::shared\_ptr<T>{}>, and std::atomic<std::weak\_ptr<T>{}>.
+提案\href{http://wg21.link/n4162}{N4162}提出了新的类型std::atomic\_shared\_ptr和std::atomic\_weak\_ptr。将它们合并到ISO C++标准中，表示它们成为std::atomic的模板偏特化，即std::atomic<std::shared\_ptr<T>{}>和std::atomic<std::weak\_ptr<T>{}>。
 
-Consequently, the atomic operations for std::shared\_ptr are deprecated with C++20.
+因此，std::shared\_ptr的原子操作在C++20中弃用了。
 
-\subsubsubsection{6.2.3\hspace{0.2cm} std::atomic\_flag Extensions}
+\subsubsubsection{6.2.3\hspace{0.2cm}std::atomic\_flag扩展}
 
-Before I write about std::atomic\_flag extension in C++20, I want to give a short reminder of std::atomic\_flag in C++11. If you want to read more details, read my post about \href{https://www.modernescpp.com/index.php/the-atomic-flag}{std::atomic\_flag} in C++11.
+在介绍C++20中的std::atomic\_flag扩展之前，我想简单地提一下C++11中的std::atomic\_flag。若想了解更多细节，请阅读我关于C++11中\href{https://www.modernescpp.com/index.php/the-atomic-flag}{std::atomic\_flag}的文章。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.2.3.1\hspace{0.2cm}  C++11}
+\textbf{6.2.3.1\hspace{0.2cm}C++11}
 
-std::atomic\_flag is a kind of atomic boolean. It has clear- and set-state functions. I call the clear state false and the set state true for simplicity. Its clear member function enables you to set its value to false. With the test\_and\_set method, you can set the value to true and return the previous value. ATOMIC\_FLAG\_INIT enables initializing the std::atomic\_flag to false.
+std::atomic\_flag是一种原子布尔值，具有清态和定态功能。为了简单起见，我称clear状态为false，set状态为true。clear成员函数可以将其值设置为false。使用test\_and\_set方法，可以将值设置为true并返回之前的值。ATOMIC\_FLAG\_INIT允许将std:: ATOMIC\_FLAG初始化为false。
 
-std::atomic\_flag has two exciting properties, it is
+std::atomic\_flag有两个重要的属性
 
 \begin{itemize}
 \item 
-the only lock-free atomic.
+唯一的无锁原子类型。
 
 \item 
-the building block for higher thread abstractions.
+更高的线程构建块抽象。
 \end{itemize}
 
-With C++11, there is no member function to ask for the current value of a std::atomic\_flag without changing it. This changes with C++20.
+C++11中，没有成员函数要求std::atomic\_flag的当前值而不更改它，而这在C++20中有所改变。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.2.3.2\hspace{0.2cm} C++20 Extensions}
+\textbf{6.2.3.2\hspace{0.2cm}C++20的扩展}
 
-The following table shows the more powerful interface of std::atomic\_flag in C++20.
-
-\begin{center}
-All operations of std::atomic\_flag atomicFlag
-\end{center}
+下表展示了在C++20中std::atomic\_flag具有更强大的接口。
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{Method}             & \textbf{Description}                                           \\ \hline
-atomicFlag.clear()          & Clears the atomic flag.                                        \\
+\textbf{操作}             & \textbf{描述}                                           \\ \hline
+atomicFlag.clear()          & 清除原子flag。                                        \\
 \begin{tabular}[c]{@{}l@{}}atomicFlag.test\_and\_set() \\ atomicFlag.test() (C++20)\end{tabular} &
-\begin{tabular}[c]{@{}l@{}}Sets the atomic flag and returns the old value. \\ Returns the value of the flag.\end{tabular} \\
+\begin{tabular}[c]{@{}l@{}}设置原子flag并返回旧值。 \\ 返回flag的值。\end{tabular} \\
 \begin{tabular}[c]{@{}l@{}}atomicFlag.notify\_one() (C++20) \\ atomicFlag.notify\_all (C++20)\end{tabular} &
-\begin{tabular}[c]{@{}l@{}}Notifies one thread waiting on the atomic flag.\\ Notifies all threads waiting on the atomic flag.\end{tabular} \\
-atomicFlag.wait(bo) (C++20) & Blocks the thread until notified and the atomic value changes.
+\begin{tabular}[c]{@{}l@{}}通知一个等待原子flag的线程。\\ 通知所有等待原子flag的线程。\end{tabular} \\
+atomicFlag.wait(bo) (C++20) & 阻塞线程，直到得到通知，将原子值改变为止。
 \end{tabular}
 \end{table}
 
-The call atomicFlag.test() returns the atomicFlag value without changing it. Further on, you can use std::atomic\_flag for thread synchronization: atomicFlag.wait(), atomicFlag.notify\_one(), and atomicFlag.notify\_all(). The member functions notify\_one or notify\_all notify one or all of the waiting atomic flags. atomicFlag.wait(bo) needs a boolean bo. The call atomicFlag.wait(bo) blocks until the next notification or spurious wakeup. It checks then if the value of atomicFlag is equal to bo and unblocks if not. The value bo serves as a predicate to protect against spurious wakeups. A spurious wakeup is an erroneous notification.
+调用atomicFlag.test()返回atomicFlag值而不更改它，可以使用std::atomic\_flag进行线程同步:atomicFlag.wait()、atomicFlag.notify\_one()和atomicFlag.notify\_all()。成员函数notify\_one或notify\_all通知一个或所有处于等待的原子flag。atomicFlag.wait(bo)需要一个布尔值bo，使用atomicFlag.wait(bo)将其阻塞，直到下一次通知或伪唤醒。然后，会检查atomicFlag的值是否等于bo，若不等于则解除阻塞。值bo用作防止为唤醒的谓词，而伪唤醒是一种错误的通知。
 
-As compared to C++11, default-construction of a std::atomic\_flag is initialized to false state.
+与C++11相比，std::atomic\_flag的默认构造初始化为false。
 
-The remaining more powerful atomics can provide their functionality by using a mutex. That is according to the C++ standard. So these atomics have a member function is\_lock\_free to check if the atomic internally uses a mutex. On the popular platforms, I always get the answer false. But you should be aware of that.
+根据C++标准，更强大的原子功能，可以通过互斥量来提供。因此这些原子有一个成员函数is\_lock\_free，可以用来检查原子内部是否使用了互斥量。在主流的平台上，我总是得到false的回答，但各位需要了解这一点。
 
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{6.2.3.3\hspace{0.2cm} One Time Synchronization of Threads}
-
-Sender-receiver workflows are quite common for threads. In such a workflow, the receiver is waiting for the sender’s notification before Future continues to work. There are various ways to implement these workflows. With C++11, you can use condition variables or promise/future pairs; with C++20, you can use std::atomic\_flag. Each way has its pros and cons. Consequently, I want to compare them. I assume you don’t know the details of condition variables or promises and futures. Therefore, I provide a short refresher.
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{6.2.3.3.1\hspace{0.2cm} Condition Variables}
+\textbf{6.2.3.3\hspace{0.2cm}线程的一次性同步}
 
-A condition variable can fulfill the role of a sender or a receiver. As a sender, it can notify one or more receivers.
+发送-接收工作流对于线程来说非常常见。这样的工作流中，接收者在Future继续工作之前等待发送者的通知。有多种方法可以实现这些工作流。C++11中，可以使用条件变量或promise/future对;C++20中，可以使用std::atomic\_flag。每种方法都有其利弊，所以我想对它们进行比较。我假设读者们并不了解条件变量，promise和future的细节。因此，我提供了一些简短的复习内容。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Thread synchronization with condition variables
+\textbf{6.2.3.3.1\hspace{0.2cm}条件变量}
+
+条件变量可以扮演发送者或接收者的角色。作为发送方，可以通知一个或多个接收方。
+
 \begin{lstlisting}[style=styleCXX]
 // threadSynchronizationConditionVariable.cpp
 
@@ -481,28 +470,24 @@ int main() {
 }
 \end{lstlisting}
 
-The program has two child threads: t1 and t2. They get their payload prepareWork and completeWork in lines 40 and 41. The function prepareWork (line 14) notifies that it is done with the preparation of the work: condVar.notify\_one(). While holding the lock, thread t2 is waiting for its notification: condVar.wait(lck, []\{ return not myVec.empty(); \}). The waiting thread always performs the same steps. When awoken, it checks the predicate while holding the lock ([]\{ return not myVec.empty();). If the predicate does not hold, it puts itself back to sleep. If the predicate holds, it continues with its work. In the concrete workflow, the sending thread puts the initial values into the std::vector (line 18), which the receiving thread completes (line 29).
+程序有两个子线程:t1和t2，在第40行和第41行中获得负载prepareWork和completeWork。函数prepareWork(第14行)通知它已经完成了工作的准备:condVar.notify\_one()。当持有锁时，线程t2正在等待它的通知:condVar.wait(lck，[]\{return not myVec.empty();\})。等待线程总是执行相同的步骤。唤醒时，它在持有锁的同时检查谓词([]\{return not myVec.empty();)。若谓词不成立，重新回到睡眠状态；否则，它将继续其工作。在具体的工作流中，发送线程将初始值放入std::vector(第18行)，接收线程完成(第29行)。
 
 \begin{center}
-\includegraphics[width=1.0\textwidth]{content/3/chapter6/images/12.png}\\
-Thread synchronization with condition variables
+\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/12.png}\\
 \end{center}
 
-Condition variables have many inherent issues. For example, the receiver could be awakened without notification or could lose the notification. The first issue is known as spurious wakeup and the second as lost wakeup. The predicate protects against both flaws. The notification could be lost when the sender sends its notification before the receiver is in the wait state and does not use a predicate. Consequently, the receiver waits for something that never happens. This is a deadlock. When you study the output of the program, you see that every second run would cause a deadlock if I did not use a predicate. Of course, it is possible to use condition variables without a predicate.
+条件变量有许多已知的问题。例如，接收者可能在没有通知的情况下唤醒，或者可能丢失通知。第一个问题称为伪唤醒，第二个问题称为未唤醒。谓词可以杜绝这两种问题。若发送方在接收方处于等待状态且未使用谓词之前发送通知，则通知可能丢失。因此，接收者等待的事情永远不会发生。这是一个死锁。在研究程序的输出时，会发现，若不使用谓词，那么每次运行一秒就会死锁。当然，可以使用没有谓词的条件变量。
 
-If you want to know the details of the sender-receiver workflow and the traps of condition variables, read my posts \href{https://www.modernescpp.com/index.php/c-core-guidelines-be-aware-of-the-traps-of-condition-variables}{“C++ Core Guidelines: Be Aware of the Traps of Condition Variables”}.
+若想知道发送-接收工作流程和条件变量陷阱的细节，请阅读我的帖子\href{https://www.modernescpp.com/index.php/c-core-guidelines-be-aware-of-the-traps-of-condition-variables}{“C++核心指南:小心条件变量的陷阱”}。
 
-Let me implement the same workflow using a future/promise pair.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{6.2.3.3.2\hspace{0.2cm} Futures and Promises}
-
-A promise can send a value, an exception, or a notification to its associated future. Here is the corresponding workflow using a promise and a future.
+接下来，让我使用future/promise来实现相同的工作流。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Thread synchronization with a promise/future pair
+\textbf{6.2.3.3.2\hspace{0.2cm}Future和Promise}
+
+promise可以向其关联的future发送值、异常或通知。下面是使用promise和future的相应工作流。
+
 \begin{lstlisting}[style=styleCXX]
 // threadSynchronizationPromiseFuture.cpp
 
@@ -549,19 +534,16 @@ int main() {
 }
 \end{lstlisting}
 
-When you study the workflow, you recognize that the synchronization is reduced to its essential parts: prom.set\_value() (line 14) and fut.wait() (line 21). I skip the screenshot to this run because it is essentially the same as the previous run with condition variables.
+在研究这个工作流时，会发现同步简化为几个基本部分:prom.set\_value()(第14行)和fut.wait()(第21行)。我跳过了这次运行的截图，因为它应该与前面条件变量的运行结果相同。
 
-Here is more information on promises and futures, often just called \href{https://www.modernescpp.com/index.php/tag/tasks}{tasks}.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{6.2.3.3.3\hspace{0.2cm} std::atomic\_flag}
-
-Now, I jump directly from C++11 to C++20.
+这里有更多关于promise和future的信息，通常称为\href{https://www.modernescpp.com/index.php/tag/tasks}{task}。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Thread synchronization with a std::atomic\_flag
+\textbf{6.2.3.3.3\hspace{0.2cm}std::atomic\_flag}
+
+现在，我直接从C++11跳到C++20。
+
 \begin{lstlisting}[style=styleCXX]
 // threadSynchronizationAtomicFlag.cpp
 
@@ -609,24 +591,20 @@ int main() {
 }
 \end{lstlisting}
 
-The thread preparing the work (line 16) sets the atomicFlag to true and sends the notification. The thread completing the work waits for the notification. It is only unblocked if atomicFlag is equal to true.
+准备工作的线程(第16行)将atomicFlag设置为true并发送通知。完成工作的线程等待通知。只有当atomicFlag等于true时，才会解除阻塞。
 
-Here are a few runs of the program with the Microsoft Compiler.
+下面是使用Microsoft编译器运行该程序的几次。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter6/images/13.png}\\
-Thread synchronization with std::atomic\_flag
 \end{center}
 
-\subsubsubsection{6.2.4\hspace{0.2cm} std::atomic Extensions}
+\subsubsubsection{6.2.4\hspace{0.2cm}std::atomic扩展}
 
-In C++20, std::atomic. like \href{https://en.cppreference.com/w/cpp/atomic/atomic}{std::atomic\_ref, std::atomic} can be instantiated with floating-point types such as float, double, and long double. In addition, std::atomic\_flag and std::atomic can be used for thread synchronization via the member functions notify\_one, notify\_all, and wait. Notifying and waiting is available on all partial and full specializations of std::atomic (bools, integrals, floats and pointers) and std::atomic\_ref.
+C++20中，std::atomic与\href{https://en.cppreference.com/w/cpp/atomic/atomic}{std::atomic\_ref}一样可以用浮点类型实例化，如float、double和long double。此外，std::atomic\_flag和std::atomic可以通过成员函数notify\_one、notify\_all和wait进行线程同步。通知和等待在std::atomic(布尔，整型，浮点和指针)和std::atomic\_ref的所有偏和全特化上都可用。
 
-Thanks to atomic<bool>, the previous program threadSynchronizationAtomicFlag.cpp can directly be reimplemented.
+有了atomic<bool>，前面threadSynchronizationAtomicFlag.cpp可以重新进行实现。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Thread synchronization with std::atomic<bool>
 \begin{lstlisting}[style=styleCXX]
 // threadSynchronizationAtomicBool.cpp
 
@@ -674,40 +652,38 @@ int main() {
 }
 \end{lstlisting}
 
-The call atomicBool.wait(false) blocks if atomicBool == false holds. Consequently, the call atomicBool.store(true) (line 16) sets atomicBool to true and sends its notification.
+若atomicBool == false成立，则调用atomicBool.wait(false)将其阻塞。因此，调用atomicBool.store(true)(第16行)将atomicBool设置为true并发送通知。
 
-As before, here are four runs with the Microsoft Compiler.
+和前面一样，下面是使用Microsoft编译器的四次运行。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter6/images/14.png}\\
-Thread synchronization with std::atomic<bool>
 \end{center}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Condition Variables versus Promise/Future Pairs versus std::atomic\_flag}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={条件变量、Promise/Future对和std::atomic\_flag}]
 	
-When you only need a one-time notification, such as in the previous program threadSynchronizationConditionVariable.cpp, promises and futures are a better choice than condition variables. Promises and futures cannot be victims of spurious or lost wakeups.
-Furthermore, there is neither a need to use locks or mutexes, nor is there a need to use a predicate to protect against spurious or lost wakeups. There is only one downside to using promises and futures: they can only be used once.
+当只需要一次性通知时(threadSynchronizationConditionVariable.cpp)，Promise/Future对是比条件变量更好的选择。Promise/Future对可以避免伪唤醒和未唤醒。此外，这种方式不需要使用锁或互斥量，也不需要使用谓词来防止伪唤醒或未唤醒。使用Promise/Future对只有一个缺点:只能使用一次。
 
 
-I’m not sure if I would use a future/promise pair or atomics such as std::atomic\_flag or std::atomic<bool> for such a simple thread-synchronization workflow. All of them are thread-safe by design and require no protection mechanism so far. Promises and futures are easier to use and atomics are probably faster. I’m only sure that I would not use a condition variable if possible.
+不确定我是否会使用Promise/Future对或原子类型(如std::atomic\_flag或std::atomic<bool>)，来实现这样一个简单的线程同步工作流。从设计上讲，这些方式都是线程安全的，目前还不需要额外的保护机制。Promise/Future对更容易使用，不过原子类型可能运行的更快。但有一点是确定的，尽可能不要去使用条件变量。
 	
 \end{tcolorbox}
 
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 	
 \begin{itemize}
 \item 
-std::atomic\_ref applies atomic operations to the referenced object. Concurrent writing and reading is atomic for referenced objects, with no data race. The lifetime of the referenced object must exceed the lifetime of the std::atomic\_ref.
+std::atomic\_ref对引用的对象应用原子操作。并发写和读对于引用的对象来说是原子的，没有数据竞争。引用对象的生存期必须超过std::atomic\_ref的生存期。
 
 \item 
-A std::shared\_ptr consists of a control block and its resource. The control block is thread-safe, but the access to the resource is not. With C++20, we have an atomic shared pointer: std::atomic<std::shared\_ptr<T>{}>, and std::atomic<std::weak\_ptr<T>{}>.
+std::shared\_ptr由一个控制块及其资源组成。控制块是线程安全的，但对资源的访问不是。在C++20中，添加了原子共享指针:std::atomic<std::shared\_ptr<T>{}>和std::atomic<std::weak\_ptr<T>{}>。
 
 \item 
-std::atomic\_flag as a kind of atomic boolean is the only guaranteed lock-free data structure in C++. Its limited interface is extended in C++20. You can return its value, and you can use it for thread synchronization.
+std::atomic\_flag作为一种原子布尔值，是C++中唯一保证无锁的数据结构。其有限的接口在C++20中进行了扩展，现在可以返回它的值，并且可以将它用于线程同步。
 
 \item 
-std::atomic, introduced in C++11, gets various improvements in C++20. You can specialize a std::atomic for a floating-point value, and you can use it for thread synchronization.
+std::atomic，在C++11中引入，并在C++20中得到了改进。可以为浮点值特化std::atomic，并且可以将其用于线程同步。
 \end{itemize}
 	
 \end{tcolorbox}

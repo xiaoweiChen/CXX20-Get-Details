@@ -1,46 +1,43 @@
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter6/images/18.png}\\
-Cippi waits at the barrier
+Cippi在栅栏外等待
 \end{center}
 
-Latches and barriers are coordination types that enable some threads to block until a counter becomes zero. In C++20 we get latches and barriers in two variations: std::latch and std::barrier. Concurrent invocations of the member functions of a std::latch or a std::barrier produce no data race.
+锁存器(门闩)和栅栏属于协调类型，可以阻塞线程，直到计数器变为零。C++20中，我们有两种类型的门闩和栅栏:std::latch和std::barrier。并发调用std::latch或std::barrier的成员函数不会产生数据竞争。
 
-First, there are two questions:
+首先，有两个问题:
 
 \begin{enumerate}
 \item 
-What is the difference between these two mechanisms to coordinate threads? You can use a std::latch only once, but you can use a std::barrier more than once. A std::latch is useful for managing one task by multiple threads. A std::barrier helps managing repeated tasks by multiple threads. Additionally, a std::barrier enables you to execute a function in the so-called completion step. The completion step is the state when the counter becomes zero.
+这两种协调线程的机制之间有什么区别?std::latch只能使用一次，但std::barrier可以使用多次。std::latch在多线程管理一个任务时很有用，std::barrier可以帮助管理多个线程的重复任务。此外，std::barrier可在完成步骤中执行函数，这里的“完成步骤”指的是计数器变为零时的状态。
 
 \item 
-What use cases do latches and barriers support that cannot be done in C++11 and C++14 with futures, threads, or condition variables combined with locks? Latches and barriers address no new use cases, but they are a lot easier to use. They are also more performant because they often use a \href{https://en.wikipedia.org/wiki/Non-blocking_algorithm}{lock-free} mechanism internally.
+在C++11和C++14中用future、线程或条件变量与锁结合的情况下，门闩和栅栏支持哪些用例?门闩和栅栏没有解决新的用例，但是它们的使用要容易得多。因为它们经常在内部使用\href{https://en.wikipedia.org/wiki/Non-blocking_algorithm}{无锁}机制，所以性能会更好。
 \end{enumerate}
 
-\subsubsubsection{6.4.1\hspace{0.2cm} std::latch}
+\subsubsubsection{6.4.1\hspace{0.2cm}std::latch}
 
-Now, let us have a closer look at the interface of a std::latch.
+现在，让我们来了解一下std::latch的接口。
 
 \begin{center}
-Member functions of a std::latch lat
+std::latch latat的成员函数
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{Member function} & \textbf{Description}          \\ \hline
-lat.count\_down(upd = 1)       & Atomically decrements the counter by upd without blocking the caller.  \\
-lat.try\_wait()          & Returns true if counter == 0. \\
-lat.wait()                     & Returns immediately if counter == 0. If not blocks until counter == 0. \\
-lat.arrive\_and\_wait(upd = 1) & Equivalent to count\_down(upd); wait();.                              
+\textbf{成员函数} & \textbf{描述}          \\ \hline
+lat.count\_down(upd = 1)       & 按upd原子地递减计数器，而不阻塞调用者。  \\
+lat.try\_wait()          & 若counter == 0则返回true。 \\
+lat.wait()                     & 若counter == 0立即返回。若不阻塞，直到counter == 0再返回。 \\
+lat.arrive\_and\_wait(upd = 1) &等价于count\_down(upd); wait();.                              
 \end{tabular}
 \end{table}
 
-The default value for upd is 1. When upd is greater than the counter or negative, the behavior is undefined. The call lat.try\_wait() never actually waits, as its name suggests.
+upd的默认值为1。当upd大于计数器或为负数时，行为未定义。使用lat.try\_wait()从不会真正等待，正如其名称一样。
 
-The following program bossWorkers.cpp uses two std::latch to build a boss-workers workflow. I synchronized the output to std::cout using the function synchronizedOut (line 13). This synchronization makes it easier to follow the workflow.
+下面的bossWorkers.cpp中，使用两个std::latch来构建一个boss-workers工作流。我使用synchronizedOut函数将输出同步到std::cout(第13行)，使工作流更容易使用这种同步方式。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-A boss-worker workflow using two std::latch
 \begin{lstlisting}[style=styleCXX]
 // bossWorkers.cpp
 
@@ -118,18 +115,14 @@ int main() {
 }
 \end{lstlisting}
 
-The idea of the workflow is straightforward. The six workers herb, scott, bjarne, andrei, andrew, and david (lines 41 - 57) have to fulfill their job. When each has finished his job, it counts down the std::latch workDone (line 25). The boss (main-thread) is blocked in line 59 until the counter becomes 0. When the counter is 0, the boss uses the second std::latch goHome to signal its workers to go home. In this case, the initial counter is 1 (line 9). The call goHome.wait() blocks until the counter becomes 0.
+工作流的思想很简单。六个工人herb, scott, bjarne, andrei, andrew和david(第41 - 57行)必须完成他们的工作。当每个人都完成了他的工作时，它开始倒数std::latch workDone(第25行)。boss(主线程)在第59行阻塞，直到计数器变为0。当计数器为0时，boss使用第二个std::latch goHome向其员工发出回家的信号。这种情况下，初始计数器是1(第9行)，goHome.wait()会阻塞直到计数器变为0。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter6/images/19.png}\\
-A boss-worker workflow using two std::latch
+\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/19.png}\\
 \end{center}
 
-When you think about this workflow, you may notice that it can be performed without a boss. Here it is.
+在研究这个工作流时，可能会注意到它可以在没有老板的情况下执行。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-A worker’s workflow using a std::latch
 \begin{lstlisting}[style=styleCXX]
 // workers.cpp
 
@@ -191,53 +184,52 @@ int main() {
 }
 \end{lstlisting}
 
-There is not much to add to this simplified workflow. The call wordDone.arrive\_and\_wait() (line 22) is equivalent to the calls count\_down(upd); wait();. This means the workers coordinate themselves and the boss is no longer necessary, as was the case in the previous program bossWorkers.cpp.
+这个简化的工作流程中，不需要添加太多的内容。wordDone.arrival\_and\_wait()(第22行)等价于count\_down(upd);wait();。这意味着，工人间可以相互协调，不再需要老板，就像在前面的bossWorkers.cpp那样。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter6/images/20.png}\\
-A workers workflow using a std::latch
+\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/20.png}\\
 \end{center}
 
-A std::barrier is similar to a std::latch.
+std::barrier与std::latch类似。
 
-\subsubsubsection{6.4.2\hspace{0.2cm} std::barrier}
+\subsubsubsection{6.4.2\hspace{0.2cm}std::barrier}
 
-There are two differences between a std::latch and a std::barrier. First, you can use a std::barrier more than once, and second, you can set the counter for the next step (iteration). Immediately after the counter becomes zero, the so-called completion step starts. In this completion step, a callable is invoked. The std::barrier gets its callable in its constructor.
+std::latch和std::barrier之间有两个区别。首先，可以多次使用std::barrier；其次，可以为下一步(迭代)设置计数器。在计数器变为零之后，“完成步骤”立即开始。在“完成步骤”中，调用一个可调用对象。std::barrier在它的构造函数中，可以获得这个可调用的对象。
 
-The completion step performs the following steps:
+“完成步骤”执行以下操作:
 
 \begin{enumerate}
 \item 
-All threads are blocked.
+阻塞所有线程。
 
 \item 
-An arbitrary thread is unblocked and executes the callable.
+任意线程解除阻塞并执行可调用对象。
 
 \item 
-If the completion step is done, all threads are unblocked.
+若完成了“完成步骤”，则所有线程都将解除阻塞。
 \end{enumerate}
 
 \begin{center}
-Member functions of a std::barrier bar
+std::barrier bar的成员函数
 \end{center}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-Member function         & Description                                   \\ \hline
-bar.arrive(upd)         & Atomically decrements counter by upd.         \\
-bar.wait()              & Blocks at the synchronization point until the completion step is done.  \\
-bar.arrive\_and\_wait() & Equivalent to wait(arrive())                  \\
-bar.arrive\_and\_drop() & Decrements the counter for the current and the subsequent phase by one. \\
-std::barrier::max       & Maximum value supported by the implementation
+\textbf{成员函数}         & \textbf{描述}                                   \\ \hline
+bar.arrive(upd)         & 按upd自动递减计数器。         \\
+bar.wait()              & 在同步点上阻塞，直到完成步骤完成。  \\
+bar.arrive\_and\_wait() & 等价于wait(arrive())                  \\
+bar.arrive\_and\_drop() & 将当前阶段和后续阶段的计数器减1。 \\
+std::barrier::max       & 得到实现支持的最大值。
 \end{tabular}
 \end{table}
 
-The call bar.arrive\_and\_drop() means essentially that the counter is decremented by one for the next phase. The program fullTimePartTimeWorkers.cpp halves the number of workers in the second phase.
+bar.arrival\_and\_drop()会让计数器在下一阶段减1，fullTimePartTimeWorkers.cpp将第二阶段的工作人员数量减半。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Full-time and part-time workers
+\textbf{全职和兼职工作者}
 \begin{lstlisting}[style=styleCXX]
 // fullTimePartTimeWorkers.cpp
 
@@ -313,21 +305,21 @@ int main() {
 }
 \end{lstlisting}
 
-This workflow consists of two kinds of workers: full-time workers (line 17) and part-time workers (line 32). The part-time worker works in the morning, the full-time worker in the morning and the afternoon. Consequently, the full-time workers call workDone.arrive\_and\_wait() (lines 23 and 25) two times. On the contrary, the part-time workers call workDone.arrive\_and\_drop() (line 38) only once. This workDone.arrive\_and\_drop() call causes the part-time worker to skip the afternoon work. Accordingly, the counter has in the first phase (morning) the value 6, and in the second phase (afternoon) the value 3.
+这个工作流由两种工人组成:全职工人(第17行)和兼职工人(第32行)。兼职工人在上午工作，全职工人在上午和下午工作。因此，全职工作人员使用workDone.arrive\_and\_wait()两次(第23行和第25行)。相反，兼职工作者只使用workDone.arrive\_and\_drop()(第38行)一次。workDone.arrive\_and\_drop()会让兼职工作者跳过下午的工作。相应地，计数器在第一阶段(上午)的值为6，在第二阶段(下午)的值会变为3。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter6/images/21.png}\\
-Full-time and part-time workers
+\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/21.png}\\
+全职和兼职工作者
 \end{center}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 	
 \begin{itemize}
 \item 
-Latches and barriers are coordination types that enable some threads to block until a counter becomes zero. You can use a std::latch only once, but you can use a std::barrier more than once.
+门闩和栅栏都是协调类型，可以阻塞线程，直到计数器变为零。std::latch只能使用一次，而std::barrier可以使用多次。
 
 \item 
-A std::latch is useful for managing one task by multiple threads; a std::barrier helps manage repeated tasks by multiple threads.
+std::latch多用于多线程管理一个任务;barrier多用于多线程管理重复的任务。
 \end{itemize}
 	
 \end{tcolorbox}
