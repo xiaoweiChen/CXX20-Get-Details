@@ -1,13 +1,13 @@
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter7/images/13.png}\\
-Cippi handles a data stream
+\includegraphics[width=0.6\textwidth]{content/3/chapter7/images/13.png}\\
+Cippi在处理数据流
 \end{center}
 
-Before I modify and generalize the generator for an infinite data stream, I want to present it as a starting point of our journey. I intentionally put many output operations in the source code and only ask for three values. This simplification and visualization should help to understand the control flow.
+在为无限数据流修改和泛化生成器之前，我想把它作为我们旅程的起点。我有意在源代码中放置了许多输出操作，并且只要求三个值。这种简化和可视化应该有助于理解控制流。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Generator generating an infinite data stream
+\textbf{生成无限数据流的生成器}
 \begin{lstlisting}[style=styleCXX]
 // infiniteDataStreamComments.cpp
 
@@ -68,6 +68,7 @@ struct Generator {
 			
 			return Generator{handle_type::from_promise(*this)};
 		}
+	
 		std::suspend_always yield_value(int value) {
 			std::cout << " promise_type::yield_value" << '\n'; \
 			
@@ -106,32 +107,29 @@ int main() {
 }
 \end{lstlisting}
 
-Executing the program on the \href{https://godbolt.org/z/cTW9Gq}{Compiler Explorer} makes the control flow transparent.
+可以在\href{https://godbolt.org/z/cTW9Gq}{Compiler Explorer}上执行程序，使控制流更加明显。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter7/images/14.png}\\
-Generator generating an infinite data stream
+生成无限数据流的生成器
 \end{center}
 
-Let’s analyze the control flow.
+让我们分析一下控制流。
 
-The call getNext() (line 87) triggers the creation of the Generator<int>. First, the promise\_type (line 38) is created, and the following get\_return\_object call (line 54) creates the generator (line 56) and stores it in a local variable. The result of this call is returned to the caller when the coroutine is suspended the first time. The initial suspension happens immediately (line 48). Because the member function call initial\_suspend returns an Awaitable std::suspend\_always (line 48), the control flow continues with the coroutine getNext until the instruction co\_yield value (line 79). This call is mapped to the call yield\_value(int value) (line 59) and the current value is prepared current\_value = value (line 61). The member function yield\_value(int value) returns the Awaitable std::suspend\_always (line 59). Consequently, the execution of the coroutine pauses, and the control flow goes back to the main function, and the for loop starts (line 89). The call gen.getNextValue() (line 89) starts the execution of the coroutine by resuming the coroutine, using coro.resume() (line 34). Further, the function getNextValue() returns the current value that was prepared using the previously invoked member function yield\_value(int value) (line 59). Finally, the generated number is displayed in line 90 and the for loop continues. In the end, the generator and the promise are destructed.
+调用getNext()(第89行)创建Generator<int>，同时创建promise\_type(第38行)，然后下面的get\_return\_object(第55行)创建生成器(第58行)，并将其存储在一个局部变量中。当协程第一次挂起时，此调用的结果返回给调用方，初始暂停立即发生(第46行)。因为成员函数调用initial\_suspend返回可等待std::suspend\_always(第46行)，控制流继续使用协程getNext，直到指令co\_yield value(第82行)。该调用会映射到yield\_value(int value)(第61行)，当前值为current\_value = value(第64行)，成员函数yield\_value(int value)返回可等待的std::suspend\_always(第58行)。因此，协程的执行暂停，控制流返回到主函数，for循环开始(第92行)。gen.getNextValue()(第89行)通过使用coro.resume()(第34行)恢复协程来开始执行协程。此外，函数getNextValue()返回使用前面调用的成员函数yield\_value(int value)准备的当前值(第61行)。最后，生成的数字显示在第93行，for循环继续。最后，销毁生成器和promise。
 
-After this detailed analysis, I want to make a first modification of the control flow.
+详细分析之后，我想对控制流进行第一次修改。
 
-\subsubsubsection{7.3.1\hspace{0.2cm} Modifications}
+\subsubsubsection{7.3.1\hspace{0.2cm}修改}
 
-The snippets and line numbers are all based on the previous program infiniteDataStreamComments.cpp. I only show the modifications.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{7.3.3.1\hspace{0.2cm} The Coroutine is Not Resumed}
-
-When I disable the resumption of the coroutine (gen.getNextValue() in line 89) and the display of its value (line 90), the coroutine immediately pauses.
+代码段和行号都基于前面的infiniteDataStreamComments.cpp，这里只展示修改部分。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Not resuming the coroutine
+\textbf{7.3.3.1\hspace{0.2cm}协程不会恢复}
+
+当我禁用协程恢复(第92行中的gen.getNextValue())和其值的显示(第93行)时，协程会立即暂停。
+
 \begin{lstlisting}[style=styleCXX]
 int main() {
 	
@@ -144,22 +142,18 @@ int main() {
 }
 \end{lstlisting}
 
-The coroutine never runs. Consequently, the generator and its promise are created and destroyed.
+协程永远不会运行。因此，生成器和promise创建后，直接销毁。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter7/images/15.png}\\
-Not resuming the coroutine
 \end{center}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{7.3.3.2\hspace{0.2cm} initial\_suspend Never Suspends}
+\textbf{7.3.3.2\hspace{0.2cm}initial\_suspend从不挂起}
 
-In the program, the member function initial\_suspend returns the Awaitable std::suspend\_always (line 46). As its name suggests, the Awaitable std::suspends\_always causes the coroutine to pause immediately. Let me return std::suspend\_never instead of std::suspend\_always.
+在程序中，成员函数initial\_suspend返回可等待的std::suspend\_always(第46行)，所以std::suspends\_always会导致协程立即暂停。让我返回std::suspend\_never，而非std::suspend\_always。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-initial\_suspend suspends never
 \begin{lstlisting}[style=styleCXX]
 std::suspend_never initial_suspend() {
 	std::cout << " promise_type::initial_suspend" << '\n';
@@ -167,22 +161,18 @@ std::suspend_never initial_suspend() {
 }
 \end{lstlisting}
 
-In this case, the coroutine runs immediately and pauses when the function yield\_value (line 59) is invoked. A subsequent call gen.getNextValue() (line 89) resumes the coroutine and triggers the execution of the member function yield\_value once more. The result is that the start value 10 is ignored, and the coroutine returns the values 20, 30, and 40.
+在这种情况下，协程立即运行，并在函数yield\_value调用时暂停。后续gen.getNextValue()恢复协程，并再次触发成员函数yield\_value的执行。结果会忽略起始值10，所以协程的返回值为20、30和40。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter7/images/16.png}\\
-Don’t Resuming the Coroutine
 \end{center}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{7.3.3.3\hspace{0.2cm} yield\_value Never Suspends}
+\textbf{7.3.3.3\hspace{0.2cm}yield\_value从不挂起}
 
-The member function yield\_value (line 59) is triggered by the call co\_yield value and prepares the current\_value (line 61). The function returns the Awaitable std::suspend\_always (line 62) and, therefore, pauses the coroutine. Consequently, a subsequent call gen.getNextValue (line 89) has to resume the coroutine. When I change the return value of the member function yield\_value to std::suspend\_never, let me see what happens.
+成员函数yield\_value由co\_yield value触发，并准备current\_value。该函数返回std::suspend\_always，因此暂停协程。因此，后续gen.getNextValue必须恢复协程。当我改变成员函数yield\_value的返回值为std::suspend\_never时，来看看会发生什么。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-yield\_value never suspends
 \begin{lstlisting}[style=styleCXX]
 std::suspend_never yield_value(int value) {
 	std::cout << " promise_type::yield_value" << '\n';
@@ -191,22 +181,18 @@ std::suspend_never yield_value(int value) {
 }
 \end{lstlisting}
 
-As you may guess, the while loop (lines 77 - 82) runs forever, and the coroutine does not return anything.
+正如各位猜到的那样，while循环会永远运行，协程不返回任何东西。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter7/images/17.png}\\
-yield\_value Never Suspends
 \end{center}
 
-It is straightforward to restructure the generator infiniteDataStreamComments.cpp so that it produces a finite number of values.
+重构infiniteDataStreamComments.cpp中的生成器很简单，这样它就能产生有限数量的值了。
 
-\subsubsubsection{7.3.2\hspace{0.2cm} Generalization}
+\subsubsubsection{7.3.2\hspace{0.2cm}泛化}
 
-You may wonder why I never used the full generic potential of Generator. Let me adjust its implementation to produce the successive elements of an arbitrary container of the Standard Template Library.
+各位可能会好奇，为什么我从来没有使用Generator的全泛化。现在，我将调整它的实现，以生成标准模板库任意容器的连续元素。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Generator successively returning each element
 \begin{lstlisting}[style=styleCXX]
 // coroutineGetElements.cpp
 
@@ -307,9 +293,9 @@ int main() {
 }
 \end{lstlisting}
 
-In this example, the generator is instantiated and used three times. In the first two cases, gen (line 76) and gen2 (line 83) are initialized with std::string helloWorld, while gen3 uses a std::vector<int> (line 91). The output of the program should not be surprising. Line 78 returns all characters of the string helloWorld successively, line 85 only the first five characters, and line 93 the elements of the std::vector<int>.
+在本例中，生成器进行了实例化，并使用了三次。在前两种情况下，gen(第75行)和gen2(第82行)使用std::string helloWorld进行了初始化，而gen3使用std::vector<int>(第90行)进行初始化。程序的输出应该没啥好说的。第77行依次返回字符串helloWorld的所有字符，第84行只返回前5个字符，第92行返回std::vector<int>的元素。
 
-You can try out the program on the \href{https://godbolt.org/z/j9znva}{Compiler Explorer}.
+您可以在\href{https://godbolt.org/z/j9znva}{Compiler Explorer}上尝试编译运行该程序。
 
 \begin{tcblisting}{commandshell={}}
 H e l l o  w o r l d
@@ -319,15 +305,8 @@ H e l l o
 1 2 3 4 5
 \end{tcblisting}
 
-\begin{center}
-A generator successively returning each element
-\end{center}
+简而言之，Generator<T>的实现几乎与前一个示例完全相同。与前一个示例的关键区别是协程getNext。
 
-To make it short. The implementation of the Generator<T> is almost identical to the previous one. The crucial difference with the previous program is the coroutine getNext.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-getNext
 \begin{lstlisting}[style=styleCXX]
 template <typename Cont>
 Generator<typename Cont::value_type> getNext(Cont cont) {
@@ -335,10 +314,10 @@ Generator<typename Cont::value_type> getNext(Cont cont) {
 }
 \end{lstlisting}
 
-getNext is a function template that takes a container as an argument and iterates in a range-based for loop through all elements of the container. After each iteration, the function template pauses. The return type Generator<typename Cont::value\_type> may look surprising to you. Cont::value\_type is a dependent template parameter, for which the parser needs a hint. By default, the compiler assumes a non-type if it could be interpreted as a type or a non-type. For this reason, I have to put typename in front of Cont::value\_type.
+getNext是一个函数模板，接受容器作为参数，并在基于范围的for循环中遍历容器的所有元素。每次迭代后，函数模板都会暂停。生成器的返回类型可能会让你感到惊讶，Cont::value\_type是一个依赖的模板参数，解析器需要对此进行提示。默认情况下，若它可以解释为类型或非类型，则编译器假定其是一个非类型。出于这个原因，必须把typename放在Cont::value\_type前面。
 
 
-
+\newpage
 
 
 

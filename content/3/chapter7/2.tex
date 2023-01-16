@@ -1,13 +1,10 @@
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter7/images/7.png}\\
-Cippi starts the workflow
+\includegraphics[width=0.6\textwidth]{content/3/chapter7/images/7.png}\\
+Cippi开启工作流
 \end{center}
 
-Before I create variations of the future from section co\_return, we should understand its control flow. Comments make the control flow transparent. Additionally, I provide a link to the presented programs on online compilers.
+在有关co\_return的章节中创建future变量之前，我们应该理解其控制流。注释使控制流透明。此外，我还提供了在线编译器上提供的程序的链接。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Control flow of an eager future
 \begin{lstlisting}[style=styleCXX]
 // eagerFutureWithComments.cpp
 
@@ -77,26 +74,22 @@ int main() {
 }
 \end{lstlisting}
 
-The call createFuture (line 60) causes the creating of the instance of MyFuture (line 59). Before MyFuture’s constructor call (line 10) is completed, the promise promise\_type is created, executed, and destroyed (lines 20 - 48). The promise uses in each step of its control flow the awaitable std::suspend\_never (lines 36 and 40) and, hence, never pauses. To save the result of the promise for the later fut.get() call (line 60), it has to be allocated. Furthermore, the used std::shared\_ptrs ensure (lines 9 and 21) that the program does not cause a memory leak. As a local, fut goes out of scope in line 65, and the C++ run time calls its destructor.
+调用createFuture(第60行)创建MyFuture实例(第59行)。MyFuture的构造函数调用(第10行)完成之前，promise promise\_type就会创建、执行和销毁(第20-48行)。promise在其控制流的每一步中都使用可等待的std::suspend\_never(第36和40行)，因此从不暂停。为了为后面的fut.get()保存promise的结果(第60行)，所以必须对它进行内存分配。此外，使用的std::shared\_ptr的(第9行和第21行)程序不会出现内存泄漏。作为局部变量，fut在第65行超出了范围，C++运行时届时会调用其析构函数。
 
-You can try out the program on the \href{https://godbolt.org/z/Y9naEx}{Compiler Explorer}.
+您可以在\href{https://godbolt.org/z/Y9naEx}{Compiler Explorer}上尝试编译运行该程序。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter7/images/8.png}\\
-An eager future
 \end{center}
 
-The presented coroutine runs immediately and is, therefore, eager. Furthermore, the coroutine runs in the thread of the caller.
+所呈现的协程立即运行。此外，协程会在调用者的线程中运行。
 
-Let’s make the coroutine lazy.
+现在，来让协程变懒惰。
 
-\subsubsubsection{7.2.1\hspace{0.2cm} A Lazy Future}
+\subsubsubsection{7.2.1\hspace{0.2cm}惰性Future}
 
-A lazy future is a future that runs only if asked for the value. Let’s see what I have to change in the eager coroutine, presented in eagerFutureWithComments.cpp, to make it lazy.
+惰性future是指仅在请求值时才运行的future，来看看需要对eagerFutureWithComments.cpp中的立即协程中进行哪些修改，才能使其变得懒惰。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Control flow of a lazy future
 \begin{lstlisting}[style=styleCXX]
 // lazyFuture.cpp
 
@@ -173,20 +166,16 @@ int main() {
 }
 \end{lstlisting}
 
-Let’s first study the promise. The promise always suspends at the beginning (line 44) and the end (line 48). Furthermore, the member function get\_return\_object (line 36) creates the return object that is returned to the caller of the coroutine createFuture (line 58). The future MyFuture is more interesting. It has a handle coro (line 12) to the promise. MyFuture uses the handle to manage the promise. It resumes the promise (line 24), asks the promise for the result (line 25), and finally destroys it (line 19). The resumption of the coroutine is necessary because it never runs automatically (line 44). When the client invokes fut.get() (line 68) to ask for the result of the future, it implicitly resumes the promise (line 24).
+我们先来研究一下promise。promise总是在开头(第44行)和结尾(第48行)处挂起。此外，成员函数get\_return\_object(第36行)会创建返回对象，返回给协程createFuture的调用者(第58行)。future MyFuture更有趣，它有一个用来处理promise的句柄coro(第12行)。MyFuture使用这个句柄来管理promise。可以恢复promise(第24行)执行，向promise请求结果(第25行)，最后销毁它(第19行)。恢复协程是必要的，因为它不会自动运行(第44行)。当调用端使用fut.get()(第68行)来请求future的结果时，就会隐式地恢复promise(第24行)的运行。
 
-You can try out the program on the \href{https://godbolt.org/z/EejWcj}{Compiler Explorer}.
+可以在\href{https://godbolt.org/z/EejWcj}{Compiler Explorer}上尝试编译运行该程序。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter7/images/9.png}\\
-A lazy future
 \end{center}
 
-What happens if the client is not interested in the result of the future? Let’s try it out.
+若调用端对future的结果不感兴趣怎么办?让我们模拟一下。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-The client does not resume the coroutine
 \begin{lstlisting}[style=styleCXX]
 int main() {
 	
@@ -200,28 +189,24 @@ int main() {
 }
 \end{lstlisting}
 
-As you may guess, the promise never runs, and the member functions return\_value and final\_suspend are not executed.
+正如读者们可能猜到的那样，promise永远不会运行，成员函数return\_value和final\_suspend也不会执行。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter7/images/10.png}\\
-A lazy future that is not started
 \end{center}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={About the Numbers}]
-One of the challenges of dealing with coroutines is to handle the lifetime of the coroutine. In the previous program eagerFutureWithComments.cpp, I stored the coroutine result in a std::shared\_ptr. This is critical because the coroutine is executed eagerly.
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={关于数据}]
+处理协程的挑战之一是处理协程的生命周期。在前面的eagerFutureWithComments.cpp中，我将协程结果存储在std::shared\_ptr中。这很重要，因为协程是立即执行的。
 
-In this program lazyFuture.cpp, the call final\_suspend always suspends (line 48): std::suspend\_always final\_suspend(). Consequently, the promise outlives the client, and a std::shared\_ptr is not necessary anymore. Returning std::suspend\_never from the function final\_suspend would cause, in this case, undefined behavior because the client would outlive the promise. Hence, the lifetime of the result ends, bevor the client asks for it.
+在lazyFuture.cpp中，使用final\_suspend总是挂起(第48行):std::suspend\_always final\_suspend()。因此，promise比调用端的生命周期更长，不再需要std::shared\_ptr。这种情况下，从函数final\_suspend返回std::suspend\_never将导致未定义行为。因此，结果的生命周期在调用端请求它之前就结束了。
 \end{tcolorbox}
 
-Let’s vary the coroutine further and run the promise in a separate thread.
+让我们进一步修改协程，并在单独的线程中运行promise。
 
-\subsubsubsection{7.2.2\hspace{0.2cm} Execution on Another Thread}
+\subsubsubsection{7.2.2\hspace{0.2cm}在另一个线程上执行协程}
 
-The coroutine is fully suspended before entering the coroutine createFuture (line 67), because the member function initial\_suspend returns std::suspend\_always (line 52). Consequently, the promise can run on another thread.
+进入协程createFuture之前，因为成员函数initial\_suspend返回std::suspend\_always(第52行)，所以协程处于挂起(第67行)状态。因此，promise可以在另一个线程上执行。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Executing the promise on another thread
 \begin{lstlisting}[style=styleCXX]
 // lazyFutureOnOtherThread.cpp
 
@@ -309,20 +294,19 @@ int main() {
 }
 \end{lstlisting}
 
-I added a few comments to the program that show the id of the running thread. The program lazyFutureOnOtherThread.cpp is quite similar to the previous program lazyFuture.cpp. The main difference is the member function get (line 19). The call std::thread t([this] \{ coro.resume(); \}); (line 24) resumes the coroutine on another thread.
+我在代码中添加了一些注释，显示正在运行的线程的id。lazyFutureOnOtherThread.cpp与前面的程序lazyFuture.cpp非常相似。主要区别在于成员函数get(第19行)。使用std::thread t([this] \{coro.resume();\});(第24行)，将在另一个线程上恢复协程的执行。
 
-You can try out the program on the \href{https://wandbox.org/permlink/jFVVj80Gxu6bnNkc}{Wandbox} online compiler.
+你可以在\href{https://wandbox.org/permlink/jFVVj80Gxu6bnNkc}{Wandbox}在线编译器上尝试这个程序。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter7/images/11.png}\\
-Execution on another thread
+\includegraphics[width=1.0\textwidth]{content/3/chapter7/images/11.png}\\
 \end{center}
 
-I want to add a few additional remarks about the member function get. It is crucial that the promise, resumed in a separate thread, finishes before it returns coro.promise().result.
+我想补充一些关于成员函数get的内容。在另一个线程中恢复的promise，必须在返回coro.promise().result之前完成，这一点至关重要。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-The member function get using std::thread
+\textbf{成员函数获取std::thread}
 \begin{lstlisting}[style=styleCXX]
 T get() {
 	std::thread t([this] { coro.resume(); });
@@ -331,11 +315,11 @@ T get() {
 }
 \end{lstlisting}
 
-Where I to join the thread t after the call return coro.promise().result, the program would have undefined behavior. In the following implementation of the function get, I use a std::jthread. Since std::jthread automatically joins when it goes out of scope. This is too late.
+函数在调用return coro.promise()后将线程t汇入。结果，程序将具有未定义行为。在下面函数get的实现中，我使用了std::jthread。因为std::jthread在超出作用域时自动汇入，但这太迟了。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-The member function get using std::jthread
+\textbf{成员函数获取std::jthread}
 \begin{lstlisting}[style=styleCXX]
 T get() {
 	std::jthread t([this] { coro.resume(); });
@@ -343,22 +327,19 @@ T get() {
 }
 \end{lstlisting}
 
-In this case, the client likely gets its result before the promise prepares it using the member function return\_value. Now, result has an arbitrary value, and therefore so does res.
+这种情况下，调用端很可能在promise使用成员函数return\_value准备promise之前，就得到了结果。result有一个任意值，res也一样。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter7/images/12.png}\\
-Execution on another thread
+\includegraphics[width=1.0\textwidth]{content/3/chapter7/images/12.png}\\
+在另一个线程上执行协程
 \end{center}
 
-There are other possibilities to ensure that the thread is done before the return call.
+还有其他方法可以确保线程在返回调用之前完成。
 
 \begin{itemize}
 \item 
-Create a std::jthread in its scope.
+在其作用域中创建std::jthread。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-std::jthread has its own scope
 \begin{lstlisting}[style=styleCXX]
 T get() {
 	{
@@ -369,11 +350,8 @@ T get() {
 \end{lstlisting}
 
 \item 
-Make std::jthread a temporary object
+将std::jthread设置为临时对象
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-std::jthread as a temporary
 \begin{lstlisting}[style=styleCXX]
 T get() {
 	std::jthread([this] { coro.resume(); });
@@ -383,4 +361,6 @@ T get() {
 
 \end{itemize}
 
-In particular, I don’t like the last solution because it may take you a few seconds to recognize that I just called the constructor of std::jthread.
+特别说明，我不喜欢最后一个解决方案，因为它可能需要几秒钟，才能意识到刚刚调用了std::jthread的构造函数。
+
+\newpage
