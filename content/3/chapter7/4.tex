@@ -1,18 +1,15 @@
 \begin{center}
-\includegraphics[width=0.5\textwidth]{content/3/chapter7/images/18.png}\\
-Cippi digs the garden
+\includegraphics[width=0.4\textwidth]{content/3/chapter7/images/18.png}\\
+Cippi挖花园的地
 \end{center}
 
-Before I modify the workflow from section co\_await, I want to make the awaiter workflow more transparent.
+在修改co\_await章节的工作流之前，我想让待等待的工作流更加透明。
 
 
-\subsubsubsection{7.4.1\hspace{0.2cm} The Transparent Awaiter Workflow}
+\subsubsubsection{7.4.1\hspace{0.2cm}透明的待等待的工作流}
 
-I added a few output messages to the program startJob.cpp.
+我在startJob.cpp中添加了一些输出。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Starting a job on request (including comments)
 \begin{lstlisting}[style=styleCXX]
 // startJobWithComments.cpp
 
@@ -94,26 +91,23 @@ int main() {
 }
 \end{lstlisting}
 
-First of all, I replaced the predefined Awaitables std::suspend\_always and std::suspend\_never with Awaitables MySuspendAlways (line 6) and MySuspendNever (line 20). I use them in lines 51, 55, and 66. The Awaitables mimic the behavior of the predefined Awaitables but additionally write a comment. Due to the use of std::cout, the member functions await\_ready, await\_suspend, and await\_resume cannot be declared as constexpr.
+首先，我用可等待对象MySuspendAlways(第6行)和MySuspendNever(第20行)替换了预定义的可等待对象std::suspend\_always和std::suspend\_never，在第51、55和66行使用了它们。这些可等待对象模仿预定义的可等待对象的行为，但还要加点注解。由于使用std::cout，所以成员函数await\_ready、await\_suspend和await\_resume不能声明为constexpr。
 
-The screenshot of the program execution shows the control flow nicely, which you can directly observe on the \href{https://godbolt.org/z/T5rcE4}{Compiler Explorer}.
+程序执行的屏幕截图很好地显示了控制流，可以直接在\href{https://godbolt.org/z/T5rcE4}{Compiler Explorer}上观察到。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter7/images/19.png}\\
-Starting a job on request (including comments)
+根据请求开启工作(包括注解)
 \end{center}
 
-The function initial\_suspend (line 51) is executed at the beginning of the coroutine and the function final\_suspend at its end (line 55). The call prepareJob() (line 73) triggers the creation of the coroutine object, and the function call job.start() its resumption and, hence, completion (line 74). Consequently, the members await\_ready, await\_suspend, and await\_resume of MySuspendAlways are executed. When you don’t resume the Awaitable such as the coroutine object returned by the member function final\_suspend, the function await\_resume is not processed. In contrast, the Awaitable’s MySuspendNever function is immediately ready because await\_ready returns true and, hence, does not suspend. Thanks to the comments, you should have an elementary understanding of the awaiter workflow.
+函数initial\_suspend(第51行)在协程的开头执行，final\_suspend在协程的末尾执行(第55行)。prepareJob()(第73行)触发了协程对象的创建，函数调用job.start()恢复了协程对象，因此完成了协程对象的创建(第74行)。因此，MySuspendAlways的await\_ready、await\_suspend和await\_resume成员将执行。在不恢复成员函数final\_suspend返回的可等待对象(例如：协程对象)的情况下，不会处理await\_resume。相反，MySuspendNever函数是立即执行的，因为await\_ready返回true，所以不会挂起。通过这些注解，读者们应该对待等待的工作流有了基本的了解。
 
-Now, it’s time to vary it.
+现在，来改变它吧。
 
-\subsubsubsection{7.4.2\hspace{0.2cm} Automatically Resuming the Awaiter}
+\subsubsubsection{7.4.2\hspace{0.2cm}自动恢复的Awaiter}
 
-In the previous workflow, I explicitly started the job.
+前面的工作流中，我显式地启动了该任务。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Explicitly starting the job
 \begin{lstlisting}[style=styleCXX]
 int main() {
 	
@@ -127,11 +121,8 @@ int main() {
 }
 \end{lstlisting}
 
-This explicit invoking of job.start() was necessary because await\_ready in the Awaitable MySuspendAlways always returned false. Now let’s assume that await\_ready can return true or false and the job is not explicitly started. A short reminder: When await\_ready returns true, the function await\_resume is directly invoked but not await\_suspend.
+显式调用job.start()是必要的，因为MySuspendAlways中的await\_ready总是返回false。现在假设await\_ready可以返回true或false，并且任务没有显式地启动。一个简短的提醒:当await\_ready返回true时，函数await\_resume(不是await\_suspend)会直接调用。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-Automatically Resuming the Awaiter
 \begin{lstlisting}[style=styleCXX]
 // startJobWithAutomaticResumption.cpp
 
@@ -205,28 +196,28 @@ int main() {
 }
 \end{lstlisting}
 
-irst of all, the coroutine is now called performJob and runs automatically. gen (line 9) is a random number generator for the numbers 0 or 1. It uses for its job the default random engine, initialized with the seed. Thanks to std::bind\_front, I can bind it together with the std::uniform\_int\_distribution to get a callable which, when used, gives me a random number 0 or 1.
+首先，协程现在称为performJob并自动运行。gen(第9行)是数字0或1的随机数生成器，其使用默认的随机引擎，用种子初始化。因为std::bind\_front，所以可以将它与std::uniform\_int\_distribution绑定在一起，以获得一个可调用对象。在使用时，会生成出一个随机数0或1。
 
-I removed in this example the Awaitables with predefined Awaitables from the C++ standard, except the Awaitable MySuspendAlways as the return type of the member function initial\_suspend (line 41). await\_ready (line 13) returns a boolean. When the boolean is true, the control flow jumps directly to the member function await\_resume (line 23), when false, the coroutine is immediately suspended and, therefore, the function await\_suspend runs (line 17). The function await\_suspend gets the handle to the coroutine and uses it to resume the coroutine (line 19). Instead of returning the value true, await\_suspend can also return void.
+这个例子中，我从C++标准中删除了带有预定义可等待对象的可等待对象，除了作为成员函数initial\_suspend返回类型的可等待对象MySuspendAlways(第41行)。await\_ready(第13行)返回一个布尔值。当布尔值为true时，控制流直接跳转到成员函数await\_resume(第23行)；当为false时，协程立即挂起。因此，函数await\_suspend运行(第17行)。函数await\_suspend获取协程句柄，并使用它来恢复协程(第19行)。而不是返回值true, await\_suspend也可以返回void。
 
-The following screenshot shows: When await\_ready returns true, the function await\_resume is called, when await\_ready returns false, the function await\_suspend is also called.
+下面的截图显示:当await\_ready返回true时，调用await\_resume函数，当await\_ready返回false时，调用await\_suspend函数。
 
-You can try out the program on the \href{https://godbolt.org/z/8b1Y14}{Compiler Explorer}.
+读者们可以在\href{https://godbolt.org/z/8b1Y14}{Compiler Explorer}上尝试编译和运行该程序。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter7/images/20.png}\\
-Automatically Resuming the Awaiter
+自动恢复的Awaiter
 \end{center}
 
-Let me improve the presented program more and resume the awaiter on a separate thread.
+让我进一步改进程序，并在单独的线程上恢复待等待对象。
 
-\subsubsubsection{7.4.3\hspace{0.2cm} Automatically Resuming the Awaiter on a Separate Thread}
+\subsubsubsection{7.4.3\hspace{0.2cm}自动恢复单独线程上的Awaiter}
 
-The following program is based on the previous one.
+下面的程序是在前一个程序的基础上编写的。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Automatically Resuming the Awaiter on a Seperate Thread
+\textbf{一个单独的线程上自动恢复Awaiter}
 \begin{lstlisting}[style=styleCXX]
 // startJobWithAutomaticResumptionOnThread.cpp
 
@@ -292,37 +283,37 @@ int main() {
 }
 \end{lstlisting}
 
-The main difference with the previous program is the new awaitable MyAwaitable, used in the coroutine performJob (line 54). On the contrary, the coroutine object returned from the coroutine performJob is straightforward. Essentially, its member functions initial\_suspend (line 38) and final\_suspend (line 43) return the predefined awaitable std::suspend\_never. Additionally, both functions show the JobNumber of the executed job and the thread ID on which it runs. The screenshot shows which coroutine runs immediately and which one is suspended. Thanks to the thread id, you can observe that suspended coroutines are resumed on a different thread.
+与前一个程序的区别在于，协程performJob中使用了新的可等待MyAwaitable(第54行)。相反，从协程performJob返回的协程对象很简单，它的成员函数initial\_suspend(第38行)和final\_suspend(第43行)返回预定义的可等待std::suspend\_never。此外，这两个函数都显示所执行作业的JobNumber和所运行的线程ID。屏幕截图显示了哪个协程立即运行，哪个挂起。多亏了线程id，才可以观察到挂起的协程在另一个线程上恢复了。
 
-You can try out the program on the \href{https://wandbox.org/permlink/skHgWKF0SYAwp8Dm}{Wandbox}.
+读者们可以在\href{https://wandbox.org/permlink/skHgWKF0SYAwp8Dm}{Wandbox}上尝试该程序。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter7/images/21.png}\\
-Automatically Resuming the Awaiter on a Separate Thread
+自动恢复单独线程上的Awaiter
 \end{center}
 
-Let me discuss the interesting control flow of the program. Line 59 creates eight default-constructed threads, which the coroutine performJob (line 53) takes by reference. Further, the reference becomes the argument for creating MyAwaitable\{out\} (line 54). Depending on the value of res (line 17), and, therefore, the return value of the function await\_ready, the Awaitable continues (res is true) to run or is suspended (res is false). In case MyAwaitable is suspended, the function await\_suspend (line 22) is executed. Thanks to the assignment of outerThread (line 23), it becomes a running thread. The running threads must outlive the lifetime of the coroutine. For this reason, the threads have the scope of the main function.
+来讨论一下这个程序的有趣的控制流程。第59行创建了8个默认构造的线程，协程performJob(第53行)通过引用接受这些线程。此外，引用成为创建MyAwaitable\{out\}的参数(第54行)。根据res的值(第17行)，以及函数await\_ready的返回值，协程将继续(res为true)运行或挂起(res为false)。若MyAwaitable挂起，函数await\_suspend(第22行)将执行。由于分配了outerThread(第23行)，其变成了一个正在运行的线程，从而生命周期必须比协程的长。因此，线程具有main函数的作用域。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={Distilled Information}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 	
 \begin{itemize}
 \item 
-When you want to synchronize threads more than once, you have many options. You can use condition variables, std::atomic\_flag, std::atomic<bool>, or semaphores. This case study answers the question: Which variant is the fastest one? The numbers show that condition variables are the slowest way, and atomic flags the fastest way to synchronize threads. The performance of std::atomic<bool> is in between. Semaphores are nearly as fast as atomic flags.
+想要多次同步线程时，有许多选项。可以使用条件变量、std::atomic\_flag、std::atomic<bool>或信号量。这个案例研究回答了一个问题:哪个变体是最快的?数字表明，条件变量是最慢的方式，原子标记是同步线程的最快方式。std::atomic<bool>的性能介于两者之间，信号量几乎和原子标志一样快。
 
 \item 
-The section coroutines introduced an eager future, using co\_return. This future is an ideal starting point to make it lazy and finally, let it run on its own thread.
+使用co\_return，协程的章节中介绍了一个立即执行的future。这个future是一个理想的起点，可以让它变得懒惰，最后让它在自己的线程上运行。
 
 \item 
-Modifications of the generator for an infinite data stream reveals its nature. When the member function initial\_suspend returns std::suspend\_never, the coroutine starts immediately and ignores the first value. In contrast, returning std::suspend\_never from the function yield\_value ends in an infinite loop. When you forget to resume the coroutine, it will never run.
+对无限数据流的生成器的修改了解了其本质。当成员函数initial\_suspend返回std::suspend\_never时，协程立即启动并忽略第一个值。相反，从函数yield\_value返回std::suspend\_never将以无限循环结束。当忘记恢复协程时，其将永远不会运行。
 
 \item 
-The generator Generator<T> is generally applicable. Instead of an infinite data stream, it can successively return the elements of an arbitrary container of the Standard Template Library.
+泛型Generator<T>，可以连续返回标准模板库中任意容器的元素，而不是无限的数据流。
 
 \item 
-Implementing your own Awaitable MySuspendNever and MySuspendAlways makes the awaiter workflow transparent. Adapting the Awaitable MySuspendAlways enables it to create an Awaiter that resumes itself if necessary.
+实现自己的可等待的MySuspendNever和MySuspendAlways使等待工作流透明。调整可等待的MySuspendAlways使其能够创建一个在必要时恢复自身的Awaiter。
 
 \item 
-Modification of the Awaitable empowers you to automatically resume the coroutine on a separate thread.
+修改可等待对象，可使协程在其他线程上恢复运行。
 \end{itemize}
 	
 \end{tcolorbox}
