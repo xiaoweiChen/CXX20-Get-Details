@@ -1,31 +1,33 @@
 
-The header <version> allows you to ask your compiler for its C++11 or later support. You can ask for attributes, features of the core language, or the library. <version> has about 200 macros defined, which expand to a number when the feature is implemented. The number stands for the year and the month in which the feature was added to the C++ standard. These are the numbers for static\_assert, lambdas, and concepts.
+头文件<version>允许请求编译器提供C++11或更高版本的支持。可以查询核心语言或库的属性、特性。<version>定义了大约200个宏，这些宏在实现特性时扩展为一个数字。这个数字代表该特性添加到C++标准中的年份和月份。这些是static\_assert、Lambda和概念的数字。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Macros for static\_assert, lambdas, and concepts
+\textbf{用于表示static\_assert、Lambda和概念的宏}
 \begin{lstlisting}[style=styleCXX]
 __cpp_static_assert 200410L
 __cpp_lambdas 200907L
 __cpp_concepts 201907L
 \end{lstlisting}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Feature Support}]
-When I experiment with brand-new C++ features, I check which compiler implements the feature I’m interested in. This is the time I visit \href{https://en.cppreference.com/w/cpp/compiler_support}{cppreference.com/compiler\_support}, search for the feature I want to try out and hope that at least one compiler of the big three (GCC, Clang, MSVC) implements the new feature.
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={支持的功能}]
+	
+当尝试全新的C++特性时，我会检查哪个编译器实现了我感兴趣的特性。这是我访问\href{https://en.cppreference.com/w/cpp/compiler_support}{cppreference.com/compiler\_support}的时候，搜索我想尝试的功能，并希望三大编译器(GCC, Clang, MSVC)中至少有一个实现了新功能。
 
-Getting the answer partial is not satisfying. In the end, I don’t know who I should contact when the compilation of a brand-new feature fails.
+\hspace*{\fill} \\ %插入空行
+只得到部分答案并不令人满意。最后，当一个全新功能的编译失败时，我也不知道该去找谁。
 \end{tcolorbox}
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/5/chapter9/images/1.png}\\
-Feature support for C++20 core language
+\includegraphics[width=1.0\textwidth]{content/5/chapter9/images/1.png}\\
+支持C++20核心语言的特性
 \end{center}
 
-The cppreference.com page for \href{https://en.cppreference.com/w/cpp/feature_test}{feature testing} uses all macros together in a long, long source file.
+cppreference.com的\href{https://en.cppreference.com/w/cpp/feature_test}{功能测试}页面，在一个很长的源文件中使用了所有宏。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Use of all feature test macros
+\textbf{使用所有特性测试宏}
 \begin{lstlisting}[style=styleCXX]
 // featureTest.cpp
 // from cppreference.com
@@ -381,22 +383,22 @@ int main() {
 }
 \end{lstlisting}
 
-Of course, the length of the source file is overwhelming. When you want to know more about each macro, visit the page for \href{https://en.cppreference.com/w/cpp/feature_test}{feature testing}. In particular, that page provides a link for each macro so that you can get more information about a feature. For example, here is the table on attributes:
+当然，源文件太长了。若想了解更多关于每个宏的信息，请访问\href{https://en.cppreference.com/w/cpp/feature_test}{特性测试}页面。特别是，该页面为每个宏提供了一个链接，以便您可以获得关于某个特性的更多信息。例如，下面是属性表:
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/5/chapter9/images/2.png}\\
-Macros for the attributes
+属性的宏
 \end{center}
 
-Here is a demonstration of the <version> header and its macros. I executed the program on the brand-new GCC, Clang, and MSVC compilers. I used the Compiler Explorer for the GCC and Clang compilers. The /Zc:\_\_cplusplus flag enables that the \_\_cplusplus macro reports the recent C++ language standards support. Additionally, I enabled C++20 support on all three platforms. For obvious reasons, I only display the support of the C++20 core language.
+下面是<version>标头及其宏的演示。我在全新的GCC、Clang和MSVC编译器上执行了这个程序。我为GCC和Clang编译器使用了编译器资源管理器。/Zc:\_\_cplusplus标志允许\_\_cplusplus宏报告最新的C++语言标准支持。此外，我在所有三个平台上启用了C++20支持。这里，我只显示了对C++20核心语言的支持。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{GCC 10.2}
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/5/chapter9/images/3.png}\\
-C++20 core language support available on the GCC compiler
+\includegraphics[width=0.6\textwidth]{content/5/chapter9/images/3.png}\\
+GCC编译器支持的C++20
 \end{center}
 
 
@@ -405,8 +407,8 @@ C++20 core language support available on the GCC compiler
 \textbf{Clang 11.0}
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/5/chapter9/images/4.png}\\
-C++20 core language support available on the Clang compiler
+\includegraphics[width=0.6\textwidth]{content/5/chapter9/images/4.png}\\
+Clang编译器支持的C++20
 \end{center}
 
 
@@ -415,8 +417,10 @@ C++20 core language support available on the Clang compiler
 \textbf{MSVC 19.27}
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/5/chapter9/images/5.png}\\
-C++20 core language support available on the MSVC compiler
+\includegraphics[width=0.6\textwidth]{content/5/chapter9/images/5.png}\\
+MSVC编译器支持的C++20
 \end{center}
 
-The three screenshots speak a clear message about the big three: Their C++20 core language support is quite good at the end of 2020.
+这三张截图清楚地传达了这三巨头的信息:他们的C++20的核心语言支持，在2020年底时还是相当不错的。
+
+

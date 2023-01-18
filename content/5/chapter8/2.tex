@@ -1,35 +1,35 @@
 
-It is not sure that the following three features, contracts, reflection, and pattern matching, will be part of C++23. The general idea is, therefore, that they should be part of an upcoming C++ standard. This means that they are partially supported in C++23.
+下面的三个特性，契约、反射和模式匹配，不确定是否会成为C++23的一部分。总的想法是，它们应该是即将到来的C++标准的一部分。C++23可能会部分支持它们。
 
 \subsubsubsection{8.2.1\hspace{0.2cm}契约}
 
-Contracts were planned to be the fifth big feature of C++20. Because of design issues, they were removed in the standardization committee meeting in July 2019 in Cologna. At the same time, the \href{https://isocpp.org/std/the-committee}{study group 21 for contracts} was created.
+契约本来是C++20的第五大特性。由于设计问题，在2019年7月在科隆举行的标准化委员会会议上移除。同时，创建了研究契约的\href{https://isocpp.org/std/the-committee}{第21研究组}。
 
 \begin{itemize}
 \item 
-What is a Contract?
+什么是契约？
 \end{itemize}
 
-A contract specifies in a precise and checkable way interfaces for software components. These software components are typically functions and member functions that have to fulfill preconditions, postconditions, or invariants. Here are the simplified definitions of these three terms:
+契约以精确和可检查的方式，为软件组件指定接口。这些软件组件通常是函数和成员函数，必须满足前置条件、后置条件或不变式(断言)。以下是这三个术语的简化定义:
 
 \begin{itemize}
 \item 
-A precondition: a predicate that is supposed to hold upon entry in a function
+前置条件:假定在函数输入时持有的谓词
 
 \item 
-A postcondition: a predicate that is supposed to hold upon exit from the function
+后置条件:假定在函数退出时保持的谓词
 
 \item 
-An assertion: a predicate that is supposed to hold at its point in the computation
+断言:在计算中假定在其点上保持不变的谓词
 \end{itemize}
 
-The precondition and the postcondition are placed outside the function definition, but the invariant (assertion) is placed inside. A predicate is a function, which returns a boolean.
+前置条件和后置条件放置在函数定义之外，但不变式(断言)放置在函数定义内部。谓词是一个返回布尔值的函数。
 
-Here is a first example:
+这里是一个例子:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-The function push uses contracts
+\textbf{使用契约}
 \begin{lstlisting}[style=styleCXX]
 int push(queue& q, int val)
 	[[ expects: !q.full() ]]
@@ -40,13 +40,13 @@ int push(queue& q, int val)
 }
 \end{lstlisting}
 
-The attribute expects is a precondition, the attribute ensures a postcondition, and the attribute assert an assertion. The contracts for the function push are that the queue is not full before adding an element, that it is not empty after adding and the assertion q.is\_ok() holds.
+属性expect是先决条件，属性确保后置条件，属性assert是断言。函数push的契约是，在添加元素之前队列不满，在添加元素之后队列不空，并且断言q.is\_ok()成立。
 
-Preconditions and postconditions are part of the function interface. This means they can’t access local members of a function or private or protected members of a class. Assertions, however, are part of the implementation and can, therefore, access local members of a function of private or protected members of a class:
+前置条件和后置条件是函数接口的一部分，所以不能访问函数的局部成员或类的私有或受保护成员。然而，断言是实现的一部分，因此可以访问类的私有成员或受保护成员的函数的局部成员:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Accessing a private attribute
+\textbf{访问私有属性}
 \begin{lstlisting}[style=styleCXX]
 class X {
 public:
@@ -61,44 +61,44 @@ private:
 };
 \end{lstlisting}
 
-The attribute m is private and can, therefore, not be part of a precondition. By default, a violation of a contract terminates the program.
+成员m是私有的，因此不能成为前提条件的一部分。默认情况下，违反契约将终止程序。
 
-You can adjust the behavior of the attributes.
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{8.2.1.1\hspace{0.2cm} Fine-tune Attributes}
-
-The syntax for adapting the attributes is quite elaborate: [[contract-attribute modifier: conditional-expression ]].
-
-\begin{itemize}
-\item 
-contract-attribute: expects, ensures, and assert
-
-\item 
-modifier: specifies the contract level or the enforcement of the contract; possible values are default, audit, and axiom
-\begin{itemize}
-\item 
-default: the cost of run-time checking should be small; it is the default modifier
-
-\item 
-audit: the cost of run-time checking is assumed to be large
-
-\item 
-axiom: the predicate is not checked at run time
-\end{itemize}
-
-\item 
-conditional-expression: the predicate of the contract
-\end{itemize}
-
-For the ensures attribute, there is additionally an identifier available: [[ensures modifier identifier: conditional-expression ]] 
-
-The identifier lets you refer to the return value of the function.
+可以调整属性的行为。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Accessing the return value
+\textbf{8.2.1.1\hspace{0.2cm}调整属性}
+
+适配属性的语法比较复杂:[[契约属性修饰符:条件表达式]]。
+
+\begin{itemize}
+\item 
+契约属性:期望、保证和断言
+
+\item 
+修饰符:指定契约级别或契约的强制执行，其值包括default、audit和axiom
+\begin{itemize}
+\item 
+default: 运行时检查的成本应该很小，是默认的修饰符
+
+\item 
+audit: 假定运行时检查的成本很大
+
+\item 
+axiom: 运行时不检查谓词
+\end{itemize}
+
+\item 
+条件表达式:契约的谓词
+\end{itemize}
+
+对于保证属性，还有一个额外的标识符可用:[[保证修饰符标识符:条件表达式]]
+
+标识符允许引用函数的返回值。
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{访问返回值}
 \begin{lstlisting}[style=styleCXX]
 int mul(int x, int y)
 	[[expects: x > 0]] // implicit default
@@ -108,32 +108,29 @@ int mul(int x, int y)
 }
 \end{lstlisting}
 
-res as the identifier is an arbitrary name. As shown in the example, you can use more contracts of the same kind.
+res作为标识符是名称。如示例所示，可以使用更多相同类型的契约。
 
-Let me dive deeper into the handling of contract violations.
+现在，来看看违反契约的处理方式。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{8.2.1.2\hspace{0.2cm} Handling Contract Violations}
+\textbf{8.2.1.2\hspace{0.2cm}违约的处理}
 
-A compilation has three assertion build levels:
+编译有三个断言构建级别:
 
 \begin{itemize}
 \item 
-off: no contracts are checked
+off: 不检查契约
 
 \item 
-default: default contracts are checked; this is the default
+default: 默认检查契约
 
 \item 
-audit: default and audit contracts are checked
+audit: 默认检查契约和审核契约
 \end{itemize}
 
-When a contract violation occurs, because the predicate returns false, the violation handler is invoked. The violation handler gets a value of type std::contract\_violation. This value provides detailed information about the violation of the contract.
+当发生违约时，由于谓词返回false，将调用违约处理程序。违约规处理程序会得到一个std::contract\_violation类型的值，此值提供关于违约的详细信息。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-The class contract\_violation
 \begin{lstlisting}[style=styleCXX]
 namespace std {
 	class contract_violation{
@@ -149,34 +146,34 @@ namespace std {
 
 \begin{itemize}
 \item 
-line\_number: the line number of the contract violation
+line\_number: 违反契约的行号
 
 \item 
-file\_name: the file name of the contract violation
+file\_name: 违反契约的文件名称
 
 \item 
-function\_name: the function name of the contract violation
+function\_name: 违反契约的函数名
 
 \item 
-comment: the predicate of the contract
+comment: 契约的谓词
 
 \item 
-assertion\_level: the assertion level of the contract
+assertion\_level: 契约的断言级别
 \end{itemize}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{8.2.1.3\hspace{0.2cm} Declaration of Contracts}
+\textbf{8.2.1.3\hspace{0.2cm}契约的声明}
 
-A contract can be placed on the declaration of a function. This includes declarations of virtual functions or function templates.
+契约可以放在函数的声明中，包括虚函数或函数模板的声明。
 
 \begin{itemize}
 \item 
-The contract declaration of a function must be identical. Any declaration different from the first one can omit the contract.
+函数的契约声明必须相同，与第一个声明不同的声明都可以省略契约。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Conctract declarations must be idential
+\textbf{契约声明必须相同}
 \begin{lstlisting}[style=styleCXX]
 int f(int x)
 	[[expects: x > 0]]
@@ -189,11 +186,11 @@ int f(int x)
 \end{lstlisting}
 
 \item 
-A contract cannot be modified in an overriding function.
+不能在重载函数中修改契约。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Overriding functions cannot modify a contract
+\textbf{重载函数不能修改契约}
 \begin{lstlisting}[style=styleCXX]
 truct B {
 	virtual void f(int x)[[expects: x > 0]];
@@ -207,21 +204,21 @@ struct D: B{
 \end{lstlisting}
 \end{itemize}
 
-Both contract definitions of class D are erroneous. The contract of the member function D::f differs from the one from B::f. The member function D::g adds a contract to B::g.
+D类契约的两个定义都是错误的。成员函数D::f的契约与B::f的契约不同，而成员函数D::g向B::g添加了一个契约。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Closing Thoughts from Herb Sutter}]
-Contracts were planned to be part of C++20 but were delayed at least to C++23. Herb Sutter’s thoughts on \href{https://herbsutter.com/2018/07/02/trip-report-summer-iso-c-standards-meeting-rapperswil/}{Sutter’s Mill} give you an idea about their importance: “contracts is the most impactful feature of C++20 so far, and arguably the most impactful feature we have added to C++ since C++11.
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Herb Sutter的结束语}]
+契约是C++20的一部分，但目前至少推迟到了C++23。Herb Sutter关于\href{https://herbsutter.com/2018/07/02/trip-report-summer-iso-c-standards-meeting-rapperswil/}{Sutter的话}可以让你了解了它们的重要性:“契约是迄今为止C++20中最有影响力的特性，可以说是自C++11以来，最有影响力的特性。
 \end{tcolorbox}
 
-\subsubsubsection{8.2.2\hspace{0.2cm} Reflection}
+\subsubsubsection{8.2.2\hspace{0.2cm}反射}
 
-Reflection is the possibility of a program to analyze and modify itself. Reflection takes place at compile time and, therefore, adheres to the C++ metarule: “don’t pay for anything you don’t use”. The \href{https://en.cppreference.com/w/cpp/header/type_traits}{type-traits library} is a powerful tool for reflection, but the proposal \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0385r2.pdf}{P0385} for static reflection goes much further.
+反射是程序分析和修改自身的可能性。反射发生在编译时，遵循C++的元规则:“不为不用的东西付费”。\href{https://en.cppreference.com/w/cpp/header/type_traits}{type-traits库}是一个用于反射的强大工具，但是用于静态反射的提案\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0385r2.pdf}{P0385}走得更远。
 
-The following code snippet should give you a first impression on reflection:
+下面的代码片段应该会给你一个关于反射的第一印象:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-The reflection operator
+\textbf{反射操作符}
 \begin{lstlisting}[style=styleCXX]
 template <typename T>
 T min(constT& a,constT& b) {
@@ -239,36 +236,32 @@ T min(constT& a,constT& b) {
 }
 \end{lstlisting}
 
-The new reflection operator \$reflect is the crucial expression in the example. First, the new operator creates a special data type, which provides meta information on the template parameter T (line 4) and the values a (line 6), and c (line 9). Thanks to function composition, the metainformation can be used to provide more information: get\_base\_name\_v<get\_aliased\_t .... (lines 7 and 10).
+反射操作符\$reflect是示例中的关键表达式。首先，new操作符创建一个特殊的数据类型，它提供了关于模板参数T(第4行)和值a(第6行)和c(第9行)的元信息。由于函数组合，元信息可以用来提供更多信息:get\_base\_name\_v<get\_aliased\_t...(第7和第10行)。
 
-When you invoke the function min with the argument min(12.34, 23.45), you get the following output:
+当用参数min(12.34, 23.45)调用函数min时，会得到以下输出:
 
 \begin{tcblisting}{commandshell={}}
 function: min<double>(a: double = 12.34, b: double = 23.45)
 \end{tcblisting}
 
-\begin{center}
-Calling min(12.34, 23.45)
-\end{center}
-
-You may be curious and want to know: Which metainformation could you get with reflection? The following points give you the answer:
+读者们可能会好奇:通过反射可以获得哪些元信息?以下几点可以给你答案:
 
 \begin{itemize}
 \item 
-Objects: the source-code line and column and the name of the file
+对象:源代码行和列以及文件名
 
 \item 
-Classes: the private and public data members and member functions
+类:私有和公共数据成员和成员函数
 
 \item 
-Aliases: the name of the resolved alias
+别名:已解析的别名
 \end{itemize}
 
-The next example from proposal P0385 shows how reflection helps determine the private and public members of a class.
+提案P0385的下一个示例展示了，反射如何帮助确定类的私有和公共成员。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Determining the public and private members of the class foo
+\textbf{确定类foo的public和private成员}
 \begin{lstlisting}[style=styleCXX]
 #include <reflect>
 #include <iostream>
@@ -343,26 +336,26 @@ int main(void) {
 }
 \end{lstlisting}
 
-The program produces the following output:
+该程序产生以下输出:
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/5/chapter8/images/8.png}\\
-Displaying the public and private members of the class foo
+显示类foo的public和private成员
 \end{center}
 
-\subsubsubsection{8.2.3\hspace{0.2cm} Pattern Matching}
+\subsubsubsection{8.2.3\hspace{0.2cm}模式匹配}
 
-New data types such as \href{https://en.cppreference.com/w/cpp/utility/tuple}{std::tuple} or \href{https://en.cppreference.com/w/cpp/utility/variant}{std::variant} need new ways to work with their elements. Simple if or switch conditions or functions like \href{https://en.cppreference.com/w/cpp/utility/apply}{std::apply} or \href{https://en.cppreference.com/w/cpp/utility/variant/visit}{std::visit} can only provide basic functionality. Pattern matching, heavily used in functional programming, enables the more powerful handling of the new data types.
+诸如\href{https://en.cppreference.com/w/cpp/utility/tuple}{std::tuple}或\href{https://en.cppreference.com/w/cpp/utility/variant}{std::variant}这样的新数据类型需要新的方法来处理它们的元素。简单的if或switch条件或函数，如\href{https://en.cppreference.com/w/cpp/utility/apply}{std::apply}或\href{https://en.cppreference.com/w/cpp/utility/variant/visit}{std::visit}只能提供基本功能。函数式编程中，大量使用的模式匹配以支持更强大的新数据类型处理。
 
-The following code snippets from the proposal \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1371r2.pdf}{P1371R2} on pattern matching compares classical control structures with pattern matching. Pattern matching uses the keyword inspect and \_\_ for a placeholder.
+下面的代码片段来自关于模式匹配的提案\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1371r2.pdf}{P1371R2}，比较了经典的控制结构和模式匹配。模式匹配使用关键字inspect和\_\_作为占位符。
 
 \begin{itemize}
 \item 
-switch statement
+switch语句
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-switch statement versus pattern matching
+\textbf{switch语句与模式匹配}
 \begin{lstlisting}[style=styleCXX]
 switch (x) {
 	case 0: std::cout << "got zero"; break;
@@ -378,11 +371,11 @@ inspect (x) {
 \end{lstlisting}
 
 \item 
-if condition
+if条件语句
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-if statement versus pattern matching
+\textbf{if语句与模式匹配}
 \begin{lstlisting}[style=styleCXX]
 if (s == "foo") {
 	std::cout << "got foo";
@@ -399,14 +392,14 @@ inspect (s) {
 }
 \end{lstlisting}
 
-The application of pattern matching on std::tuple, std::variant, or polymorphy demonstrates its power.
+模式匹配在std::tuple、std::variant或polymorphism上的应用证明了它的强大。
 
 \item 
 std::tuple
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-std::tuple versus pattern matching
+\textbf{std::tuple与模式匹配}
 \begin{lstlisting}[style=styleCXX]
 auto&& [x, y] = p;
 if (x == 0 && y == 0) {
@@ -432,7 +425,7 @@ std::variant
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-std::variant versus pattern matching
+\textbf{std::variant与模式匹配}
 \begin{lstlisting}[style=styleCXX]
 struct visitor {
 	void operator()(int i) const {
@@ -452,11 +445,11 @@ inspect (v) {
 \end{lstlisting}
 
 \item 
-Polymorphic data types
+多态数据类型
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-Polymorphy versus pattern matching
+\textbf{多态与模式匹配}
 \begin{lstlisting}[style=styleCXX]
 struct Shape { virtual ~Shape() = default; };
 struct Circle : Shape { int radius; };
@@ -480,7 +473,7 @@ int get_area(const Shape& shape) {
 \end{lstlisting}
 \end{itemize}
 
-The proposal P1371R2 on pattern matching offers more advanced use cases. For example, pattern matching can be used to traverse an \href{https://en.wikipedia.org/wiki/Binary_expression_tree}{expression tree}.
+关于模式匹配的提案P1371R2提供了更高级的用例。例如，模式匹配可用于遍历\href{https://en.wikipedia.org/wiki/Binary_expression_tree}{表达式树}。
 
 
 
