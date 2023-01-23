@@ -1,10 +1,10 @@
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter4/images/26.png}\\
-Cippi量身高
+\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/26.png}\\
+Cippi在测量身高
 \end{center}
 
-三向比较操作符<=>通常称为宇宙飞船操作符。飞船操作符确定两个值A和B是A < B, A == B，还是A > B。开发者可以定义飞船操作符，或者使用编译器自动生成的。
+三向比较操作符<=>通常称为“宇宙飞船操作符”。飞船操作符可以确定两个值A和B是A < B, A == B，还是A > B。开发者可以定义飞船操作符，或者让编译器自动生成。
 
 为了理解三向比较运算符的优点，先从经典的运算方法开始。
 
@@ -14,7 +14,7 @@ Cippi量身高
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{MyInt支持的比较操作较少}
+\textbf{MyInt支持的比较操作很少}
 \begin{lstlisting}[style=styleCXX]
 // comparisonOperator.cpp
 #include <iostream>
@@ -48,7 +48,9 @@ int main() {
 使用小于运算符
 \end{center}
 
-老实说，MyInt是一个不直观的类型。当定义六个排序关系中的一个时，就应该定义所有的顺序关系。直观类型至少应该是半常规的。现在，我必须编写大量的样板代码。这是缺失的5个运算符。
+老实说，MyInt是一个不直观的类型。当定义六个排序关系中的一个时，就应该定义所有的顺序关系。直观类型至少为半常规。现在，我必须编写大量的样板代码。
+
+这是缺失的5个运算符实现：
 
 \begin{lstlisting}[style=styleCXX]
 bool operator == (const MyInt& rhs) const {
@@ -68,11 +70,11 @@ bool operator >= (const MyInt& rhs) const {
 }
 \end{lstlisting}
 
-现在，来看看C++20和三向比较运算符。
+现在，来看看C++20的三向比较运算符。
 
 \subsubsubsection{4.3.2\hspace{0.2cm}C++20的顺序关系}
 
-可以定义三向比较操作符，或者使用=default从编译器生成它。这两种情况下，可以自动得到所有六个比较运算符:==、!=、<、<=、>和>=。
+可以定义三向比较操作符，或者使用=default让编译器生成。这两种情况下，可以自动得到所有六个比较运算符:==、!=、<、<=、>和>=。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -129,11 +131,11 @@ int main() {
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/28.png}\\
 \end{center}
 
-在这种情况下，用户定义的和编译器生成的三向比较操作符之间有一些细微的区别。MyInt的编译器推导的返回类型(第9行)支持强排序，MyDouble的编译器推导的返回类型(第17行)支持部分排序。
+这种情况下，用户定义的和编译器生成的三向比较操作符间有一些细微的区别。MyInt的编译器推导的返回类型(第9行)支持强排序，MyDouble的编译器推导的返回类型(第17行)支持部分排序。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={指针比较}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={比较指针}]
 
-编译器生成的三向比较运算符比较指针，但不比较引用的对象。
+编译器生成的三向比较运算符可以比较指针，但不比较引用的对象。
 
 \begin{lstlisting}[style=styleCXX]
 // spaceshipPoiner.cpp
@@ -180,13 +182,13 @@ int main() {
 T支持全部6种关系运算符:==、!=、<、<=、>和>=(简称:关系运算符)
 
 \item 
-所有相等的值都是一样的:(简称:等价)
+所有相等的值都一样:(简称:等价)
 
 \item 
 T的所有值都具有可比性:对于T的任意值a和b, a < b、a == b和a > b三个关系中的一个必须为真(简称:可比性)
 \end{enumerate}
 
-当使用字符串的大小写不敏感表示作为排序标准时，等价值不必不同。此外，两个任意浮点值不需要具有可比性:对于a = 5.5, b = NaN(不是一个数字)，以下表达式都不返回true: a < NaN, a == NaN，或a > NaN。
+当使用字符串的大小写不敏感表示作为排序标准时，等价值不必不同。此外，两个浮点值不需要具有可比性:对于a = 5.5, b = NaN(不是一个数字)，以下表达式都不返回true: a < NaN, a == NaN，或a > NaN。
 
 根据这三种性质，区分三种比较策略是很简单的:
 
@@ -203,7 +205,7 @@ T的所有值都具有可比性:对于T的任意值a和b, a < b、a == b和a > b
 支持强排序的类型支持隐式弱排序和部分排序，这同样适用于弱排序。支持弱排序的类型也支持部分排序。其他方向则不适用。
 
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/29.png}\\
+\includegraphics[width=0.3\textwidth]{content/3/chapter4/images/29.png}\\
 强、弱、偏排序
 \end{center}
 
@@ -325,7 +327,7 @@ vec1 == vec2
 \noindent
 \textbf{4.3.4.2\hspace{0.2cm}编译时的比较}
 
-三向比较操作符是隐式的constexpr。因此，可以简化前面的程序threewaycompare.cpp，并在编译时比较下面程序中的MyDouble。
+三向比较操作符是隐式的constexpr，可以简化前面的程序threewaycompare.cpp，并在编译时比较下面程序中的MyDouble。
 
 \begin{lstlisting}[style=styleCXX]
 // threeWayComparisonAtCompileTime.cpp
@@ -364,7 +366,7 @@ struct MyDouble {
 在编译时进行比较(第24行)，并得到了比较结果。
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter4/images/30.png}\\
+\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/30.png}\\
 使用constexpr编译器生成的太空船操作符
 \end{center}
 
@@ -372,7 +374,7 @@ struct MyDouble {
 \noindent
 \textbf{4.3.4.3\hspace{0.2cm}直接使用三向比较运算符}
 
-编译器生成的三向比较运算符执行字典顺序比较。本例中，字典比较意味着从左到右比较所有基类，以及类的所有非静态成员的声明顺序。所以，必须加以限定:出于性能原因，编译器生成的==和!=运算符在C++20中的表现不同。我将在优化的==和!=操作符一节中再来详谈。
+编译器生成的三向比较运算符执行字典顺序比较。本例中，字典比较是从左到右比较所有基类，以及类的所有非静态成员的声明顺序。所以，必须加以限定:出于性能原因，编译器生成的==和!=运算符在C++20中的表现不同。我将在优化的==和!=操作符一节中再来详谈。
 
 来自Microsoft C++团队博客的帖子\href{https://devblogs.microsoft.com/cppblog/simplify-your-code-with-rocket-science-c20s-spaceship-operator/}{“用火箭科学简化代码:C++20的宇宙飞船操作符”}提供了一个令人印象深刻的字典比较例子。为了可读性，我添加了一些注释。
 
@@ -416,11 +418,11 @@ int main() {
 }
 \end{lstlisting}
 
-我认为这个程序最具挑战性的方面不是宇宙飞船操作符，而是通过聚合初始化来初始化Bases(第22和25行)。当成员都是public时，聚合初始化使我们能够直接初始化类类型(class、struct、union)的成员，所以可以使用大括号初始化。聚合初始化将在C++20中指定初始化器一节中更详细地讨论。
+我认为这个程序最具挑战性的不是宇宙飞船操作符，而是通过聚合初始化来初始化Bases(第22和25行)。当成员都是public时，聚合初始化使我们能够直接初始化类类型(class、struct、union)的成员，所以可以使用大括号初始化。聚合初始化将在C++20中指定初始化器一节中更详细地讨论。
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={优化的==和!=操作符}]
 
-对于类似字符串或类vector类型，存在优化潜力。这种情况下，==和!=可能比编译器生成的三向比较运算符更快。若比较的两个值的长度不同，==和!=操作符可以停止。否则，若一个值是另一个值的前缀，则将比较所有元素，直到较短的值结束为止。标准化委员会意识到了这个性能问题，并通过论文\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1185r2.html}{P1185R2}解决了这个问题。因此，编译器生成的==和!=操作符(对于类字符串或类vector类型)首先会比较其长度，必要时再比较其内容。
+对于类似字符串或类vector类型，存在优化潜力。这种情况下，==和!=可能比编译器生成的三向比较运算符更快。若比较的两个值的长度不同，==和!=操作符可以停止。否则，若一个值是另一个值的前缀，则将比较所有元素，直到较短的值结束为止。标准化委员会意识到了这个性能问题，并通过\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1185r2.html}{P1185R2}解决了这个问题。因此，编译器生成的==和!=操作符(对于类字符串或类vector类型)首先会比较其长度，必要时再比较其内容。
 
 \end{tcolorbox}
 
@@ -430,7 +432,7 @@ int main() {
 
 当编译器看到诸如a < b之类的东西时，会使用太空船操作符将其重写为(a <=> b) < 0。
 
-当然，该规则适用于所有六个比较运算符:a OP b变成(a <=> b) OP 0。这就更好了。若没有类型(a)到类型(b)的转换，编译器生成新的表达式为0 OP (b <=> a)。
+当然，该规则适用于所有六个比较运算符:a OP b变成(a <=> b) OP 0。若没有类型(a)到类型(b)的转换，编译器生成新的表达式为0 OP (b <=> a)。
 
 例如，对于小于操作符，若(a <=> b) < 0不起作用，编译器会生成0 < (b <=> a)。本质上，编译器负责比较操作符的对称性。
 
@@ -481,7 +483,7 @@ int main() {
 }
 \end{lstlisting}
 
-第24行、第29行和第34行中使用了小于操作符和相应的太空船表达式。第35行是最有趣的。它举例说明了比较(int2011 < myInt2014)如何触发飞船表达式(0 < (myInt2014 <=> int2011)的生成。
+第24行、第29行和第34行中使用了小于操作符和相应的太空船表达式。第35行比较(int2011 < myInt2014)，会生成飞船表达式(0 < (myInt2014 <=> int2011)。
 
 \begin{tcblisting}{commandshell={}}
 myInt2011 < myInt2014
@@ -494,9 +496,9 @@ int2011 < myInt2014
 int2011 < myInt2014
 \end{tcblisting}
 
-老实说，MyInt有一个问题:构造函数接受一个参数应该声明为explicit。接受一个参数的构造函数，如MyInt(int val)(第8行)是转换构造函数。所以MyInt的实例可以由任意整数或浮点值生成，因为每个整数或浮点值都可以隐式地转换为int。
+MyInt有一个问题:构造函数接受一个参数时，应该声明为explicit。接受一个参数的构造函数，如MyInt(int val)(第8行)是转换构造函数。所以MyInt的实例可以由任意整数或浮点值生成，因为每个整数或浮点值都可以隐式地转换为int。
 
-来修复这个问题，并使构造函数MyInt(int val)为显式。为了支持MyInt和int的比较，MyInt需要用于int的三向比较操作符。
+为了修复这个问题，需要使构造函数MyInt(int val)显式化。为了支持MyInt和int的比较，MyInt需要用于int的三向比较操作符。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -551,7 +553,7 @@ int main() {
 }
 \end{lstlisting}
 
-我在(第10行)中定义了三向比较运算符，并将其声明为constexpr。用户定义的三向比较操作符不是隐式的constexpr，这与编译器生成的三向比较操作符不同。在每个组合中都可以比较MyInt和int(第34、37和40行)。
+我在(第10行)中定义了三向比较运算符，并将其声明为constexpr。用户定义的三向比较操作符不是隐式的constexpr，这与编译器生成的三向比较操作符不同。每个组合中都可以比较MyInt和int(第34、37和40行)。
 
 \begin{tcblisting}{commandshell={}}
 isLessThan(MyInt2011, myInt2014): true
@@ -559,11 +561,11 @@ isLessThan(int2011, myInt2014): true
 isLessThan(MyInt2011, int2014): true
 \end{tcblisting}
 
-老实说，各种三向比较运算符的实现非常优雅。编译器自动生成MyInt的比较，并且用户显式地定义了与int的比较。此外，由于重新排序，需定义2个操作符就可以得到18 = 3 * 6个比较操作符的组合。3代表int OP MyInt, MyInt OP MyInt和MyInt OP int的组合，6代表六个比较运算符。
+各种三向比较运算符的实现非常优雅。编译器自动生成MyInt的比较，并且用户显式地定义了与int的比较。此外，由于重新排序，需定义2个操作符就可以得到18 = 3 * 6个比较操作符的组合。3代表int OP MyInt, MyInt OP MyInt和MyInt OP int的组合，6代表六个比较运算符。
 
 \subsubsubsection{4.3.6\hspace{0.2cm}用户定义和自动生成的比较操作符}
 
-可以定义六个比较操作符中的一个，并使用太空船操作符自动生成所有比较操作符时，有一个问题:哪个具有更高的优先级?例如，MyInt有一个用户定义的小于等于运算符，还有编译器生成的6个比较运算符。
+可以定义六个比较操作符中的一个，并使用太空船操作符自动生成所有比较操作符时，有一个问题:哪个优先级更高?例如，MyInt有一个用户定义的小于等于运算符，还有编译器生成的6个比较运算符。
 
 看看会发生什么。
 
@@ -619,10 +621,10 @@ int main() {
 <
 \end{tcblisting}
 
-编译器使用用户定义的==(第29和30行)和<操作符(第31行)。此外，编译器使用==运算符生成了!=运算符(第30行)。另一方面，编译器不会使用!=操作符生成==操作符。
+编译器使用用户定义的==(第29和30行)和<操作符(第31行)。此外，编译器使用==运算符生成了!=运算符(第30行)，而编译器不会使用!=操作符生成==操作符。
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={与Python的相似性}]
-Python 3中，编译器在必要时从==中生成!=，而不是反过来。在Python 2中，所谓的富比较(用户自定义的六个比较操作符)的优先级高于Python的三向比较操作符\_\_cmp\_\_。相似度高的那个，我看得是Python 2，因为三向比较运算符\_\_cmp\_\_在Python 3中删除了。
+Python 3中，编译器在必要时从==中生成!=，而不是反过来。Python 2中，所谓的富比较(用户自定义的六个比较操作符)的优先级高于Python的三向比较操作符\_\_cmp\_\_。因为三向比较运算符\_\_cmp\_\_在Python 3中删除了，所以还是更像Python 2。
 \end{tcolorbox}	
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]

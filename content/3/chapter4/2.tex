@@ -5,15 +5,12 @@
 Cippi在准备包裹
 \end{center}
 
-模块是C++20的四大特性之一，模块的功能有很多:更短的编译时间，隔离宏，取消头文件，避免丑陋的工作区。在介绍模块的优点之前，先来一起了解一下模块。
+模块是C++20的四大特性之一，模块的功能有很多:编译时间短，隔离宏，取消头文件，避免工作区。在介绍模块的优点之前，先来了解一下模块。
 
 \subsubsubsection{4.2.1\hspace{0.2cm}为什么需要模块?}
 
-从一个简单的可执行文件开始，我创建了一个helloWorld.cpp程序。
+从一个简单的可执行文件开始：
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{一个简单的hello world程序}
 \begin{lstlisting}[style=styleCXX]
 // helloWorld.cpp
 
@@ -52,15 +49,15 @@ int main() {
 预处理器的输出
 \end{center}
 
-哇! !预处理步骤的输出超过50万个字节。我不想责怪GCC，其他编译器也同样啰嗦。预处理器的输出则是编译器的输入。
+哇! !预处理步骤的输出超过50万个字节。我不想责怪GCC，因为其他编译器也有同样的情况。预处理器的输出则是编译器的输入。
 
-这个预处理步骤的结果就是翻译单元。
+预处理步骤的结果就是翻译单元。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{4.2.1.1.2\hspace{0.2cm}编译}
 
-在预处理器的输出上分别执行编译，编译器解析C++源代码，并将其转换为汇编代码。生成的文件称为目标文件，包含二进制形式的编译代码。目标文件可以引用没有定义的符号，也可以放在存档文件中以供以后重用。这些存档文件称为静态库。
+编译器在预处理器的输出上执行编译，解析C++源代码，并将其转换为汇编代码。生成的文件称为目标文件，包含二进制形式的编译代码。目标文件可以引用没有定义的符号，也可以放在存档文件中以供后续重用。这些存档文件称为静态库。
 
 编译器生成的对象文件则是链接器的输入。
 
@@ -68,7 +65,7 @@ int main() {
 \noindent
 \textbf{4.2.1.1.3\hspace{0.2cm}连接}
 
-链接器的输出可以是可执行库、静态库或动态库。链接器的工作是解析对未定义符号的引用，符号在目标文件或库中定义。这个阶段常见的错误是符号没有定义或者定义了不止一次。
+链接器的输出可以是可执行文件、静态库或动态库。链接器的工作是解析对未定义符号的引用，符号在目标文件或库中定义。这个阶段常见的错误是符号没有定义或者定义了不止一次。
 
 这个由三个步骤组成的构建过程继承自C。若只有一个翻译单元，就能很好地工作。但若有不止一个翻译单元，就会出现很多问题。
 
@@ -82,7 +79,7 @@ int main() {
 \noindent
 \textbf{4.2.1.2.1\hspace{0.2cm}重复替换}
 
-预处理器用相应的头文件替换\#include指令。修改一下helloWorld.cpp程序，使重复可见。我重构了程序并添加了两个源文件hello.cpp和world.cpp。源文件hello.cpp提供了hello函数，源文件world.cpp提供了world函数。
+预处理器用相应的头文件替换\#include指令。修改一下helloWorld.cpp程序，重构了程序并添加了两个源文件hello.cpp和world.cpp。源文件hello.cpp提供了hello函数，源文件world.cpp提供了world函数。
 
 两个源文件都包含相应的头文件。重构意味着具有与前面的程序helloWorld.cpp相同的外部行为，但内部结构进行了改进。以下是新文件:
 
@@ -90,8 +87,6 @@ int main() {
 \item 
 hello.cpp和hello.h
 
-\noindent
-hello的实现
 \begin{lstlisting}[style=styleCXX]
 // hello.cpp
 
@@ -102,8 +97,6 @@ void hello() {
 }
 \end{lstlisting}
 
-\noindent
-hello的头文件
 \begin{lstlisting}[style=styleCXX]
 // hello.h
 
@@ -115,8 +108,6 @@ void hello();
 \item 
 world.cpp和world.h
 
-\noindent
-world的实现
 \begin{lstlisting}[style=styleCXX]
 // world.cpp
 
@@ -127,8 +118,6 @@ void world() {
 }
 \end{lstlisting}
 
-\noindent
-world的头文件
 \begin{lstlisting}[style=styleCXX]
 // world.h
 
@@ -140,8 +129,6 @@ void world();
 \item 
 helloWorld2.cpp
 
-\noindent
-使用hello和world
 \begin{lstlisting}[style=styleCXX]
 // helloWorld2.cpp
 
@@ -165,7 +152,7 @@ int main() {
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter4/images/14.png}\\
-编译的一个简单程序
+编译一个简单程序
 \end{center}
 
 问题是这样的。预处理器运行在每个源文件上，所以头文件<iostream>总共包含了三次。因此，每个源文件均多了50多万行代码。
@@ -175,9 +162,7 @@ int main() {
 预处理源文件的大小
 \end{center}
 
-这是对编译时间的浪费。
-
-与头文件不同，模块只导入一次，而且不会有什么开销。
+这是对编译时间的浪费。与头文件不同，模块只导入一次，所以不会有什么开销。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -214,7 +199,7 @@ ODR代表单一定义规则，对于函数:
 
 \begin{itemize}
 \item 
-函数在任何翻译单元中不能有一个以上的定义。
+函数在任何翻译单元中不能有多于一个的定义。
 
 \item 
 函数在程序中不能有多个定义。
@@ -222,7 +207,7 @@ ODR代表单一定义规则，对于函数:
 
 可以在多个翻译单元中定义具有外部链接的内联函数，而宏必须满足每个定义的要求。
 
-当链接一个违背单一定义规则的程序时，链接器会怎么样。下面的代码示例有两个头文件，header.h和header2.h。主程序包含头文件header.h两次，因此，由于包含了func的两个定义，因此违背了单一定义规则。
+当链接违背单一定义规则的程序时，链接器会怎么样呢？下面的代码示例有两个头文件，header.h和header2.h。主程序包含头文件header.h两次，由于包含了func的两个定义，因此违背了单一定义规则。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -257,7 +242,7 @@ int main() {}
 违背了单一定义规则
 \end{center}
 
-我们已经习惯了一些丑陋的方法，比如在头文件周围加一个包含守卫。在头文件header.h中添加包含守卫FUNC\_H可以解决这个问题。
+我们已经习惯了一些丑陋的方法，比如：在头文件周围加一个包含守卫。在头文件header.h中添加包含守卫FUNC\_H可以解决这个问题。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -275,7 +260,7 @@ void func(){}
 
 对于模块，不太可能出现重复符号。
 
-那么，现在我将来说说模块的优势。
+那么，现在我就来聊聊模块的优势。
 
 \subsubsubsection{4.2.2\hspace{0.2cm}优势}
 
@@ -283,31 +268,34 @@ void func(){}
 
 \begin{itemize}
 \item 
-模块只导入一次，而且实际上编译开销很小。
+模块只导入一次，编译开销很小。
 
 \item 
-导入模块没有顺序之分。
+导入模块没有顺序的区别。
 
 \item 
-模块不可能重复符号。
+模块不可能出现重复符号。
 
 \item 
 模块能够表达代码的逻辑结构。可以显式地指定应导出或不应导出的名称，还可以将几个模块捆绑到一个更大的模块中，并将它们作为逻辑包提供出去。
 
 \item 
-由于模块，不需要再将源代码分离为接口和实现部分。
+不需要再将源代码分离为接口和实现部分。
 \end{itemize}
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title=常规类型]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={常规类型}]
+
 C++中的模块可能比你想象的要更加古老。简短的历史回顾应该能让你了解，把如此有价值的东西纳入C++标准需要多长时间。
 
 \hspace*{\fill} \\ %插入空行
-2004年，Daveed Vandevoorde写了一份提案\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2004/n1736.pdf}{N1736.pdf}，第一次描述了模块的思想。不过，直到2012年才成立了专门的研究小组(SG2，模块)。2017年，Clang 5.0和MSVC 19.1提供了第一个实现。一年后，模块TS(技术规范)确定。大约在同一时间，Google针对模块提出了所谓的ATOM(Another Take On Modules)提案(\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0947r1.html}{P0947})。2019年，Modules TS和ATOM提案合并到C++20委员会草案中(\href{https://github.com/cplusplus/draft/releases/tag/n4842}{N4842})。
+2004年，Daveed Vandevoorde写了一份提案\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2004/n1736.pdf}{N1736.pdf}，第一次描述了模块的思想。不过，直到2012年才成立了专门的研究小组(SG2，模块)。2017年，Clang 5.0和MSVC 19.1提供了第一个实现。2018年，模块TS(技术规范)确定。大约在同一时间，Google针对模块提出了ATOM(Another Take On Modules)提案(\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0947r1.html}{P0947})。2019年，模块TS和ATOM提案合并到C++20委员会草案中(\href{https://github.com/cplusplus/draft/releases/tag/n4842}{N4842})。
 \end{tcolorbox}
 
-\subsubsubsection{4.2.3\hspace{0.2cm}一个例子}
+\subsubsubsection{4.2.3\hspace{0.2cm}举个例子}
 
-本节的目的很简单:向您介绍模块。模块的更高级特性将在后面几节中介绍。让我们从一个简单的数学模块开始吧。
+本节的目的很简单:介绍模块。模块的更高级特性将在后面几节中介绍。
+
+先从一个简单的数学模块开始吧。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -322,7 +310,7 @@ export int add(int fir, int sec){
 }
 \end{lstlisting}
 
-表达式导出模块math是模块声明。通过将export放在函数add的定义之前，add导出，因此模块的使用者可以使用。
+表达式导出模块math是模块声明。通过将export放在函数add的定义之前，将add导出。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -339,8 +327,6 @@ int main() {
 
 import math导入math模块，并使模块中导出的名称对client.cpp可见。
 
-让我们从模块声明文件开始。
-
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{4.2.3.1\hspace{0.2cm}模块的声明文件}
@@ -349,10 +335,10 @@ import math导入math模块，并使模块中导出的名称对client.cpp可见�
 
 \begin{itemize}
 \item 
-Microsoft编译器使用扩展名ixx。后缀ixx代表模块接口源。
+Microsoft编译器使用扩展名ixx，后缀ixx代表模块接口源。
 
 \item 
-Clang编译器最初使用扩展cppm，后缀中的m可能代表模块。这个约定在Clang的新版本中更改为cpp扩展。
+Clang编译器最初使用扩展cppm，后缀中的m可能代表模块。这个约定在Clang的新版本中更改为cpp扩展(不使用后缀的方式来区分模块)。
 
 \item 
 GCC编译器则不使用特殊的扩展。
@@ -384,7 +370,7 @@ export int getProduct(const std::vector<int>& vec) {
 }
 \end{lstlisting}
 
-我在全局模块(第3行)和模块声明(第8行)之间包含了必要的头文件。
+我在全局模块(第3行)和模块声明(第8行)间包含了必要的头文件。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -411,24 +397,24 @@ int main() {
 }
 \end{lstlisting}
 
-客户端导入math模块，并使用它的功能:
+客户端导入math模块，并使用其功能:
 
 \begin{center}
 \includegraphics[width=0.5\textwidth]{content/3/chapter4/images/17.png}\\
 执行程序client1.exe
 \end{center}
 
-现在，让我们深入的了解一下细节。
+现在，再了解一下细节。
 
 \subsubsubsection{4.2.4\hspace{0.2cm}编译和使用}
 
 编译math模块。若客户端程序client.cpp使用ixx，则必须使用最新的Clang、GCC或Microsoft编译器。
 
-模块的编译还是具有挑战性。因此，我将用Microsoft编译器和Clang编译器作为示例来演示模块的编译。
+模块的编译还是具有挑战性，我将用Microsoft编译器和Clang编译器作为示例来演示模块的编译。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{4.2.4.1\hspace{0.2cm} Microsoft Visual编译器}
+\textbf{4.2.4.1\hspace{0.2cm}Microsoft Visual编译器}
 
 首先，我使用cl.exe 19.25.28614(x64)编译器。
 
@@ -437,7 +423,7 @@ int main() {
 Microsoft的编译器
 \end{center}
 
-这些是使用Microsoft编译器编译和使用模块的步骤，我只展示了最短的命令行示例。如承诺的，更多细节将随之而来。此外，对于旧的微软编译器，必须使用/std:cpplatest编译标志。
+这些是使用Microsoft编译器编译和使用模块的步骤，我只展示了最短的命令行示例。此外，对于旧的微软编译器，必须使用/std:cpplatest编译标志。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -455,7 +441,7 @@ cl.exe /experimental:module client.cpp math.obj
 第2行创建可执行文件client.exe。若第一步没有隐式使用math.ifc文件，则链接器无法找到模块。
 \end{itemize}
 
-由于一些原因，就不展示程序执行的输出了。
+这里，就不展示程序执行的输出了。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -468,7 +454,7 @@ cl.exe /experimental:module client.cpp math.obj
 Clang 10.0.0编译器
 \end{center}
 
-使用clang编译器，模块声明文件就是一个cpp文件。因此，我必须重新命名math.ixx文件为math.cpp。
+使用clang编译器，模块声明文件就是一个cpp文件，必须将math.ixx重命名为math.cpp。
 
 \begin{lstlisting}[style=styleCXX]
 // math.cpp
@@ -486,16 +472,16 @@ export int add(int fir, int sec){
 \noindent
 \textbf{使用Clang编译器构建可执行文件}
 \begin{tcblisting}{commandshell={}}
-clang++ -std=c++2a -stdlib=libc++ -c math.cpp -Xclang -emit-module-interface \
-   -o math.pcm
+clang++ -std=c++2a -stdlib=libc++ -c math.cpp -Xclang \ 
+  -emit-module-interface -o math.pcm
 
-clang++ -std=c++2a -stdlib=libc++ -fprebuilt-module-path=. client.cpp math.pcm \
-   -o client
+clang++ -std=c++2a -stdlib=libc++ -fprebuilt-module-path=. \ 
+  client.cpp math.pcm -o client
 \end{tcblisting}
 
 \begin{itemize}
 \item 
-第1行创建模块math.pcm。后缀pcm代表预编译模块。标志-std=c++2a指定C++20标准的工作草案，-stdlib=libc++指定使用的C++标准库。标记组合-Xclang -emit-module-interface是创建预编译模块所必需的标志。
+第1行创建模块math.pcm，后缀pcm代表预编译模块。标志-std=c++2a指定C++20标准的工作草案，-stdlib=libc++指定使用的C++标准库。标记组合-Xclang -emit-module-interface是创建预编译模块所需的标志。
 
 \item 
 第4行创建可执行程序，使用模块math.pcm，并用-fprebuilt-module-path标志指定模块的路径。
@@ -551,13 +537,13 @@ export namespace math {
 }
 \end{lstlisting}
 
-当客户端使用来自导出命名空间的名称时，必须限定这些名称。
+当客户端使用来自导出的命名空间时，必须限定这些名称。
 
 只有没有内部链接的名称才可以导出。
 
 \subsubsubsection{4.2.6\hspace{0.2cm}构造模块结构的指南}
 
-来研究一下如何构造模块的指导方针。
+来了解一下构造模块的指导方针。
 
 \begin{lstlisting}[style=styleCXX]
 module; // global module fragment
@@ -570,7 +556,7 @@ export namespace math {
 }
 \end{lstlisting}
 
-这个指导原则有一个目的:提供一个简化的模块结构，以及将要书写的内容。那么，这个模块结构有什么新东西呢?
+这个指导原则有一个目的:提供简化的模块结构，以及将要书写的内容。那么，这个模块结构有什么新东西呢?
 
 \begin{itemize}
 \item 
@@ -581,17 +567,15 @@ export namespace math {
 
 \item 
 可以在模块权限的开始导入模块。导入的模块具有模块链接，在模块外部不可见。这一点也适用于非导出声明。
-
-\item 
-我将导出的名称放在命名空间math中，该名称与模块名称相同。
-
-\item 
-模块只有声明的名称。现在，一起来了解一下接口和模块的实现分离。
 \end{itemize}
+ 
+我将导出的名称放在命名空间math中，该名称与模块名称相同。
+ 
+模块只有声明的名称。现在，一起来了解一下接口和模块的实现分离。
 
 \subsubsubsection{4.2.7\hspace{0.2cm}模块接口单元和模块实现单元}
 
-当模块变大时，应该将其组织成一个模块接口单元和一个或多个模块实现单元。按照前面提到的构造模块的指导原则，我将重构math模块。
+当模块变大时，应该将其组织成一个模块接口单元和一个或多个模块实现单元。按照前面提到的构造模块的指导原则重构math模块。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -686,7 +670,7 @@ int main() {
 
 从用户的角度来看，除了导入模块math(第6行)，还需要添加命名空间math。
 
-解释依赖于编译器，我把它们放在一个单独的提示框中。若各位想尝试一下，这些信息还是有参考意义的。
+解释依赖于编译器，我把它们放在一个单独的提示框中。若各位想尝试一下，可以参考这些信息。
 
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={使用Microsoft编译器构建可执行文件}]
@@ -696,12 +680,14 @@ int main() {
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{用模块接口单元和模块实现单元构建模块}
+{\footnotesize
 \begin{tcblisting}{commandshell={}}
 cl.exe /c /experimental:module mathInterfaceUnit.ixx /EHsc
 cl.exe /c /experimental:module mathImplementationUnit.cpp /EHsc
 cl.exe /c /experimental:module client3.cpp /EHsc
 cl.exe client3.obj mathInterfaceUnit.obj mathImplementationUnit.obj
 \end{tcblisting}
+}
 
 \begin{itemize}
 \item 
@@ -729,7 +715,7 @@ cl.exe client3.obj mathInterfaceUnit.obj mathImplementationUnit.obj
 
 \subsubsubsection{4.2.8\hspace{0.2cm}子模块和模块分区}
 
-当模块变大时，希望将其功能划分为可管理的组件。C++20模块提供了两种方法:子模块和分区。
+当模块变大时，可以将其功能划分为可管理的组件。C++20模块提供了两种方法:子模块和分区。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -746,7 +732,7 @@ export import math.math1;
 export import math.math2;
 \end{lstlisting}
 
-表达式export import math.math1将math.math1导入math模块。并将其作为math模块的一部分重新导出。
+表达式export import math.math1将math.math1导入math模块，并将其作为math模块的一部分重新导出。
 
 完整起见，下面是完整的math.math1和math.math2。我使用单独的代码段，将math模块与其子模块分开。实际开发中，代码没必要分开。
 
@@ -773,7 +759,7 @@ export {
 }
 \end{lstlisting}
 
-仔细观察，会发现math模块中的export语句相较之前有所不同。math.math1使用导出说明符，而math.math2则使用导出组或导出块。
+仔细观察会发现，math模块中的export语句相较之前有所不同。math.math1使用导出说明符，而math.math2则使用导出组或导出块。
 
 从使用者的角度来看，使用math模块非常简单。
 
@@ -800,7 +786,7 @@ int main() {
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={使用Microsoft编译器构建可执行文件}]
 	
-模块和其子模块如何一同构建可执行文件
+模块和其子模块一同构建可执行文件
 
 \begin{tcblisting}{commandshell={}}
 cl.exe /c /experimental:module mathModule1.ixx /EHsc
@@ -814,7 +800,7 @@ cl.exe /EHsc /experimental:module mathModuleClient.cpp \
 
 \end{tcolorbox}
 
-子模块其实也是模块，每个子模块都有一个模块声明。因此，用户可以只使用其中之一，所以创建一个只使用math.math1模块的主程序。
+子模块也是模块，每个子模块都有一个模块声明。用户可以只使用其中之一，所以这里就创建一个只使用math.math1模块的主程序。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -834,7 +820,7 @@ int main() {
 子模块和模块的用法
 \end{center}
 
-将模块划分为模块和子模块，是模块设计者让用户导入部分模块的一种方法。不过，这个观察结果不适用于模块分区。
+将模块划分为模块和子模块，是模块设计者让用户导入部分模块的一种方法，但这个观察结果不适用于模块分区。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -842,7 +828,7 @@ int main() {
 
 一个模块可以划分为多个分区。每个分区由一个模块接口单元(分区接口文件)和零个或多个模块实现单元(参见模块接口单元和模块实现单元)组成。分区导出的名称由主模块接口单元(主接口文件)导入和重新导出。分区名称必须以模块名称开头，并且分区不能单独存在。
 
-模块分区的描述比其实现更难理解。在下面的代码，我将为模块分区，重写math模块及其子模块为math.math1和math.math1(参见子模块)。在这个过程中，我会简要的介绍模块分区术语。
+模块分区的描述比其实现更难理解。下面的代码中，我将为模块分区重写math模块，以及其子模块math.math1和math.math2(参见子模块)。这个过程中，我会介绍模块分区的术语。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -885,7 +871,7 @@ export {
 }
 \end{lstlisting}
 
-与模块声明类似，表达式导出模块math:math1和导出模块math:math2(第3行)声明了一个模块接口分区。模块接口分区也是模块接口单元。名称math代表模块，名称math1或math2代表分区。
+与模块声明类似，表达式导出模块math:math1和导出模块math:math2(第3行)声明了一个模块接口分区。模块接口分区也是模块接口单元。math代表模块，math1或math2代表分区。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -900,7 +886,7 @@ int main() {
 }
 \end{lstlisting}
 
-假设了用户程序与以前在子模块中使用的程序相同。同样的观察也适用于可执行文件的创建和程序的执行:
+假设用户程序与以前在子模块中使用的程序相同，同样的观察结果也适用于可执行文件的创建和程序的执行:
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/23.png}\\
@@ -918,8 +904,6 @@ int main() {
 \item 
 templateSum.h
 
-\noindent
-\textbf{定义函数模板sum}
 \begin{lstlisting}[style=styleCXX]
 // templateSum.h
 template <typename T, typename T2>
@@ -931,8 +915,6 @@ auto sum(T fir, T2 sec) {
 \item 
 sumMain.cpp
 
-\noindent
-\textbf{使用模板sum}
 \begin{lstlisting}[style=styleCXX]
 // sumMain.cpp
 #include <templateSum.h>
@@ -942,7 +924,7 @@ int main() {
 \end{lstlisting}
 \end{itemize}
 
-主程序直接包含头文件templateSum.h，sum(1,1.5)触发模板实例化。这种情况下，编译器从函数模板sum中生成具体的函数sum，该函数以int型和double型作为参数。若想要可视化这个过程，请使用\href{https://cppinsights.io/}{C++ Insights}上的示例。
+主程序直接包含头文件templateSum.h，sum(1,1.5)触发模板实例化。编译器从函数模板sum中生成具体的函数sum，该函数以int型和double型作为参数。若想要可视化这个过程，请使用\href{https://cppinsights.io/}{C++ Insights}上的示例。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -956,8 +938,6 @@ C++20中，模板应该可以在模块中。模块有一个唯一的内部表示
 \item 
 mathModuleTemplate.ixx
 
-\noindent
-\textbf{定义函数模板sum}
 \begin{lstlisting}[style=styleCXX]
 // mathModuleTemplate.ixx
 export module math;
@@ -972,8 +952,6 @@ export namespace math {
 \item 
 clientTemplate.cpp
 
-\noindent
-\textbf{使用函数模板sum}
 \begin{lstlisting}[style=styleCXX]
 // clientTemplate.cpp
 #include <iostream>
@@ -987,7 +965,7 @@ int main() {
 \end{lstlisting}
 \end{itemize}
 
-编译程序的命令行与前面的命令行没有什么不同。因此，这里直接显示程序的输出:
+编译程序的命令行与前面的没有什么不同，这里直接显示程序的输出:
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/24.png}\\
@@ -995,13 +973,13 @@ int main() {
 
 通过模块，我们得到了一种新的连接方式。
 
-\subsubsubsection{4.2.10\hspace{0.2cm}模块连接}
+\subsubsubsection{4.2.10\hspace{0.2cm}模块链接}
 
 C++20之前，C++支持两种类型的链接:内部链接和外部链接。
 
 \begin{itemize}
 \item 
-内部链接:在翻译单元之外不能访问具有内部链接的名称，内部链接主要包括声明为静态的命名空间作用域名称和匿名命名空间的成员。
+内部链接:翻译单元之外不能访问具有内部链接，内部链接主要包括声明为静态的命名空间作用域和匿名命名空间的成员。
 
 \item 
 外部链接: 具有外部链接的名称可在翻译单元外部访问。外部链接包括声明为非静态的名称、类型及其成员、变量和模板。
@@ -1014,7 +992,7 @@ C++20引入模块连接:
 模块链接: 具有模块链接的名称只能在模块内部访问。若名称没有外部链接且不导出，则视为模块链接。
 \end{itemize}
 
-前面的模块声明mathModuleTemplate.ixx的变体说明了我的观点。假设想返回给函数模板sum的用户的不仅是加法的结果，还有编译器推导出的返回类型。
+前面的模块声明mathModuleTemplate.ixx的变体说明了这个观点。假设想返回给函数模板sum的用户的不仅是加法的结果，还有编译器推导出的返回类型。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -1046,7 +1024,7 @@ export namespace math {
 }
 \end{lstlisting}
 
-函数模板sum不返回数字的和，而是返回\href{https://en.cppreference.com/w/cpp/utility/pair}{std::pair}(第21行)，其中包含sum和res值类型的字符串表示。注意，我将函数模板showType(第11行)放在导出的math命名空间(第16行)之外。因此，不可能在模块math外使用它。函数模板showType使用\href{https://www.modernescpp.com/index.php/perfect-forwarding}{完美转发}来保留函数参数t的类型。\href{https://en.cppreference.com/w/cpp/language/typeid}{typeid}运算符在运行时查询有关类型的信息(\href{https://en.cppreference.com/w/cpp/types}{运行时类型标识(RTTI)})。
+函数模板sum不返回数字的和，而是返回\href{https://en.cppreference.com/w/cpp/utility/pair}{std::pair}(第21行)，其中包含sum和res值类型的字符串表示。注意，我将函数模板showType(第11行)放在导出的math命名空间(第16行)之外。因此，不可能在模块math外使用。函数模板showType使用\href{https://www.modernescpp.com/index.php/perfect-forwarding}{完美转发}来保留函数参数t的类型。\href{https://en.cppreference.com/w/cpp/language/typeid}{typeid}运算符在运行时查询有关类型的信息(\href{https://en.cppreference.com/w/cpp/types}{运行时类型标识(RTTI)})。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -1092,7 +1070,7 @@ int main() {
 #include "myHeader.h" => import "myHeader.h";
 \end{lstlisting}
 
-首先，import遵循与include相同的查找规则。这意味着对于引号("myHeader.h")来说，在系统搜索路径之前，会先在本地目录中进行搜索。
+首先，import遵循与include相同的查找规则。所以对于引号("myHeader.h")方式来说，在系统搜索路径之前，会先在本地目录中进行搜索。
 
 其次，这不仅仅是文本替换。编译器会根据import生成类似模块的东西，并将结果视为模块。导入模块语句从头中获取所有可导出的名称，包括宏。导入这些合成的头文件单元比包含头文件要快，并且在速度上与预编译的头文件相当。
 
@@ -1102,11 +1080,11 @@ int main() {
 
 头文件单元有一个缺点，并非所有的头文件都是可导入的。哪些头文件可导入\href{https://en.cppreference.com/w/cpp/language/ub}{已经定义好了}，但是C++标准保证所有标准库头文件都是可导入的头文件。导入功能排除了C头文件，它们只是简单包装在std名称空间中而已，例如<cstring>是<string.h>的C++包装器。可以很容易地识别包装的C头文件，因为其模式是:xxx.h包装为cxxx。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={使用Microsoft编译器构建可执行文件}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={使用Microsoft编译器构建可执行文件}]
 
 \begin{itemize}
 \item 
-模块克服了头文件和宏的缺陷。模块的导入实际上是无开销的，与宏相比，也无所谓导入顺序。此外，还解决了名称冲突。
+模块克服了头文件和宏的缺陷。模块的导入是无开销的，与宏相比，也无所谓导入顺序。此外，还解决了命名冲突。
 
 \item 
 模块由模块接口单元和模块实现单元组成。必须有一个模块接口单元，并且具有导出模块声明和任意多个模块实现单元。未在模块接口中导出的名称具有模块链接，不能在模块外部使用。
@@ -1121,7 +1099,7 @@ C++20中的标准库不是模块化的，用C++20构建模块也是一项具有�
 要构造大型软件系统，模块提供了两种方式:子模块和分区。与分区相反，子模块可以独立存在。
 
 \item 
-多亏了头文件单元，可以用直接使用import语句替换include，编译器会自动生成一个模块。
+有了头文件单元，就可以用直接使用import语句替换include，编译器会自动生成一个模块。
 \end{itemize}
 
 \end{tcolorbox}
