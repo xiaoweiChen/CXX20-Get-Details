@@ -1,10 +1,10 @@
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter4/images/31.png}\\
+\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/31.png}\\
 Cippi接受了神圣的触摸
 \end{center}
 
-指定初始化是聚合初始化的一种特殊情况。
+指定初始化是聚合初始化的特例。
 
 \subsubsubsection{4.4.1\hspace{0.2cm}聚合初始化}
 
@@ -28,9 +28,6 @@ C++20中，支持聚合初始化的类型必须满足以下条件:
 
 下面的程序演示了聚合初始化。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{聚合初始化}
 \begin{lstlisting}[style=styleCXX]
 // aggregateInitialization.cpp
 
@@ -64,7 +61,7 @@ std::cout << '\n';
 }
 \end{lstlisting}
 
-第21和22行使用大括号直接初始化聚合，大括号中的初始化式的顺序必须与成员的声明顺序匹配。在介绍三向比较操作符的部分中，有挺复杂的聚合初始化示例。
+第21和22行使用大括号直接初始化聚合，大括号中的初始化式的顺序必须与成员的声明顺序匹配。介绍三向比较操作符的部分中，有挺复杂的聚合初始化示例。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/32.png}\\
@@ -74,11 +71,8 @@ std::cout << '\n';
 
 \subsubsubsection{4.4.2\hspace{0.2cm}类成员的命名初始化}
 
-指定初始化允许使用类型成员的名称直接初始化。对于联合体，只能提供一个初始化式。对于聚合初始化，大括号中的初始化式的顺序必须与成员的声明顺序匹配。
+指定初始化允许使用类型成员名直接初始化。对于联合体，只能提供一个初始化式。对于聚合初始化，大括号中的初始化式的顺序必须与成员的声明顺序匹配。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{指定初始化}
 \begin{lstlisting}[style=styleCXX]
 // designatedInitializer.cpp
 
@@ -112,17 +106,14 @@ int main(){
 }
 \end{lstlisting}
 
-第21和22行使用指定的初始化器来初始化聚合。像.x或.y这样的初始化式称为指示符。
+第21和22行使用指定的初始化器来初始化聚合，像.x或.y这样的初始化式称为指示符。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/33.png}\\
 \end{center}
 
-聚合成员可以已经有默认值，当缺少初始化式时使用此默认值。但这并不适用于一个联合体。
+聚合成员可以已经有默认值，当缺少初始化式时使用此默认值，但这并不适用于联合体。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{带有默认值的指定初始化器}
 \begin{lstlisting}[style=styleCXX]
 // designatedInitializersDefaults.cpp
 
@@ -165,17 +156,14 @@ int main(){
 }
 \end{lstlisting}
 
-第20行初始化了所有成员，但第24行没有为成员x提供值。因此，x没有初始化。若只初始化没有默认值的成员，比如在第28行或第34行中，没什么问题。因为z和y的顺序是错误的，第32行中的表达式则无法编译。
+第20行初始化了所有成员，但第24行没有为成员x提供值，x没有初始化。若只初始化没有默认值的成员，比如在第28行或第34行中没问题，因为z和y的顺序是错误的，第32行中的表达式则无法编译。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/34.png}\\
+\includegraphics[width=0.6\textwidth]{content/3/chapter4/images/34.png}\\
 \end{center}
 
-指定初始化器检测缩窄转换，导致了精度降低。
+指定初始化器检测窄化转换，导致精度降低。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{指定的初始化式检测缩窄转换}
 \begin{lstlisting}[style=styleCXX]
 // designatedInitializerNarrowingConversion.cpp
 
@@ -209,7 +197,7 @@ int main(){
 }
 \end{lstlisting}
 
-因为初始化.y = 2.5和.z = 3.5f会缩窄转换为int，所以第21行和第22行会产生编译时错误。
+因为初始化.y = 2.5和.z = 3.5f会窄化为int，所以第21行和第22行会产生编译时错误。
 
 \begin{center}
 \includegraphics[width=1.0\textwidth]{content/3/chapter4/images/35.png}\\
@@ -218,7 +206,9 @@ int main(){
 有趣的是，指定初始化式在C和C++的行为不太一样。
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={C和C++的区别}]
-C指定的初始化器支持C++中不支持的用例。C允许
+C指定的初始化器支持C++中不支持的用例。
+
+C允许：
 
 \begin{itemize}
 \item 
@@ -234,7 +224,7 @@ C指定的初始化器支持C++中不支持的用例。C允许
 数组的指定初始化
 \end{itemize}
 
-提案\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0329r4.pdf}{P0329R4}为这些用例提供了不言自明的示例:
+提案\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0329r4.pdf}{P0329R4}为这些用例提供了示例:
 
 \begin{lstlisting}[style=styleCXX]
 struct A { int x, y; };
@@ -245,12 +235,12 @@ struct B b = {.a.x = 0}; // valid C, invalid C++ (nested)
 struct A a = {.x = 1, 2}; // valid C, invalid C++ (mixed)
 \end{lstlisting}
 
-C和C++这种差异的基本原理，也是提案的一部分:“在C++中，成员以反向构造顺序销毁，初始化式列表的元素以词法顺序求值，因此字段初始化式必须按顺序指定。数组指示符与lambda表达式语法冲突。嵌套的指示符则很少使用。”提案继续认为，只有乱序初始化聚合会经常使用。
+C和C++这种差异的原理，也是提案的一部分:“C++成员以反向构造顺序销毁，初始化式列表的元素以词法顺序求值，因此字段初始化式必须按顺序指定。数组指示符与Lambda表达式语法冲突。嵌套的指示符则很少使用。”提案还认为，只有乱序初始化聚合会经常使用。
 
 \end{tcolorbox}	
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
-指定初始化是聚合初始化的一种特殊情况，使其能够使用类成员的名称初始化类成员。初始化顺序必须与声明顺序匹配。
+指定初始化是聚合初始化的一种特殊情况，使其能够使用类成员名初始化类成员。初始化顺序必须与声明顺序匹配。
 \end{tcolorbox}	
 
 \newpage
