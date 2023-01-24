@@ -9,9 +9,9 @@ Cippi在上楼梯
 
 \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1152r0.html}{P1152R0}提案摘要概述了volatile所经历的变化:“建议弃用volatile的部分用法，并删除不明确的部分的用法”\href{https://www.zhihu.com/question/366070396}{知乎上的讨论}。这篇文章的目的在于，在运行时或编译器更新时已经出现了微妙损坏的代码，使用volatile的不明确行为时，会使编译时代码遭到破坏。”深入讨论volatile之前，我想回答一个关键问题:什么时候应该使用volatile?
 
-C++标准的某个注释:“volatile是对实现的一个提示，以避免进行激进地优化，因为对象的值可会通过实现无法检测到的方式改变。”所以对于单线程，编译器必须在可执行文件中执行加载或存储操作，就像源码中一样频繁。因此，volatile不能消除或重新排序。因此，可以使用volatile对象与处理程序通信，但不能用于与另一个执行线程通信。
+C++标准的某个注释:“volatile是对实现的一个提示，以避免进行激进地优化，因为对象的值可会通过实现无法检测到的方式改变。”所以对于单线程，编译器必须在可执行文件中执行加载或存储操作，就像源码中一样频繁，所以volatile不能消除或重新排序。因此，可以使用volatile对象与处理程序通信，但不能用于与另一个执行线程通信。
 
-在展示volatile保留了哪些语义之前，我想先从已弃用的特性开始说起:
+展示volatile保留了哪些语义之前，我想先从已弃用的特性开始说起:
 
 \begin{enumerate}
 \item 
@@ -24,11 +24,11 @@ C++标准的某个注释:“volatile是对实现的一个提示，以避免进�
 结构化绑定声明中弃用volatile限定符
 \end{enumerate}
 
-若想知道背后复杂的细节，我建议你观看一下CppCon 2019的演讲\href{https://www.youtube.com/watch?v=KJW_DLaVXIY}{“废除volatile”}。下面是他演讲中的几个例子。此外，我修复了源码中的一些拼写错误。下面代码片段中的数字代表前面列出的三个弃用语义。
+若想知道背后复杂的细节，我建议你观看一下CppCon 2019的演讲\href{https://www.youtube.com/watch?v=KJW_DLaVXIY}{“废除volatile”}。下面是他演讲中的几个例子，我修复了源码中的一些拼写错误。下面代码片段中的数字代表前面列出的三个弃用语义。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{已弃用的volatile用例}
+\textbf{弃用的volatile用例}
 \begin{lstlisting}[style=styleCXX]
 // (1)
 int neck, tail;
@@ -68,12 +68,12 @@ void park(linhenykus alvarezsauroid) {
 \end{lstlisting}
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={volatile和多线程语义}]
-volatile通常用于表示，独立于常规程序流，并可以进行修改的对象。例如，这些是嵌入式编程中表示外部设备(内存映射I/O)的对象。因为这些对象可以独立于常规程序流进行修改，并且它值直接写入主存，因此缓存中不会进行优化存储。换句话说，volatile避免了主动优化，并且没有多线程语义。
+volatile通常用于表示，独立于常规程序流，并可以进行修改的对象。例如，这些是嵌入式编程中表示外部设备(内存映射I/O)的对象。因为这些对象可以独立于常规程序流进行修改，并且它值直接写入主存，因此缓存中不会进行优化存储。简单来说，volatile避免了主动优化，并且没有多线程语义。
 \end{tcolorbox}
 
 \subsubsubsection{4.9.2\hspace{0.2cm}带有初始化式的范围for循环}
 
-C++20中，可以直接使用带有初始化式的范围for循环。
+C++20可以直接使用带有初始化式的范围for循环。
 
 \begin{lstlisting}[style=styleCXX]
 // rangeBasedForLoopInitializer.cpp
@@ -107,7 +107,7 @@ int main() {
 }
 \end{lstlisting}
 
-基于范围的for循环在第9行使用std::vector，在第15行使用std::initializer\_list，在第23行使用std::string。此外，在第9行和第15行中，类模板使用了C++17的自动类型推断(使用std::vector，而非std::vector<int>)。
+基于范围的for循环在第9行使用std::vector，第15行使用std::initializer\_list，第23行使用std::string。此外，第9行和第15行中，类模板使用了C++17的自动类型推断(使用std::vector，而非std::vector<int>)。
 
 \begin{tcblisting}{commandshell={}}
 1 2 3
@@ -119,7 +119,7 @@ H e l l o  W o r l d
 
 \subsubsubsection{4.9.3\hspace{0.2cm}virtual constexpr函数}
 
-constexpr函数有可能在编译时运行，但也可以在运行时执行。因此，可以使用C++20的virtual关键字创建constexpr函数。virtual的constexpr函数可以重写为非constexpr函数，virtual的非constexpr函数可以重写virtual的constexpr函数。我想强调的是，重写意味着基类的相关函数是虚函数。
+constexpr函数有可能在编译时执行，但也可以在运行时执行。因此，可以使用C++20的virtual关键字创建constexpr函数。virtual的constexpr函数可以重写为非constexpr函数，virtual的非constexpr函数可以重写virtual的constexpr函数。在这里，重写意味着基类的相关函数是虚函数。
 
 virtualconstexr.cpp展示了这两种组合:
 
@@ -165,10 +165,11 @@ x2.f(): 4
 
 \subsubsubsection{4.9.4\hspace{0.2cm}UTF-8字符串的新字符类型:char8\_t}
 
-除了C++11中的字符类型char16\_t和char32\_t外，C++20添加了新的字符类型char8\_t。类型char8\_t足够大，可以表示任何UTF-8代码单元(8位)。其具有与unsigned char相同的大小、符号和对齐方式，但这是两个不同的类型。
+除了C++11中的字符类型char16\_t和char32\_t外，C++20添加了新的字符类型char8\_t。类型char8\_t足够大，可以表示任何UTF-8单位(8位)。其具有与unsigned char相同的大小、符号和对齐方式，但这是两个不同的类型。
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={char和char8\_t}]
-一个char有一个字节。与char8\_t相反，一个字节的比特数，以及char的比特数是没有定义的。不过，几乎所有的实现都使用8位作为一个字节。std::string是char的std::basic\_string的别名。
+
+与char8\_t相反，char有一个字节，一个字节的比特数，并且char的比特数没有明确定义。不过，几乎所有的实现都使用8位作为一个字节。char类型的std::basic\_string，别名为std::string。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -215,7 +216,7 @@ int main() {
 }
 \end{lstlisting}
 
-话不多说，下面是程序的输出:
+下面是程序的输出:
 
 \begin{tcblisting}{commandshell={}}
 char8String.size(): 10
@@ -267,7 +268,7 @@ int main() {
 }
 \end{lstlisting}
 
-using enum声明(第14行)将作用域enumeration Color的枚举值引入到本地作用域。这时起，枚举值可以无作用域的使用(第15-17行)。
+using enum声明(第14行)将作用域enumeration Color的枚举值引入到本地作用域，从而枚举值可以无作用域的进行使用(第15-17行)。
 
 \begin{center}
 \includegraphics[width=0.4\textwidth]{content/3/chapter4/images/48.png}\\
@@ -278,7 +279,7 @@ using enum声明(第14行)将作用域enumeration Color的枚举值引入到本�
 
 首先，什么是位域?下面是来自\href{https://en.wikipedia.org/wiki/Bit_field}{Wikipedia}: “位域是计算机编程中的数据结构，由许多相邻的计算机内存位置组成，这些位置可用来保存一组位值，存储的目的是使该集合中的单个位或一组位都可以寻址。位域常用来表示固定宽度的整型。”
 
-C++20中，可以默认初始化位域成员变量:
+C++20可以默认初始化位域成员变量:
 
 \begin{lstlisting}[style=styleCXX]
 // bitField.cpp

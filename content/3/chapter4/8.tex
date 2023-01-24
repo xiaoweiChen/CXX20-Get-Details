@@ -1,12 +1,13 @@
 \begin{center}
-\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/44.png}\\
+\includegraphics[width=0.3\textwidth]{content/3/chapter4/images/44.png}\\
 Cippi已经为比赛做好了准备
 \end{center}
 
-C++20中，对属性进行了改进，并添加了新的属性，如[[nodiscard("reason")]]、[[likely]]、[[unlikely]]和[[no\_unique\_address]]。并且，[[nodiscard("reason")]]可以用来显式地表达接口的意图。
+C++20对属性进行了改进，并添加了新的属性，如[[nodiscard("reason")]]、[[likely]]、[[unlikely]]和[[no\_unique\_address]]。并且，[[nodiscard("reason")]]可以用来显式地表达接口的意图。
 
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={属性}]
+
 属性允许开发者对源代码进行约束，或者为编译器提供优化可能性。可以为类型、变量、函数、名称和代码块使用属性。使用多个属性时，可以依次应用(func1)，或者在一个属性中一起应用，用逗号(func2)分隔:
 
 \hspace*{\fill} \\ %插入空行
@@ -27,16 +28,16 @@ int func2();
 {}[[noreturn]] (C++11): 表示函数不返回
 
 \item 
-{}[[carries\_dependency]] (C++11): 表示\href{https://en.cppreference.com/w/cpp/atomic/memory_order#Release-Consume_ordering}{release-consume序}依赖链中的依赖项
+{}[[carries\_dependency]] (C++11): 表示\href{https://en.cppreference.com/w/cpp/atomic/memory_order#Release-Consume_ordering}{release-consume内存序}依赖链中的依赖项
 
 \item 
-{}[[deprecated]] (C++14):表示不再使用名称
+{}[[deprecated]] (C++14):表示不再使用的名称
 
 \item 
 {}[[fallthrough]] (C++17): 表示有意跳过一个分支
 
 \item 
-{}[[maybe\_unused]] (C++17): 抑制编译器对使用名称的警告
+{}[[maybe\_unused]] (C++17): 抑制编译器对未使用名称的警告
 \end{itemize}
 \end{tcolorbox}
 
@@ -87,9 +88,9 @@ int main() {
 }
 \end{lstlisting}
 
-因为转发和参数包，工厂函数create(第11行)可以调用构造函数并返回一个在堆上分配的对象。
+因为转发和参数包，工厂函数create(第11行)可以调用构造函数，并返回一个在堆上分配的对象。
 
-这端代码有很多问题。首先，第30行存在内存泄漏，因为在堆上创建的int永远不会删除。其次，没有检查函数errorProneFunction(第32行)的错误代码。最后，构造函数调用MyType(5, true)(第34行)创建一个临时对象，创建后立即销毁，这至少是一种资源浪费。现在，让[[nodiscard]]发挥作用吧。
+这段代码有很多问题。首先，第30行存在内存泄漏，堆上创建的int永远不会删除。其次，没有检查函数errorProneFunction(第32行)的错误代码。最后，构造函数调用MyType(5, true)(第34行)创建一个临时对象，创建后立即销毁，这至少是一种资源浪费。现在，让[[nodiscard]]发挥作用吧。
 
 [[nodiscard]]可以在函数声明、枚举声明或类声明中使用。若丢弃了声明为[[nodiscard]]的函数的返回值，编译器应该发出警告。通过复制枚举或声明为[[nodiscard]]的类返回的函数也是如此。若仍然想忽略返回值，可以将其强制转换为void。
 
@@ -135,14 +136,14 @@ int main() {
 }
 \end{lstlisting}
 
-工厂函数create(第13行)和enum ErrorCode(第17行)声明为[[nodiscard]]。因此，第31行和第33行中在使用时，创建了警告。
+工厂函数create(第13行)和enum ErrorCode(第17行)声明为[[nodiscard]]。因此，第31行和第33行中在使用时，触发了警告。
 
 \begin{center}
-\includegraphics[width=1.0\textwidth]{content/3/chapter4/images/45.png}\\
+\includegraphics[width=0.8\textwidth]{content/3/chapter4/images/45.png}\\
 C++17编译器会报错
 \end{center}
 
-这样就好多了，但这段代码还有一些问题。[[nodiscard]]不能用于构造函数等不返回值的函数。因此，临时MyType(5, true)(第35行)仍会创建，没有警告。第二，错误消息太一般。作为函数的使用者，我想知道为什么丢弃结果这一行为有问题。
+这样就好多了，但这段代码还有一些问题。[[nodiscard]]不能用于构造函数等不返回值的函数，所以临时的MyType(5, true)(第35行)仍会创建，并且没有警告。第二，错误消息太一般。作为函数的使用者，我想知道为什么丢弃结果这一行为是有问题的。
 
 这两个问题都可以用C++20解决。构造函数可以声明为[[nodiscard]]，警告可以包含其他信息。
 
@@ -198,10 +199,10 @@ C++20编译器会对丢弃对象和错误代码的行为报错
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={std::async的问题}]
 	
-C++中的许多函数都可以使用[[nodiscard]]属性，并从中获益，其中就包括std::async。当你不使用std::asnyc的返回值时，想要的异步std::async使用隐式地转变为同步使用。应该在单独的线程中运行的内容，反而以阻塞的方式使用。更多关于std::async的反直觉行为，请参阅我的帖子\href{https://www.modernescpp.com/index.php/the-special-futures}{“the-special-futures”}。
+C++中的许多函数都可以使用[[nodiscard]]属性，并从中获益，其中就包括std::async。当不使用std::asnyc的返回值时，想要std::async异步使用隐式地转变为同步使用。应该在单独的线程中运行的内容，但却以阻塞的方式使用。更多关于std::async的反直觉行为，请参阅我的帖子\href{https://www.modernescpp.com/index.php/the-special-futures}{“the-special-futures”}。
 
 \hspace*{\fill} \\ %插入空行
-研究\href{https://en.cppreference.com/w/cpp/language/attributes/nodiscard}{cppreference.com/nodiscard}上的[[nodiscard]]语法时，我注意到\href{https://en.cppreference.com/w/cpp/thread/async}{std::async}的声明在C++20中发生了变化。来看一下:
+研究\href{https://en.cppreference.com/w/cpp/language/attributes/nodiscard}{cppreference.com/nodiscard}上的[[nodiscard]]语法时，我注意到\href{https://en.cppreference.com/w/cpp/thread/async}{std::async}的声明在C++20中发生了变化：
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -222,7 +223,7 @@ std::async的返回类型在C++20中声明为[[nodiscard]]。
 
 \subsubsubsection{4.8.2\hspace{0.2cm}[[likely]]和[[unlikely]]}
 
-[[likely]]和[[unlikely]]属性的提案 \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0479r5.html}{P0479R5}是据我所知最短的。为了说明动机，提案中添加了有趣的注释。“可能属性的使用旨在允许实现针对以下情况进行优化:语句或标签上，包含该属性的执行路径比不包含该属性的执行路径的可能性都要大。使用unlikely属性是为了允许实现针对以下情况进行优化:语句或标签上，包含该属性的执行路径比不包含该属性的执行路径更不可能。当且仅当执行路径包含到该标签的跳转时，包含该标签。过度使用这些属性都可能导致性能下降。”总而言之，这两个属性都会向优化器提供与预期执行路径相关的提示。
+[[likely]]和[[unlikely]]属性的提案\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0479r5.html}{P0479R5}据我所知是最短的。为了说明动机，提案中添加了有趣的注释。“可能属性的使用旨在允许实现针对以下情况进行优化:语句或标签上，包含该属性的执行路径比不包含该属性的执行路径的可能性都要大。使用unlikely属性是为了允许实现针对以下情况进行优化:语句或标签上，包含该属性的执行路径比不包含该属性的执行路径更不可能。当执行路径包含到该标签的跳转时，包含该标签。不过，过度使用这些属性都可能导致性能的下降。”总而言之，这两个属性都会向优化器提供与预期执行路径相关的提示。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -238,7 +239,7 @@ for(size_t i=0; i < v.size(); ++i){
 
 \subsubsubsection{4.8.3\hspace{0.2cm} [[no\_unique\_address]]}
 
-[[no\_unique\_address]]表示类中的成员变量不需要有内存地址。因此，若成员为空类型，编译器可以将其优化为不占用内存。
+[[no\_unique\_address]]表示类中的成员变量不需要有内存地址。若成员为空类型，编译器可以将其优化为不占用内存。
 
 下面的程序演示了新属性的用法。
 
@@ -293,7 +294,7 @@ int main() {
 }
 \end{lstlisting}
 
-类NoUniqueAddress的大小等于int(第7行)，但类UniqueAddress的大小不等于int(第12行)。UniqueAddress的成员d和e(第40行和41行)有不同的地址，但UniqueAddress类的成员没有(第33行和34行)。
+NoUniqueAddress类的大小等于int(第7行)，但UniqueAddress类的大小不等于int(第12行)。UniqueAddress的成员d和e(第40行和41行)有不同的地址，但UniqueAddress类的成员没有(第33行和34行)。
 
 \begin{tcblisting}{commandshell={}}
 sizeof(int) == sizeof(NoUniqueAddress): true
@@ -307,7 +308,7 @@ sizeof(int) == sizeof(UniqueAddress): false
 \end{tcblisting}
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
-C++20添加了一些新的属性。
+C++20添加了一些新的属性：
 \begin{itemize}
 \item 
 {}[[nodiscard("reason")]]可以在上下文中检查函数的返回值是否忽略。

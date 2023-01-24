@@ -1,19 +1,16 @@
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter4/images/41.png}\\
+\includegraphics[width=0.4\textwidth]{content/3/chapter4/images/41.png}\\
 Cippi滑下滑梯
 \end{center}
 
-C++20中，Lambda表达式支持模板参数和概念，可以默认构造，并在没有状态时支持复制赋值。此外，Lambda表达式可以在未计算的上下文中使用。C++20中，Lambda表达式会检测何时隐式复制this指针，从而使Lambda表达式出现未定义行为的一个重要原因消失了。
+C++20中，Lambda表达式支持模板参数和概念，可以有默认构造，并在没有状态时支持复制赋值。此外，Lambda表达式可以在未计算的上下文中使用，还会检测何时隐式复制this指针。
 
-先从lambda的模板参数开始。
+先从Lambda的模板参数开始吧。
 
 \subsubsubsection{4.7.1\hspace{0.2cm}Lambda的模板参数}
 
-不可否认，C++20中类型化Lambda(C++11)、泛型Lambda(C++14)和模板Lambda(Lambda的模板形参)之间的差异很小。
+C++20中类型化Lambda(C++11)、泛型Lambda(C++14)和模板Lambda(Lambda的模板形参)之间的差异很小。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{类型化Lambda、泛型Lambda和模板Lambda}
 \begin{lstlisting}[style=styleCXX]
 // templateLambda.cpp
 
@@ -57,7 +54,7 @@ auto sumTem = []<typename T>(T fir, T sec) { return fir + sec; };
 }
 \end{lstlisting}
 
-在展示这个程序的输出之前，我想比较一下这四个Lambda表达式。
+在展示程序输出之前，我想比较一下这四个Lambda表达式。
 
 \begin{itemize}
 \item 
@@ -115,7 +112,7 @@ C++20
 
 这对于不同类型的模板参数意味着什么?当然，每个Lambda传入的都是int型变量(第16-19行)，而类型化的Lambda sumInt不接受字符串(第25行)。
 
-将bool true和int 2010传递给Lambda可能会有令人惊讶(第33-36行)结果。
+将bool true和int 2010传递给Lambda可能会有出乎意料(第33-36行)的结果。
 
 \begin{itemize}
 \item 
@@ -125,7 +122,7 @@ sumInt返回2011，true可以是一个整型值，可升格为int。
 sumGen返回2011，true可以是一个整型值，可升格为int。sumInt和sumGen之间有一个细微的区别。
 
 \item 
-sumDec返回2。为什么?第二个形参sec的类型变成了第一个形参fir的类型:因为decltype(fir) sec，编译器推导出了fir的类型，其类型与sec类型相同。因此，2010转换为true。在表达式fir + sec中，fir提升为1。最后，结果是2。
+sumDec返回2。为什么?第二个形参sec的类型变成了第一个形参fir的类型:因为decltype(fir) sec，编译器推导出了fir的类型，其类型与sec类型相同。因此，2010转换为true。在表达式fir + sec中，fir提升为1，所以结果是2。
 
 \item 
 sumTem是无效的。
@@ -146,7 +143,7 @@ sumGen(true, 2010): 2011
 sumDec(true, 2010): 2
 \end{tcblisting}
 
-模板Lambda的典型的用例是在Lambda中使用容器。下面的代码给出了三个接受容器的Lambda表达式。每个Lambda表达式都会返回容器的大小。
+模板Lambda的典型的用例是在Lambda中使用容器。下面的代码给出了三个接受容器的Lambda表达式，每个表达式都会返回容器的大小。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -199,7 +196,7 @@ auto lambdaVectorIntegral = []<std::integral T>(const std::vector<T>& vec) {
 	}
 \end{lstlisting}
 
-函数lambdaGeneric(第9行)可以接受有成员函数size()的数据类型。函数lambdaVector(第10行)更具体:只接受std::vector。函数lambdaVectorIntegral(第11行)使用C++20概念std::integral。因此，它只接受使用整型(如int)的std::vector。为了使用std::integral概念，必须包含头文件<concepts>。
+函数lambdaGeneric(第9行)可以接受有成员函数size()的数据类型。函数lambdaVector(第10行)更具体:只接受std::vector。函数lambdaVectorIntegral(第11行)使用C++20概念std::integral，所以只接受使用整型(如int)的std::vector。为了使用std::integral概念，必须包含头文件<concepts>。
 
 \begin{tcblisting}{commandshell={}}
 lambdaGeneric(deq): 3
@@ -213,16 +210,13 @@ lambdaVectorIntegral(vecInt): 5
 \end{tcblisting}
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={类模板参数的推导}]
-templateLambdaVector.cpp中有个可能会错过的特性。从C++17开始，编译器就可以从类模板的实参推断类模板的类型(第20-22行)。因此，初始化vector时，可以这样写std::vector myVec{1,2,3}，而非冗长的std::vector<int> myVec{1,2,3}。
+templateLambdaVector.cpp中有个可能会错过的特性。从C++17开始，编译器就可以从类模板的实参推断类模板的类型(第20-22行)。初始化vector时，可以这样写std::vector myVec{1,2,3}，而非冗长的std::vector<int> myVec{1,2,3}。
 \end{tcolorbox}
 
 \subsubsubsection{4.7.2\hspace{0.2cm}检测并隐式复制this指针}
 
-C++20编译器会检测何时隐式复制this指针。复制隐式捕获的this指针会导致未定义的行为，例如以下行为:
+C++20编译器会检测何时隐式复制this指针。复制隐式捕获的this指针会导致未定义的行为，例如:
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{复制隐式捕获的this指针}
 \begin{lstlisting}[style=styleCXX]
 // lambdaCaptureThis.cpp
 
@@ -262,23 +256,22 @@ int main() {
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter4/images/42.png}\\
-由于未定义的行为造成的段错误
+由于未定义行为造成的段错误
 \end{center}
 
-发现lambdaCaptureThis.cpp中的问题了吗?成员函数foo(第7行)返回lambda [=] {std::cout <{}< s <{}< '\verb|\|n';}具有this指针的隐式副本。这个隐式复制在(第17行)中没有问题，但是在作用域的末尾就成了问题。作用域的结束意味着局部Lambda生命周期的结束(第19行)。因此，使用lam()(第28行)会触发未定义的行为。
+发现lambdaCaptureThis.cpp中的问题了吗?成员函数foo(第7行)返回表达式 [=] {std::cout <{}< s <{}< '\verb|\|n';}具有this指针的隐式副本。这个隐式复制在(第17行)中没有问题，但是在作用域的末尾就成了问题。作用域的结束意味着局部Lambda生命周期的结束(第19行)，所以使用lam()(第28行)会触发未定义的行为。
 
-这种情况下，C++20编译器必须发出警告。
+这种情况下，C++20编译器会发出警告。
 
 \begin{center}
 \includegraphics[width=1.0\textwidth]{content/3/chapter4/images/1-8.png}\\
-C++20会报出警告
 \end{center}
 
 C++20的最后两个Lambda特性结合起来非常好用:C++20中的Lambda可以使用默认构造，并且在没有状态时支持复制赋值。此外，Lambda表达式可以在未计算的上下文中使用。
 
-\subsubsubsection{4.7.3\hspace{0.2cm}未计算上下文中的Lambda和无状态的Lambda可以是默认构造的和复制分配的}
+\subsubsubsection{4.7.3\hspace{0.2cm}未计算上下文中的Lambda和无状态的Lambda可以默认构造和复制赋值}
 
-本节的标题包含两个术语:未计算的上下文和无状态的Lambda。先从未计算的上下文开始。
+本节的标题包含两个术语:未计算的上下文和无状态的Lambda。先从“未计算的上下文”开始说起。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -291,11 +284,8 @@ int add1(int, int); // declaration
 int add2(int a, int b) { return a + b; } // definition
 \end{lstlisting}
 
-函数add1是声明的，而add2是定义。若在已计算的上下文中使用add1，例如：通过调用将得到一个链接时错误。关键是可以在未计算的上下文中使用add1，例如\href{https://en.cppreference.com/w/cpp/language/typeid}{typeid}或\href{https://en.cppreference.com/w/cpp/language/decltype}{decltype}。两个操作符都接受未计算的操作数。
+函数add1是声明的，而add2是定义。若在已计算的上下文中使用add1，例如：通过调用将得到一个链接时错误。关键是可以在未计算的上下文中使用add1，例如\href{https://en.cppreference.com/w/cpp/language/typeid}{typeid}或\href{https://en.cppreference.com/w/cpp/language/decltype}{decltype}，两个操作符都接受未计算的操作数。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{未计算的上下文}
 \begin{lstlisting}[style=styleCXX]
 // unevaluatedContext.cpp
 
@@ -324,20 +314,19 @@ typeid(add1).name()(第13行)返回类型的字符串表示形式，decltype(第
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter4/images/43.png}\\
-使用未计算的上下文
 \end{center}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{4.7.3.2\hspace{0.2cm}无状态的Lambda}
 
-无状态是指从环境中不捕获任何内容的Lambda。换句话说，无状态的Lambda是定义中初始中括号[]为空的Lambda。例如，Lambda表达式auto add = [](int a, int b) {return a + b;};就是无状态的。
+无状态是指不捕获任何内容的Lambda。换句话说，无状态的Lambda是定义中初始中括号[]为空的Lambda。例如，Lambda表达式auto add = [](int a, int b) \{return a + b;\};就是无状态的。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{4.7.3.3\hspace{0.2cm}适配标准模板库中的关联容器}
 
-在展示示例之前，必须先添加一些注释。容器std::set和其他来自标准模板库的有序关联容器(std::map, std::multiset和std::multimap)默认使用函数对象std::less对键进行排序。std::less按字典升序对所有键进行排序。\href{https://en.cppreference.com/w/cpp/container/set}{std::set}的声明，隐式使用了std::less
+展示示例之前，先添加一些注释。容器std::set和其他来自标准模板库的有序关联容器(std::map, std::multiset和std::multimap)默认使用函数对象std::less对键进行排序。std::less按字典升序对所有键进行排序。\href{https://en.cppreference.com/w/cpp/container/set}{std::set}的声明，隐式使用了std::less。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -350,7 +339,7 @@ template<
 > class set;
 \end{lstlisting}
 
-现在，我们来看看排序。
+再来看看排序。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -407,7 +396,7 @@ void printContainer(const Cont& cont) {
 }
 \end{lstlisting}
 
-set1(第19行)和set4(第38行)按升序排序键。set2(第26行)、set3(第33行)和set5(第44行)都以相同的方式对其键进行排序，在未计算的上下文中使用Lambda。using关键字(第22行)声明了一个类型别名，下一行(第26行)中使用它来定义set。创建std::set会使用无状态Lambda表达式的默认构造函数。
+set1(第19行)和set4(第38行)按升序排序键。set2(第26行)、set3(第33行)和set5(第44行)都以相同的方式对其键进行排序，在未计算的上下文中使用Lambda。使用using关键字(第22行)声明了一个类型别名，下一行(第26行)中使用它来定义set。创建std::set会使用无状态Lambda表达式的默认构造函数。
 
 下面是程序的输出。
 
@@ -420,7 +409,7 @@ Herb scott Bjarne michael
 0 3 5 -10 -25 100
 \end{tcblisting}
 
-在研究该程序的输出时，可能会感到惊讶。set3有些特殊，使用[](const auto\& l, const auto\& r)\{return l.size() < r.size();\}作为谓词，并且忽略了Dave。原因很简单。Dave和Herb字符串的长度一样，而Herb是先添加的，所以忽略Dave。std::set支持唯一键，所以使用特殊谓词的键相同。若使用std::multiset，这就不会发生这种情况。
+在研究该程序的输出时，可能会感到惊讶。set3有些特殊，使用[](const auto\& l, const auto\& r)\{return l.size() < r.size();\}作为谓词，并且忽略了Dave。因为Dave和Herb字符串的长度一样，而Herb是先添加的，所以忽略Dave。std::set支持唯一键，所以使用特殊谓词的键相同。若使用std::multiset，这就不会发生这种情况。
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 C++20中，Lambda表达式可以有模板参数。此外，Lambda会检测this指针何时隐式引用。
