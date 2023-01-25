@@ -3,7 +3,7 @@
 Cippi在研究算盘
 \end{center}
 
-有符号整数和无符号整数的比较，有时导致意外行为和错误的原因。C++20添加了新的类型安全的比较函数std::cmp\_*，相应的错误就能完全避免了。此外，C++20还包含了一些数学常数，比如e、π或φ，使用函数std::midpoint和std::lerp，你可以计算两个数的中点或它们的线性插值。新的位操作可以访问和修改单个位或位序列。
+有符号整数和无符号整数的比较，有时是导致意外行为和错误的原因。C++20添加了新的类型安全的比较函数std::cmp\_*，相应的错误就能完全避免。此外，C++20还包含了一些数学常数，比如e、π或φ；使用函数std::midpoint和std::lerp，可以计算两个数的中点或它们的线性插值。新的位操作可以访问和修改单个位或位序列。
 
 \subsubsubsection{5.4.1\hspace{0.2cm}整型数的安全比较}
 
@@ -11,7 +11,7 @@ Cippi在研究算盘
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={整数与整型}]
 	
-术语integral(整数)和integer(整型)是C++中的同义词。这是基本类型标准的表述:“类型bool, char, char8\_t, char16\_t, char32\_t, wchar\_t，以及有符号整型和无符号整型统称为整数类型。整数是某一种具体的整型”。本书里，我更喜欢用整型这个词。
+术语integral(整数)和integer(整型)是C++中的同义词。这是基本类型标准的表述:“类型bool, char, char8\_t, char16\_t, char32\_t, wchar\_t，以及有符号整型和无符号整型统称为整数类型。整数是某一种的整型具象表达”。本书里，我更喜欢用整型这个词。
 	
 \end{tcolorbox}
 
@@ -58,7 +58,7 @@ int main() {
 不安全的比较结果令人惊讶
 \end{center}
 
-看到程序的输出时，会发现-3比7大。我想你大概知道为什么会这样。我比较了有符号的x(第11行)和无符号的y(第12行)。这背后发生了什么?下面的代码会告诉我们答案。
+看到程序的输出时，会发现-3比7大。我想你大概知道为什么会这样。我比较了有符号的x(第11行)和无符号的y(第12行)。这背后发生了什么?
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -87,9 +87,6 @@ int main()
 	return 0;
 }
 \end{lstlisting}
-\begin{center}
-分析不安全的比较
-\end{center}
 
 事情是这样的:
 
@@ -123,16 +120,16 @@ C++20支持6个整数比较函数:
 \centering
 \begin{tabular}{ll}
 \textbf{比较函数} & \textbf{描述} \\ \hline
-std::cmp\_equal           & ==               \\
-std::cmp\_not\_equal      & !=               \\
-std::cmp\_less            & \textless{}      \\
-std::cmp\_less\_equal     & \textless{}=     \\
-std::cmp\_greater         & \textgreater{}   \\
-std::cmp\_greater\_equal  & \textgreater{}= 
+std::cmp\_equal           & ==               \\ \hline
+std::cmp\_not\_equal      & !=               \\ \hline
+std::cmp\_less            & \textless{}      \\ \hline
+std::cmp\_less\_equal     & \textless{}=     \\ \hline
+std::cmp\_greater         & \textgreater{}   \\ \hline
+std::cmp\_greater\_equal  & \textgreater{}=  \\ \hline
 \end{tabular}
 \end{table}
 
-由于这个六个比较函数的出现，现在可以轻松地将之前的程序unsafecomparis.cpp改写为safecomparis.cpp。新的比较函数需要头文件<utility>。
+由于这个六个比较函数的出现，现在可以轻松地将之前的程序unsafecomparis.cpp改写为safecomparis.cpp。新的比较函数需要包含头文件<utility>。
 
 \begin{lstlisting}[style=styleCXX]
 // safeComparison.cpp
@@ -195,9 +192,6 @@ int main() {
 
 另外，还是可以用经典的方法比较double型和unsigned型的数值。classicalcompare.cpp就使用了double类型和unsigned int类型的经典比较方式。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{uint和double的经典比较方式}
 \begin{lstlisting}[style=styleCXX]
 // classicalComparison.cpp
 
@@ -220,25 +214,25 @@ int main() {
 
 \subsubsubsection{5.4.2\hspace{0.2cm}数学常数}
 
-首先，数学常数要求头文件<numbers>和命名空间std::numbers，下表提供了一个概述。
+首先，数学常数要求包含头文件<numbers>和命名空间std::numbers，下表提供了一个概述。
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
 Mathematical Constant     & Description               \\ \hline
-std::numbers::e           & $e$                       \\
-std::numbers::log2e       & $log_{2}e$                \\
-std::numbers::log10e      & $log_{10}e$               \\
-std::unmbers::pi          & $\pi$                     \\
-std::unmbers::inv\_pi     & $\frac{1}{\pi}$           \\
-std::numbers::inv\_sqrtpi & $\frac{1}{\sqrt{\pi}}$    \\
-std::numbers::ln2         & ln2                       \\
-std::numbers::ln10        & ln10                      \\
-std::numbers::sqrt2       & $\sqrt{2}$                \\
-std::numbers::sqrt3       & $\sqrt{3}$                \\
-std::numbers::inv\_sqrt3  & $\frac{1}{\sqrt{3}}$      \\
-std::numbers::egamma      & \href{https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant}{欧拉常数(Euler-Mascheroni常数)} \\
-std::numbers::phi         & $\phi$                   
+std::numbers::e           & $e$                       \\ \hline
+std::numbers::log2e       & $log_{2}e$                \\ \hline
+std::numbers::log10e      & $log_{10}e$               \\ \hline
+std::unmbers::pi          & $\pi$                     \\ \hline
+std::unmbers::inv\_pi     & $\frac{1}{\pi}$           \\ \hline
+std::numbers::inv\_sqrtpi & $\frac{1}{\sqrt{\pi}}$    \\ \hline
+std::numbers::ln2         & ln2                       \\ \hline
+std::numbers::ln10        & ln10                      \\ \hline
+std::numbers::sqrt2       & $\sqrt{2}$                \\ \hline
+std::numbers::sqrt3       & $\sqrt{3}$                \\ \hline
+std::numbers::inv\_sqrt3  & $\frac{1}{\sqrt{3}}$      \\ \hline
+std::numbers::egamma      & \href{https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant}{欧拉常数(Euler-Mascheroni常数)} \\ \hline
+std::numbers::phi         & $\phi$               \\ \hline     
 \end{tabular}
 \end{table}
 
@@ -290,20 +284,16 @@ std::numbers::egamma: 0.5772156649
 std::numbers::phi: 1.618033989
 \end{tcblisting}
 
-\begin{center}
-使用所有的数学常数
-\end{center}
-
-数学常数可用于float、double和long double。默认情况下，使用double。但也可以指定float (std::numbers::pi\_v<float>)或long double (std::numbers::pi\_v<long double>)。
+数学常数可用于float、double和long double。默认情况下，使用double，也可以指定为float (std::numbers::pi\_v<float>)或long double (std::numbers::pi\_v<long double>)。
 
 \subsubsubsection{5.4.3\hspace{0.2cm}中间值与线性插值}
 
 \begin{itemize}
 \item 
-std::midpoint(a, b):计算整数、浮点数或指针的中点(a + (b - a) / 2)。若a和b是指针，则必须指向同一个数组对象。该函数需要头文件<numeric>。
+std::midpoint(a, b):计算整数、浮点数或指针的中点(a + (b - a) / 2)。若a和b是指针，则必须指向同一个数组对象。该函数需要包含头文件<numeric>。
 
 \item 
-std::lerp(a, b, t):计算线性插值(a + t(b - a))。当t在范围[0,1]之外时，则计算线性外推。函数需要头文件<cmath>。
+std::lerp(a, b, t):计算线性插值(a + t(b - a))。当t在范围[0,1]之外时，则计算线性外推。函数需要包含头文件<cmath>。
 \end{itemize}
 
 midpointLerp.cpp使用这两个函数。
@@ -336,7 +326,7 @@ int main() {
 }
 \end{lstlisting}
 
-程序及其输出就没什么好说的了：
+输出就没什么好说的了：
 
 \begin{tcblisting}{commandshell={}}
 std::midpoint(10, 20): 15
@@ -366,9 +356,6 @@ std::midpoint(10, 20, 1): 20
 
 endian类提供了所有标量类型的端序:
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{枚举类endian}
 \begin{lstlisting}[style=styleCXX]
 enum class endian
 {
@@ -386,11 +373,11 @@ enum class endian
 若所有标量类型都是大端，则std::endian::native等于std::endian::big。
 \end{itemize}
 
-即使是极端情况也支持:
+也支持极端情况：
 
 \begin{itemize}
 \item 
-若所有的标量类型都具有sizeof 1，端序就不重要了，枚举数std::endian::little、std::endian::big和std::endian::native的值是相同的。
+若所有的标量类型都具有sizeof 1，端序就不重要了，枚举数std::endian::little、std::endian::big和std::endian::native的值相同。
 
 \item 
 若平台使用混合字节序，std::endian::native既不等于std::endian::big，也不等于std::endian::little。
@@ -424,36 +411,29 @@ constexpr if使编译器能够有条件地编译源代码。所以，编译依�
 
 下表概述了所有函数，可以在头文件<bit>中找到相应的函数。
 
-\begin{center}
-位操作
-\end{center}
-
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{函数}     & \textbf{描述}                                                             \\ \hline
-std::bit\_cast        & 重新解释对象的表示                                           \\
-std::has\_single\_bit & 检查数字是否为2的次幂                                             \\
-std::bit\_ceil        & 求不小于给定值的2的最小整数次幂 \\
-std::bit\_floor       & 求不大于给定值的2的最大整数次幂  \\
-std::bit\_width       & 找到表示给定值的最小位数                   \\
-std::rotl             & 计算按位向左移                                               \\
-std::rotr             & 计算按位向右移                                               \\
-std::countl\_zero     & 从最高位开始，计数连续0的个数      \\
-std::countl\_one      & 从最高位开始，计算连续1的个数      \\
-std::countr\_zero     & 从最低位开始，计数连续0的个数    \\
-std::countr\_one      & 从最低有效位，计算连续1的个数     \\
-std::popcount         & 统计无符号整数中位值为1的个数                                  
+\textbf{函数}     & \textbf{位操作描述}                                                             \\ \hline
+std::bit\_cast        & 重新解释对象的表示                                           \\ \hline
+std::has\_single\_bit & 检查数字是否为2的次幂                                             \\ \hline
+std::bit\_ceil        & 求不小于给定值的2的最小整数次幂 \\ \hline
+std::bit\_floor       & 求不大于给定值的2的最大整数次幂  \\ \hline
+std::bit\_width       & 找到表示给定值的最小位数                   \\ \hline
+std::rotl             & 计算按位向左移                                               \\ \hline
+std::rotr             & 计算按位向右移                                               \\ \hline
+std::countl\_zero     & 从最高位开始，计数连续0的个数      \\ \hline
+std::countl\_one      & 从最高位开始，计算连续1的个数      \\ \hline
+std::countr\_zero     & 从最低位开始，计数连续0的个数    \\ \hline
+std::countr\_one      & 从最低有效位，计算连续1的个数     \\ \hline
+std::popcount         & 统计无符号整数中位值为1的个 数                                  \\ \hline
 \end{tabular}
 \end{table}
 
-除std::bit\_cast外，所有函数都要求是无符号整数类型(unsigned char、unsigned short、unsigned int、unsigned long或unsigned long)。
+除了std::bit\_cast外，所有函数都要求是无符号整数类型(unsigned char、unsigned short、unsigned int、unsigned long或unsigned long)。
 
 bit.cpp展示了如何使用这些函数。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{位操作}
 \begin{lstlisting}[style=styleCXX]
 // bit.cpp
 
@@ -491,7 +471,7 @@ int main() {
 }
 \end{lstlisting}
 
-下面是程序的输出。
+下面是程序的输出：
 
 \begin{tcblisting}{commandshell={}}
 std::has_single_bit(0b00110010): false
@@ -507,7 +487,7 @@ std::countr_one(0b00110010): 0
 std::popcount(0b00110010): 3
 \end{tcblisting}
 
-下面的程序显示了，将std::bit\_floor, std::bit\_ceil, std::bit\_width和std::bit\_popcount用于数字2到7的效果。
+下面的程序展示了，将std::bit\_floor, std::bit\_ceil, std::bit\_width和std::bit\_popcount用于数字2到7的效果。
 
 \begin{lstlisting}[style=styleCXX]
 // bitFloorCeil.cpp
@@ -575,7 +555,7 @@ popcount(00000111) = 3
 \end{tcblisting}
 
 \begin{center}
-对一些数字使用std::bit\_floor, std::bit\_ceil, std::bit\_width和std::popcount
+使用std::bit\_floor, std::bit\_ceil, std::bit\_width和std::popcount
 \end{center}
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
@@ -591,7 +571,7 @@ C++20中的cmp\_*函数支持安全的整数比较，其可以检测有符号整
 C++20提供了计算两个值的中点或线性插值的工具函数。
 
 \item 
-有新函数可以访问和操作位或位序列。
+新函数可以访问和操作位或位序列。
 \end{itemize}
 	
 \end{tcolorbox}

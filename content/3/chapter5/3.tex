@@ -3,17 +3,14 @@
 Cippi在检查集装箱
 \end{center}
 
-C++20对标准模板库的容器还进行了很多改进。首先，是std::vector和std::string添加了constexpr构造函数，从而可以在编译时使用。所有容器都支持统一的erase成员函数，以及关联容器(map/set)添加了成员函数contains。此外，std::string可以对前缀或后缀进行检查。
+C++20对标准模板库的容器还进行了很多改进。首先，std::vector和std::string添加了constexpr构造函数，从而可以在编译时使用。所有容器都支持统一的erase成员函数，以及关联容器(map/set)添加了成员函数contains。此外，std::string可以对前缀或后缀进行检查。
 
 \subsubsubsection{5.3.1\hspace{0.2cm}constexpr的容器和算法}
 
-C++20支持constexpr容器std::vector和std::string，其中constexpr表明这两个容器的成员函数都可以在编译时使用。此外，标准模板库中，声明为constexpr的\href{https://en.cppreference.com/w/cpp/algorithm}{算法}超过100个。
+C++20支持constexpr容器std::vector和std::string，其中constexpr表明这两个容器的成员函数都可以在编译时使用。此外，标准模板库中，声明为constexpr的\href{https://en.cppreference.com/w/cpp/algorithm}{算法}超过了100个。
 
 因此，可以在编译时对int类型的std::vector进行排序。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{编译时对std::vector进行排序}
 \begin{lstlisting}[style=styleCXX]
 // constexprVector.cpp
 
@@ -48,7 +45,6 @@ int main() {
 
 两个std::vector(第8行和第20行)在编译时使用constexpr声明的函数进行排序。第一种情况下，函数maxElement返回myVec的最后一个元素，也就是它的最大值。第二种情况下，使用声明为constexpr的Lambda表达式。
 
-\hspace*{\fill} \\ %插入空行
 \begin{tcblisting}{commandshell={}}
 maxValue: 4
 maxValue2: 4
@@ -62,13 +58,10 @@ C++20提供了两种创建数组的方法。std::to\_array可以创建std::array
 \noindent
 \textbf{5.3.2.1\hspace{0.2cm}std::to\_array}
 
-std::to\_array从现有一维数组创建std::array。新std::array中的元素是从现有的一维数组复制过来的。
+std::to\_array从现有一维数组创建std::array，其中的元素是从现有的一维数组复制过来的。
 
 一维数组可以是C-string、std::initializer\_list或std::pair的一维数组。下面的例子来自\href{https://en.cppreference.com/w/cpp/container/array/to_array}{cppreference.com/to\_array}。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{使用各种一维数组创建std::array}
 \begin{lstlisting}[style=styleCXX]
 // toArray.cpp
 
@@ -106,9 +99,8 @@ int main() {
 }
 \end{lstlisting}
 
-使用C-string(第12行)，std::initializer\_list(第16行和第20行)，std::pair的std::initializer\_list(第26行)都可以创建std::array。通常，编译器可以推断出std::array的类型。还可以对类型进行指定(第20和26行)。
+使用C-string(第12行)，std::initializer\_list(第16行和第20行)，std::pair的std::initializer\_list(第26行)都可以创建std::array。通常，编译器可以推断出std::array的类型，还可以对类型进行指定(第20和26行)。
 
-\hspace*{\fill} \\ %插入空行
 \begin{tcblisting}{commandshell={}}
 A simple test
 
@@ -127,7 +119,7 @@ typeid(arr3[0]).name(): d
 \noindent
 \textbf{5.3.2.2\hspace{0.2cm}std::make\_shared}
 
-C++11起，可以通过工厂函数\href{https://en.cppreference.com/w/cpp/memory/shared_ptr/make_shared}{std::make\_shared}创建std::shared\_ptr。C++20中，这个工厂函数终于支持创建std::shared\_ptr数组了。
+C++11的工厂函数\href{https://en.cppreference.com/w/cpp/memory/shared_ptr/make_shared}{std::make\_shared}用于创建std::shared\_ptr。C++20中，这个工厂函数终于支持创建std::shared\_ptr数组了。
 
 \begin{itemize}
 \item 
@@ -175,16 +167,12 @@ removeElements.cpp从std::vector中删除所有小于零的元素。很容易，
 
 \begin{center}
 \includegraphics[width=0.7\textwidth]{content/3/chapter5/images/11.png}\\
-使用std::remove\_if从容器中删除元素
 \end{center}
 
 std::remove\_if(第16行)不会删除任何东西，std::vector的元素数量不变。算法只是返回修改后容器的新(逻辑)末端。
 
 为了修改容器内容，必须将新末端应用于容器。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{容器使用erase-remove习语}
 \begin{lstlisting}[style=styleCXX]
 // eraseRemoveElements.cpp
 
@@ -213,14 +201,13 @@ int main() {
 }
 \end{lstlisting}
 
-第16行返回容器myVec的新末端newEnd。这个新末端应用于第18行，并从newEnd开始删除myVec中的元素。当在表达式中应用函数remove和erase(第19行)时，就会清楚地看到为什么这中方式称为“erase-remove习语”了。
+第16行返回容器myVec的新末端newEnd。这个新末端应用于第18行，并从newEnd开始删除myVec中的元素。当在表达式中应用函数remove和erase(第19行)时，就会清楚地了解为什么这种方式称为“erase-remove习语”了。
 
 \begin{center}
 \includegraphics[width=0.7\textwidth]{content/3/chapter5/images/12.png}\\
-使用erase-remove习语
 \end{center}
 
-由于C++20中新增了erase和erase\_if，从容器中擦除元素就方便了许多。
+因为C++20中新增了erase和erase\_if，从容器中擦除元素就方便了许多。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -230,9 +217,6 @@ int main() {
 
 来一起看看新函数erase和erase\_if在实践中怎么使用。下面的代码，是从容器中删除一些元素。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{从容器中删除元素}
 \begin{lstlisting}[style=styleCXX]
 // eraseCpp20.cpp
 
@@ -300,20 +284,16 @@ int main() {
 
 \begin{center}
 \includegraphics[width=0.5\textwidth]{content/3/chapter5/images/13.png}\\
-使用新函数erase和erase\_if
 \end{center}
 
-新函数erase和erase\_if可以应用于标准模板库的所有容器。这并不适用于另一个方便的函数contains，其需要对关联容器进行操作。
+新函数erase和erase\_if可以应用于标准模板库的所有容器。但这并不适用于另一个函数contains，其需要对关联容器进行操作。
 
 \subsubsubsection{5.3.4\hspace{0.2cm}关联容器的contains}
 
-由于contains函数，就可以轻松地检查关联容器中是否存在元素。等一下，你可能会说，我们已经可以用find或count来完成这个任务了。
+由于contains函数，就可以轻松地检查关联容器中是否存在元素。你可能会说，我们已经可以用find或count来完成这个任务了。
 
 非也非也，这两个函数都不适合初学者，而且有各自的缺点。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{从容器中删除元素}
 \begin{lstlisting}[style=styleCXX]
 // checkExistence.cpp
 
@@ -350,13 +330,10 @@ int main() {
 使用find和count检查容器中是否有给定的元素
 \end{center}
 
-两个方式都有问题。find(第11行)太冗长了，count(第16行)也是，count还存在性能上的问题。当想知道某个元素是否在容器中时，应该在找到它时停止计算，而不是继续查找，直到结束。上面的代码中，myMultiSet.count(2)会返回2。
+两个方式都有问题。find(第11行)太冗长了，count(第16行)也是，count还存在性能上的问题。想知道某个元素是否在容器中时，应该在找到时停止，而不是继续查找直到结束。上面的代码中，myMultiSet.count(2)会返回2。
 
 与find和count不同，C++20中的contains成员函数使用起来非常方便。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{C++20中的contains}
 \begin{lstlisting}[style=styleCXX]
 // containsElement.cpp
 
@@ -401,11 +378,10 @@ int main() {
 }
 \end{lstlisting}
 
-这个示例中没有太多添加的内容。若关联容器包含键5，则函数模板containsElement5返回true。例子中，我只使用了关联容器std::set、std::unordered\_set、std::map和std::unordered\_set，它们都不能多次保存给定的键。
+若关联容器包含键5，则函数模板containsElement5返回true。例子中，我只使用了关联容器std::set、std::unordered\_set、std::map和std::unordered\_set，它们都不能多次保存给定的键。
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/3/chapter5/images/14.png}\\
-使用新函数contains
 \end{center}
 
 \subsubsubsection{5.3.5\hspace{0.2cm}字符串检查前缀和后缀}
@@ -478,7 +454,7 @@ Hello World
 	
 \begin{itemize}
 \item 
-std::vector和std::string具有constexpr构造函数，因此可以在编译时实例化。由于标准模板库(STL)提供constexpr算法，所以可以在编译时操作它们。
+std::vector和std::string具有constexpr构造函数，可以在编译时实例化。由于标准模板库(STL)提供constexpr算法，可以在编译时执行。
 
 \item 
 C++20提供了两种创建数组的方法。std::to\_array创建std::array，std::make\_shared可以创建包含数组的std::shared\_ptr。
@@ -487,7 +463,7 @@ C++20提供了两种创建数组的方法。std::to\_array创建std::array，std
 新的算法std::erase和std::erase\_if用于从STL容器中删除特定的元素(erase)或满足谓词(erase\_if)的元素。
 
 \item 
-因为新成员函数contains，可以直接检查关联容器是否具有所请求的键。
+有了新成员函数contains，就可以直接检查关联容器是否具有所请求的键。
 
 \item 
 std::string支持新的成员函数start\_with和end\_with，可用来检查容器是否具有特定的前缀或后缀。
