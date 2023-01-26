@@ -27,9 +27,6 @@
 
 这里是一个例子:
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{使用契约}
 \begin{lstlisting}[style=styleCXX]
 int push(queue& q, int val)
 	[[ expects: !q.full() ]]
@@ -42,11 +39,8 @@ int push(queue& q, int val)
 
 属性expect是先决条件，属性确保后置条件，属性assert是断言。函数push的契约是，在添加元素之前队列不满，在添加元素之后队列不空，并且断言q.is\_ok()成立。
 
-前置条件和后置条件是函数接口的一部分，所以不能访问函数的局部成员或类的私有或受保护成员。然而，断言是实现的一部分，因此可以访问类的私有成员或受保护成员的函数的局部成员:
+前置条件和后置条件是函数接口的一部分，所以不能访问函数的局部成员或类的私有或受保护成员。然而，断言是实现的一部分，因此可以访问类的私有成员或受保护成员函数的局部变量:
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{访问私有属性}
 \begin{lstlisting}[style=styleCXX]
 class X {
 public:
@@ -63,7 +57,7 @@ private:
 
 成员m是私有的，因此不能成为前提条件的一部分。默认情况下，违反契约将终止程序。
 
-可以调整属性的行为。
+并且，可以调整属性的行为。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -96,9 +90,6 @@ axiom: 运行时不检查谓词
 
 标识符允许引用函数的返回值。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{访问返回值}
 \begin{lstlisting}[style=styleCXX]
 int mul(int x, int y)
 	[[expects: x > 0]] // implicit default
@@ -171,9 +162,6 @@ assertion\_level: 契约的断言级别
 \item 
 函数的契约声明必须相同，与第一个声明不同的声明都可以省略契约。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{契约声明必须相同}
 \begin{lstlisting}[style=styleCXX]
 int f(int x)
 	[[expects: x > 0]]
@@ -186,11 +174,8 @@ int f(int x)
 \end{lstlisting}
 
 \item 
-不能在重载函数中修改契约。
+重载函数不能修改契约。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{重载函数不能修改契约}
 \begin{lstlisting}[style=styleCXX]
 truct B {
 	virtual void f(int x)[[expects: x > 0]];
@@ -206,7 +191,7 @@ struct D: B{
 
 D类契约的两个定义都是错误的。成员函数D::f的契约与B::f的契约不同，而成员函数D::g向B::g添加了一个契约。
 
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={Herb Sutter的结束语}]
+\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={结束语}]
 契约是C++20的一部分，但目前至少推迟到了C++23。Herb Sutter关于\href{https://herbsutter.com/2018/07/02/trip-report-summer-iso-c-standards-meeting-rapperswil/}{Sutter的话}可以让你了解了它们的重要性:“契约是迄今为止C++20中最有影响力的特性，可以说是自C++11以来，最有影响力的特性。
 \end{tcolorbox}
 
@@ -214,7 +199,7 @@ D类契约的两个定义都是错误的。成员函数D::f的契约与B::f的�
 
 反射是程序分析和修改自身的可能性。反射发生在编译时，遵循C++的元规则:“不为不用的东西付费”。\href{https://en.cppreference.com/w/cpp/header/type_traits}{type-traits库}是一个用于反射的强大工具，但是用于静态反射的提案\href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0385r2.pdf}{P0385}走得更远。
 
-下面的代码片段应该会给你一个关于反射的第一印象:
+下面的代码片段应该会给你一个关于反射的直观印象:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -248,7 +233,7 @@ function: min<double>(a: double = 12.34, b: double = 23.45)
 
 \begin{itemize}
 \item 
-对象:源代码行和列以及文件名
+对象:源代码行和列，以及文件名
 
 \item 
 类:私有和公共数据成员和成员函数
@@ -259,9 +244,6 @@ function: min<double>(a: double = 12.34, b: double = 23.45)
 
 提案P0385的下一个示例展示了，反射如何帮助确定类的私有和公共成员。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{确定类foo的public和private成员}
 \begin{lstlisting}[style=styleCXX]
 #include <reflect>
 #include <iostream>
@@ -339,8 +321,7 @@ int main(void) {
 该程序产生以下输出:
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/5/chapter8/images/8.png}\\
-显示类foo的public和private成员
+\includegraphics[width=0.5\textwidth]{content/5/chapter8/images/8.png}\\
 \end{center}
 
 \subsubsubsection{8.2.3\hspace{0.2cm}模式匹配}
@@ -353,9 +334,6 @@ int main(void) {
 \item 
 switch语句
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{switch语句与模式匹配}
 \begin{lstlisting}[style=styleCXX]
 switch (x) {
 	case 0: std::cout << "got zero"; break;
@@ -373,9 +351,6 @@ inspect (x) {
 \item 
 if条件语句
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{if语句与模式匹配}
 \begin{lstlisting}[style=styleCXX]
 if (s == "foo") {
 	std::cout << "got foo";
@@ -397,9 +372,6 @@ inspect (s) {
 \item 
 std::tuple
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{std::tuple与模式匹配}
 \begin{lstlisting}[style=styleCXX]
 auto&& [x, y] = p;
 if (x == 0 && y == 0) {
@@ -423,9 +395,6 @@ inspect (p) {
 \item 
 std::variant
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{std::variant与模式匹配}
 \begin{lstlisting}[style=styleCXX]
 struct visitor {
 	void operator()(int i) const {
@@ -447,9 +416,6 @@ inspect (v) {
 \item 
 多态数据类型
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{多态与模式匹配}
 \begin{lstlisting}[style=styleCXX]
 struct Shape { virtual ~Shape() = default; };
 struct Circle : Shape { int radius; };

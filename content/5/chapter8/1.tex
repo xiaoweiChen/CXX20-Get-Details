@@ -12,10 +12,12 @@ cppcoro库是基于协程TS的。TS代表技术规范，是C++20所提供的协�
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{cppcoro的命令行}
+{\footnotesize
 \begin{tcblisting}{commandshell={}}
 clang++ -std=c++17 -fcoroutines-ts -Iinclude -stdlib=libc++ libcppcoro.a
   cppcoroTask.cpp -pthread
 \end{tcblisting}
+}
 
 \begin{itemize}
 \item 
@@ -34,7 +36,7 @@ clang++ -std=c++17 -fcoroutines-ts -Iinclude -stdlib=libc++ libcppcoro.a
 libcppcoro.a: cppcoro库
 \end{itemize}
 
-正如我所说，当cppcoro基于C++20的协程时，就可以将它们用于支持C++20的编译器。此外，它们还让你对C++23中的具体协程实现有了初步了解。
+当cppcoro基于C++20的协程时，就可以将它们用于支持C++20的编译器。此外，它们还让你对C++23中的具体协程实现有了初步了解。
 
 本节关于协程库的其余部分中，我想演示几个示例，以展示协程的强大。我的演示从协程的类型开始。
 
@@ -50,14 +52,14 @@ cppcoro具有很多生成器，可以执行有各种各样的任务(task)。
 \noindent
 \textbf{8.1.1.1.1\hspace{0.2cm}task<T>}
 
-什么是任务(task)?cppcoro中使用的定义是:
+什么是任务(task)? cppcoro中使用的定义是:
 
 \begin{itemize}
 \item 
 任务表示延迟执行的异步计算，其中协程的执行直到等待任务时才开始。
 \end{itemize}
 
-任务是一个协程。在下面的程序中，函数main首先等待函数，第一个等待第二个，第二个等待第三个。
+任务是一个协程。下面的程序中，函数main首先等待函数，第一个等待第二个，第二个等待第三个。
 
 \begin{lstlisting}[style=styleCXX]
 // cppcoroTask.cpp
@@ -129,10 +131,10 @@ int main() {
 
 诚然，这个程序没有做什么有意义的事情，但它有助于理解协同程序的工作流程。
 
-首先，主函数不能是协程。Cppcoro::sync\_wait(第59行)通常用作启动顶级任务，并等待任务完成。与其他协程类似，协程首先获取开始时间作为参数，并显示其执行时间。协程首先做什么?第二次启动协程(第36和46行)，立即暂停，休眠一秒，然后通过句柄sec恢复协程(第38和48行)。第二个协程执行相同的工作流，但第三个协程不执行。至于第三个，它是一个协程，不返回任何东西，也不等待另一个协程。当第三个完成时，所有其他协程都会执行。因此，每个协程需要3秒。
+首先，主函数不能是协程。Cppcoro::sync\_wait(第59行)通常用作启动顶级任务，并等待任务完成。与其他协程类似，协程首先获取开始时间作为参数，并显示其执行时间。协程首先做什么?第二次启动协程(第36和46行)，立即暂停，休眠一秒，然后通过句柄sec恢复协程(第38和48行)。第二个协程执行相同的工作流，但第三个协程不执行。至于第三个，它是一个协程，不返回任何东西，也不等待另一个协程。当第三个完成时，所有其他协程都会执行，所以每个协程需要3秒。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/5/chapter8/images/1.png}\\
+\includegraphics[width=0.5\textwidth]{content/5/chapter8/images/1.png}\\
 \end{center}
 
 稍微改变一下程序。若协程在co\_await调用后休眠会发生什么?
@@ -204,7 +206,7 @@ int main() {
 }
 \end{lstlisting}
 
-你可能已经猜到了。主函数等待3秒，但每个迭代调用的协程要少等待1秒。
+主函数等待3秒，但每个迭代调用的协程要少等待1秒。
 
 cppcoro提供的下一个协程是generator<T>。
 
@@ -266,7 +268,7 @@ int main() {
 第一个协程hello应请求返回下一个字符，协程fibonacci返回下一个fibonacci数字。斐波那契数列可以创建无限的数据流。第33行发生了什么呢?基于范围的for循环触发协程的执行。第一次迭代启动协程，返回co\_yield b处的值(第18行)，然后暂停。后续基于范围的for循环调用恢复协程fibonacci并返回下一个fibonacci数字。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/5/chapter8/images/2.png}\\
+\includegraphics[width=1.0\textwidth]{content/5/chapter8/images/2.png}\\
 \end{center}
 
 cppcoro中提供了更多可等待的类型。
@@ -365,10 +367,10 @@ int main() {
 }
 \end{lstlisting}
 
-代码是自解释的。消费者(第41行)和生产者(第42行)在各自的线程中运行。因为主函数不能是协程，所以cppcoro::sync\_wait(consumer())调用(第41行)作为顶级任务。调用一直等待，直到协程使用者完成。协程消费者在调用co\_await事件(第19行)中等待，直到有人调用event.set()(第33行)。函数生产者在休眠两秒后发送它的事件。
+消费者(第41行)和生产者(第42行)在各自的线程中运行。因为主函数不能是协程，所以cppcoro::sync\_wait(consumer())调用(第41行)作为顶级任务。调用一直等待，直到协程使用者完成。协程消费者在调用co\_await事件(第19行)中等待，直到调用event.set()(第33行)。函数生产者在休眠两秒后发送它的事件。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/5/chapter8/images/3.png}\\
+\includegraphics[width=0.5\textwidth]{content/5/chapter8/images/3.png}\\
 \end{center}
 
 cppcoro还支持\href{https://en.cppreference.com/w/cpp/named_req/Mutex}{mutex}。
@@ -424,7 +426,7 @@ int main() {
 第26行创建10个线程，每个线程将数字0到9添加到共享sum变量(第14行)。addToSum函数是协程，在表达式co\_await mutex.scoped\_lock\_async()(第17行)中等待，直到获得互斥量。等待互斥锁的协程不是阻塞状态，而是挂起状态。前一个锁持有者在其解锁调用中恢复等待协程，所以互斥锁一直保持锁定状态，直到作用域结束(第20行)。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/5/chapter8/images/4.png}\\
+\includegraphics[width=0.5\textwidth]{content/5/chapter8/images/4.png}\\
 \end{center}
 
 \hspace*{\fill} \\ %插入空行
@@ -455,7 +457,7 @@ resume\_on()
 
 when\_all函数创建一个等待所有输入可等待对象的可等待对象，并返回它们各自结果的聚合。
 
-看看下面的代码，有个第一印象:
+看看下面的代码:
 
 \begin{lstlisting}[style=styleCXX]
 // cppcoroWhenAll.cpp
@@ -517,7 +519,7 @@ int main() {
 顶层任务cppcoro::sync\_wait(runAll())(第44行)等待可等待的runAll，后者等待可等待的getFirst、getSecond和getThird(第31行)。可等待的runAll、getFirst、getSecond和getThird是协程。每个get函数休眠一秒钟(第14、19和24行)，三乘以一秒等于三秒。这是调用cppcoro::sync\_wait(runAll())等待协程的时间，第49行显示时间持续时间。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/5/chapter8/images/5.png}\\
+\includegraphics[width=0.5\textwidth]{content/5/chapter8/images/5.png}\\
 \end{center}
 
 可以将cpp中的when\_all和线程池结合起来
@@ -530,7 +532,7 @@ static\_thead\_pool在固定大小的线程池上进行调度工作。
 
 可以调用cppcoro::static\_thread\_pool，也可以不调用。这个数字表示创建的线程数。若不指定数字，则使用C++11中加入的std::thread::hardware\_concurrency()。\href{https://en.cppreference.com/w/cpp/thread/thread/hardware_concurrency}{std::thread::hardware\_concurrency}给出了系统支持的硬件线程数，这可能是处理器或内核的数量。
 
-来试试看。下面的示例基于cppcoroWhenAll.cpp，使用了可等待的when\_any。这一次，协程并发执行。
+下面的示例基于cppcoroWhenAll.cpp，使用了可等待的when\_any。这一次，协程并发执行。
 
 \begin{lstlisting}[style=styleCXX]
 // cppcoroWhenAllOnThreadPool.cpp
@@ -604,7 +606,7 @@ int main() {
 这是与之前的程序cppcoroWhenAll.cpp的关键区别。第55行，创建了一个线程池tp，并将其用作函数runAll(tp)的参数(第56行)。函数runAll使用线程池并发地启动协程，因为有了结构化绑定(第40行)，每个协程的值可以很容易地聚合并分配给一个变量。最后，main函数只需要1秒而不是3秒。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/5/chapter8/images/6.png}\\
+\includegraphics[width=0.5\textwidth]{content/5/chapter8/images/6.png}\\
 \end{center}
 
 \subsubsubsection{8.1.2\hspace{0.2cm}模块化的标准库}
@@ -684,7 +686,7 @@ export int getProduct(const std::vector<int>& vec) {
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{将模块std.core导入客户端程序}
+\textbf{将模块std.core导入}
 \begin{lstlisting}[style=styleCXX]
 // client2.cpp
 
@@ -708,7 +710,7 @@ int main() {
 该程序产生预期的输出:
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/5/chapter8/images/7.png}\\
+\includegraphics[width=0.5\textwidth]{content/5/chapter8/images/7.png}\\
 在Windows上使用模块std.core
 \end{center}
 
@@ -720,7 +722,7 @@ int main() {
 
 首先，啥是执行器?
 
-执行器是C++中执行的基本构建块，并在执行中扮演类似的角色，例如C++中容器的分配器。许多关于执行器的建议已经发布，但还有很多设计决策仍然悬而未决。它们应该是C++23的一部分，但是可以更早地用于C++扩展标准。
+执行器是C++中执行的基本构建块，并在执行中扮演类似的角色，例如：C++中容器的分配器。许多关于执行器的建议已经发布，但还有很多设计决策仍然悬而未决。它们应该是C++23的一部分，但是可以更早地用于C++扩展标准。
 
 执行器由关于在何处、何时，以及如何运行可调用对象的规则组成。
 
@@ -735,7 +737,7 @@ When: 可调用对象可以立即运行，也可以只是调度。
 How: 可调用对象可以在CPU或GPU上运行，甚至可以以向量化的方式执行。
 \end{itemize}
 
-C++的并发性和并行性特性，很大程度依赖于执行器的构建块。这种依赖关系适用于现有的并发特性，例如\href{https://www.modernescpp.com/index.php/parallel-algorithm-of-the-standard-template-library}{并行算法的标准模板库}，但也适用于新的并发特性，例如\href{https://www.modernescpp.com/index.php/std-future-extensions}{门闩和栅栏，协程，网络库，扩展的future}，\href{https://www.modernescpp.com/index.php/transactional-memory}{事务性内存}或\href{https://www.modernescpp.com/index.php/task-blocks}{任务块}。
+C++的并发性和并行性特性，很大程度依赖于执行器的构建块。这种依赖关系适用于现有的并发特性，例如：\href{https://www.modernescpp.com/index.php/parallel-algorithm-of-the-standard-template-library}{并行算法的标准模板库}，但也适用于新的并发特性，例如：\href{https://www.modernescpp.com/index.php/std-future-extensions}{门闩和栅栏，协程，网络库，扩展的future}，\href{https://www.modernescpp.com/index.php/transactional-memory}{事务性内存}或\href{https://www.modernescpp.com/index.php/task-blocks}{任务块}。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -751,9 +753,6 @@ C++的并发性和并行性特性，很大程度依赖于执行器的构建块�
 \item 
 使用std::async
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{std::async中使用执行器}
 \begin{lstlisting}[style=styleCXX]
 // get an executor through some means
 my_executor_type my_executor = ...
@@ -767,9 +766,6 @@ auto future = std::async(my_executor, [] {
 \item 
 STL算法std::for\_each
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{std::for\_each使用执行器}
 \begin{lstlisting}[style=styleCXX]
 // get an executor through some means
 my_executor_type my_executor = ...
@@ -827,37 +823,37 @@ logging\_executor是池执行器的包装器。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{8.1.3.2\hspace{0.2cm}执行器的目的}
+\textbf{8.1.3.2\hspace{0.2cm}执行器的目标}
 
 根据提案\href{http://open-std.org/JTC1/SC22/WG21/docs/papers/2018/p1055r0.pdf}{P1055}，执行器的目标是什么呢?
 
 \begin{itemize}
 \item 
-可批处理的:控制可调用对象转换的成本与其体积之间的权衡。
+\textbf{批处理}:控制可调用对象转换的成本与其体积之间的权衡。
 
 \item 
-异构:允许可调用对象在异构上下文中运行并返回结果。
+\textbf{异构}:允许可调用对象在异构上下文中运行并返回结果。
 
 \item 
-有序:指定调用可调用对象的顺序。目标包括顺序保证，如后进先出、FIFO先入先出执行、优先级或时间限制，甚至是顺序执行。
+\textbf{有序}:指定调用可调用对象的顺序。目标包括顺序保证，如后进先出、FIFO先入先出执行、优先级或时间限制，甚至是顺序执行。
 
 \item 
-可控:可调用对象必须是针对特定计算资源的，可以延迟，甚至取消。
+\textbf{可控}:可调用对象必须是针对特定计算资源的，可以延迟，甚至取消。
 
 \item 
-可持续:对于非阻塞提交的工作单元，需要来自工作单元的信号。这些信号必须指示结果是否可用、是否发生错误、可调用对象何时完成，或被调用者是否想要取消可调用对象。也应该可以显式地启动可调用对象或停止启动。
+\textbf{可持续}:对于非阻塞提交的工作单元，需要来自工作单元的信号。这些信号必须指示结果是否可用、是否发生错误、可调用对象何时完成，或被调用者是否想要取消可调用对象。也应该可以显式地启动可调用对象或停止启动。
 
 \item 
-可分层:层次结构允许在不增加简单用例复杂性的情况下添加新功能。
+\textbf{可分层}:层次结构允许在不增加简单用例复杂性的情况下添加新功能。
 
 \item 
-可用:实现人员和用户的易用性应该是主要目标。
+\textbf{可用}:实现人员和用户的易用性应该是主要目标。
  
 \item 
-可组合:允许用户为不属于标准的特性扩展执行器。
+\textbf{可组合}:允许用户为不属于标准的特性扩展执行器。
 
 \item 
-最小化:执行器概念上不应该存在任何需要添加到其概念之上的东西。
+\textbf{最小化}:执行器概念上不需要其他东西。
 \end{itemize}
 
 \hspace*{\fill} \\ %插入空行
@@ -933,8 +929,6 @@ then执行函数是一个延续，返回一个future，但是只有在提供的f
 
 如何确保执行程序支持特定的执行函数?
 
-特殊情况下，就会知道:
-
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{使用执行函数execute的执行器}
@@ -946,7 +940,7 @@ void concrete_context(const my_oneway_single_executor& ex)
 }
 \end{lstlisting}
 
-一般情况下，可以使用函数execute::require来请求。
+通常，可以使用函数execute::require来请求。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -963,7 +957,7 @@ void generic_context(const Executor& ex)
 }
 \end{lstlisting}
 
-在这种情况下，执行器ex必须支持单基数和twoway执行。
+所以，执行器ex必须支持单基数和twoway执行。
 
 \subsubsubsection{8.1.4\hspace{0.2cm}网络库}
 
@@ -973,7 +967,7 @@ C++23中的网络库基于Christopher M. Kohlhoff的\href{https://www.boost.org/
 
 \begin{itemize}
 \item 
-TCP, UDP和多路广播
+TCP、UDP和多路广播
 
 \item 
 客户机/服务器应用
@@ -1012,9 +1006,6 @@ TCP/IP协议，如ICMP
 
 由于支持了网络库，就可以直接实现一个回显服务器。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{一个简单的回显服务器}
 \begin{lstlisting}[style=styleCXX]
 template <typename Iterator>
 void uppercase(Iterator begin, Iterator end) {
