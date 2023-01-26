@@ -1,9 +1,9 @@
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter6/images/18.png}\\
+\includegraphics[width=0.4\textwidth]{content/3/chapter6/images/18.png}\\
 Cippi在栅栏外等待
 \end{center}
 
-锁存器(门闩)和栅栏属于协调类型，可以阻塞线程，直到计数器变为零。C++20中，我们有两种类型的门闩和栅栏:std::latch和std::barrier。并发调用std::latch或std::barrier的成员函数不会产生数据竞争。
+锁存器(门闩)和栅栏属于协调类型，可以阻塞线程，直到计数器变为零。C++20中有两种类型的门闩和栅栏:std::latch和std::barrier。并发调用std::latch或std::barrier的成员函数不会产生数据竞争。
 
 首先，有两个问题:
 
@@ -17,16 +17,12 @@ Cippi在栅栏外等待
 
 \subsubsubsection{6.4.1\hspace{0.2cm}std::latch}
 
-现在，让我们来了解一下std::latch的接口。
-
-\begin{center}
-std::latch latat的成员函数
-\end{center}
+现在，来了解一下std::latch的接口。
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{成员函数} & \textbf{描述}          \\ \hline
+\textbf{成员函数} & \textbf{std::latch latat成员函数的描述}          \\ \hline
 lat.count\_down(upd = 1)       & 按upd原子地递减计数器，而不阻塞调用者。  \\
 lat.try\_wait()          & 若counter == 0则返回true。 \\
 lat.wait()                     & 若counter == 0立即返回。若不阻塞，直到counter == 0再返回。 \\
@@ -115,13 +111,13 @@ int main() {
 }
 \end{lstlisting}
 
-工作流的思想很简单。六个工人herb, scott, bjarne, andrei, andrew和david(第41 - 57行)必须完成他们的工作。当每个人都完成了他的工作时，它开始倒数std::latch workDone(第25行)。boss(主线程)在第59行阻塞，直到计数器变为0。当计数器为0时，boss使用第二个std::latch goHome向其员工发出回家的信号。这种情况下，初始计数器是1(第9行)，goHome.wait()会阻塞直到计数器变为0。
+六个工人herb, scott, bjarne, andrei, andrew和david(第41 - 57行)必须完成他们的工作。当每个人都完成了他的工作时，开始倒数std::latch workDone(第25行)。boss(主线程)在第59行阻塞，直到计数器变为0。当计数器为0时，boss使用第二个std::latch goHome向其员工发出回家的信号。所以，初始计数器是1(第9行)，goHome.wait()会阻塞直到计数器变为0。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/19.png}\\
+\includegraphics[width=0.55\textwidth]{content/3/chapter6/images/19.png}\\
 \end{center}
 
-在研究这个工作流时，可能会注意到它可以在没有老板的情况下执行。
+研究这个工作流时，可能会注意到其可以在没有老板的情况下执行。
 
 \begin{lstlisting}[style=styleCXX]
 // workers.cpp
@@ -184,17 +180,17 @@ int main() {
 }
 \end{lstlisting}
 
-这个简化的工作流程中，不需要添加太多的内容。wordDone.arrival\_and\_wait()(第22行)等价于count\_down(upd);wait();。这意味着，工人间可以相互协调，不再需要老板，就像在前面的bossWorkers.cpp那样。
+这个简化的工作流程中，不需要添加太多的内容。wordDone.arrival\_and\_wait()(第22行)等价于count\_down(upd);wait();。所以，工人间可以相互协调，不再需要老板，就和bossWorkers.cpp一样。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/20.png}\\
+\includegraphics[width=0.6\textwidth]{content/3/chapter6/images/20.png}\\
 \end{center}
 
 std::barrier与std::latch类似。
 
 \subsubsubsection{6.4.2\hspace{0.2cm}std::barrier}
 
-std::latch和std::barrier之间有两个区别。首先，可以多次使用std::barrier；其次，可以为下一步(迭代)设置计数器。在计数器变为零之后，“完成步骤”立即开始。在“完成步骤”中，调用一个可调用对象。std::barrier在它的构造函数中，可以获得这个可调用的对象。
+std::latch和std::barrier之间有两个区别。首先，可以多次使用std::barrier；其次，可以为下一步(迭代)设置计数器。计数器变为零之后，“完成步骤”立即开始。“完成步骤”中，调用一个可调用对象。std::barrier在它的构造函数中，可以获得这个可调用的对象。
 
 “完成步骤”执行以下操作:
 
@@ -209,19 +205,15 @@ std::latch和std::barrier之间有两个区别。首先，可以多次使用std:
 若完成了“完成步骤”，则所有线程都将解除阻塞。
 \end{enumerate}
 
-\begin{center}
-std::barrier bar的成员函数
-\end{center}
-
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
-\textbf{成员函数}         & \textbf{描述}                                   \\ \hline
+\textbf{成员函数}         & \textbf{std::barrier bar成员函数的描述}                                   \\ \hline
 bar.arrive(upd)         & 按upd自动递减计数器。         \\
 bar.wait()              & 在同步点上阻塞，直到完成步骤完成。  \\
 bar.arrive\_and\_wait() & 等价于wait(arrive())                  \\
 bar.arrive\_and\_drop() & 将当前阶段和后续阶段的计数器减1。 \\
-std::barrier::max       & 得到实现支持的最大值。
+std::barrier::max       & 获取实现支持的最大值。
 \end{tabular}
 \end{table}
 
@@ -229,7 +221,7 @@ bar.arrival\_and\_drop()会让计数器在下一阶段减1，fullTimePartTimeWor
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{全职和兼职工作者}
+\textbf{全职和兼职员工}
 \begin{lstlisting}[style=styleCXX]
 // fullTimePartTimeWorkers.cpp
 
@@ -305,10 +297,10 @@ int main() {
 }
 \end{lstlisting}
 
-这个工作流由两种工人组成:全职工人(第17行)和兼职工人(第32行)。兼职工人在上午工作，全职工人在上午和下午工作。因此，全职工作人员使用workDone.arrive\_and\_wait()两次(第23行和第25行)。相反，兼职工作者只使用workDone.arrive\_and\_drop()(第38行)一次。workDone.arrive\_and\_drop()会让兼职工作者跳过下午的工作。相应地，计数器在第一阶段(上午)的值为6，在第二阶段(下午)的值会变为3。
+这个工作流由两种工人组成:全职工人(第17行)和兼职工人(第32行)。兼职工人在上午工作，全职工人在上午和下午工作，所以全职工作人员使用workDone.arrive\_and\_wait()两次(第23行和第25行)，而兼职工作者只使用workDone.arrive\_and\_drop()(第38行)一次。workDone.arrive\_and\_drop()会让兼职工作者跳过下午的工作。相应地，计数器在第一阶段(上午)的值为6，在第二阶段(下午)的值会变为3。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter6/images/21.png}\\
+\includegraphics[width=0.6\textwidth]{content/3/chapter6/images/21.png}\\
 全职和兼职工作者
 \end{center}
 
@@ -319,7 +311,7 @@ int main() {
 门闩和栅栏都是协调类型，可以阻塞线程，直到计数器变为零。std::latch只能使用一次，而std::barrier可以使用多次。
 
 \item 
-std::latch多用于多线程管理一个任务;barrier多用于多线程管理重复的任务。
+std::latch多用于多线程管理一次性任务，std::barrier多用于多线程管理重复的任务。
 \end{itemize}
 	
 \end{tcolorbox}
