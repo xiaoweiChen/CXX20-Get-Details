@@ -25,9 +25,6 @@ __cpp_concepts 201907L
 
 cppreference.com的\href{https://en.cppreference.com/w/cpp/feature_test}{功能测试}页面，在一个很长的源文件中使用了所有宏。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{使用所有特性测试宏}
 \begin{lstlisting}[style=styleCXX]
 // featureTest.cpp
 // from cppreference.com
@@ -383,14 +380,14 @@ int main() {
 }
 \end{lstlisting}
 
-当然，源文件太长了。若想了解更多关于每个宏的信息，请访问\href{https://en.cppreference.com/w/cpp/feature_test}{特性测试}页面。特别是，该页面为每个宏提供了一个链接，以便您可以获得关于某个特性的更多信息。例如，下面是属性表:
+当然，源文件太长了。若想了解更多关于每个宏的信息，请访问\href{https://en.cppreference.com/w/cpp/feature_test}{特性测试}页面。特别是，该页面为每个宏提供了一个链接，以便您可以获得关于某个特性的更多信息。下面是属性表:
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/5/chapter9/images/2.png}\\
 属性的宏
 \end{center}
 
-下面是<version>标头及其宏的演示。我在全新的GCC、Clang和MSVC编译器上执行了这个程序。我为GCC和Clang编译器使用了编译器资源管理器。/Zc:\_\_cplusplus标志允许\_\_cplusplus宏报告最新的C++语言标准支持。此外，我在所有三个平台上启用了C++20支持。这里，我只显示了对C++20核心语言的支持。
+下面是<version>标头及其宏的演示。我在全新的GCC、Clang和MSVC编译器上执行了这个程序，为GCC和Clang编译器使用了编译器资源管理器。/Zc:\_\_cplusplus标志允许\_\_cplusplus宏报告最新的C++语言标准支持。此外，我在所有三个平台上启用了C++20支持。这里，我只展示了对C++20核心语言的支持。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -398,9 +395,7 @@ int main() {
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/5/chapter9/images/3.png}\\
-GCC编译器支持的C++20
 \end{center}
-
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -408,7 +403,6 @@ GCC编译器支持的C++20
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/5/chapter9/images/4.png}\\
-Clang编译器支持的C++20
 \end{center}
 
 
@@ -418,7 +412,6 @@ Clang编译器支持的C++20
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{content/5/chapter9/images/5.png}\\
-MSVC编译器支持的C++20
 \end{center}
 
 这三张截图清楚地传达了这三巨头的信息:他们的C++20的核心语言支持，在2020年底时还是相当不错的。
