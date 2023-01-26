@@ -1,13 +1,10 @@
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter7/images/13.png}\\
+\includegraphics[width=0.4\textwidth]{content/3/chapter7/images/13.png}\\
 Cippi在处理数据流
 \end{center}
 
 在为无限数据流修改和泛化生成器之前，我想把它作为我们旅程的起点。我有意在源代码中放置了许多输出操作，并且只要求三个值。这种简化和可视化应该有助于理解控制流。
 
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{生成无限数据流的生成器}
 \begin{lstlisting}[style=styleCXX]
 // infiniteDataStreamComments.cpp
 
@@ -97,7 +94,6 @@ Generator<int> getNext(int start = 10, int step = 10) {
 }
 
 int main() {
-
 	auto gen = getNext();
 	for (int i = 0; i <= 2; ++i) {
 		auto val = gen.getNextValue();
@@ -110,13 +106,12 @@ int main() {
 可以在\href{https://godbolt.org/z/cTW9Gq}{Compiler Explorer}上执行程序，使控制流更加明显。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter7/images/14.png}\\
-生成无限数据流的生成器
+\includegraphics[width=0.5\textwidth]{content/3/chapter7/images/14.png}\\
 \end{center}
 
-让我们分析一下控制流。
+来分析一下控制流。
 
-调用getNext()(第89行)创建Generator<int>，同时创建promise\_type(第38行)，然后下面的get\_return\_object(第55行)创建生成器(第58行)，并将其存储在一个局部变量中。当协程第一次挂起时，此调用的结果返回给调用方，初始暂停立即发生(第46行)。因为成员函数调用initial\_suspend返回可等待std::suspend\_always(第46行)，控制流继续使用协程getNext，直到指令co\_yield value(第82行)。该调用会映射到yield\_value(int value)(第61行)，当前值为current\_value = value(第64行)，成员函数yield\_value(int value)返回可等待的std::suspend\_always(第58行)。因此，协程的执行暂停，控制流返回到主函数，for循环开始(第92行)。gen.getNextValue()(第89行)通过使用coro.resume()(第34行)恢复协程来开始执行协程。此外，函数getNextValue()返回使用前面调用的成员函数yield\_value(int value)准备的当前值(第61行)。最后，生成的数字显示在第93行，for循环继续。最后，销毁生成器和promise。
+调用getNext()(第89行)创建Generator<int>，同时创建promise\_type(第38行)，然后下面的get\_return\_object(第55行)创建生成器(第58行)，并将其存储在一个局部变量中。当协程第一次挂起时，此调用的结果返回给调用方，初始暂停立即发生(第46行)。因为成员函数调用initial\_suspend返回可等待std::suspend\_always(第46行)，控制流继续使用协程getNext，直到指令co\_yield value(第82行)。该调用会映射到yield\_value(int value)(第61行)，当前值为current\_value = value(第64行)，成员函数yield\_value(int value)返回可等待的std::suspend\_always(第58行)。因此，协程的执行暂停，控制流返回到主函数，for循环开始(第90行)。gen.getNextValue()(第91行)通过使用coro.resume()(第34行)恢复协程来开始执行协程。此外，函数getNextValue()返回使用前面调用的成员函数yield\_value(int value)准备的当前值(第61行)。最后，生成的数字显示在第93行，for循环继续。最后，销毁生成器和promise。
 
 详细分析之后，我想对控制流进行第一次修改。
 
@@ -145,14 +140,14 @@ int main() {
 协程永远不会运行。因此，生成器和promise创建后，直接销毁。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter7/images/15.png}\\
+\includegraphics[width=0.5\textwidth]{content/3/chapter7/images/15.png}\\
 \end{center}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{7.3.3.2\hspace{0.2cm}initial\_suspend从不挂起}
 
-在程序中，成员函数initial\_suspend返回可等待的std::suspend\_always(第46行)，所以std::suspends\_always会导致协程立即暂停。让我返回std::suspend\_never，而非std::suspend\_always。
+在程序中，成员函数initial\_suspend返回可等待的std::suspend\_always(第46行)，所以std::suspends\_always会导致协程立即暂停。所以返回std::suspend\_never，而非std::suspend\_always。
 
 \begin{lstlisting}[style=styleCXX]
 std::suspend_never initial_suspend() {
@@ -161,17 +156,17 @@ std::suspend_never initial_suspend() {
 }
 \end{lstlisting}
 
-在这种情况下，协程立即运行，并在函数yield\_value调用时暂停。后续gen.getNextValue()恢复协程，并再次触发成员函数yield\_value的执行。结果会忽略起始值10，所以协程的返回值为20、30和40。
+从而，协程立即运行，并在函数yield\_value调用时暂停。后续gen.getNextValue()恢复协程，并再次触发成员函数yield\_value的执行。结果会忽略起始值10，所以协程的返回值为20、30和40。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter7/images/16.png}\\
+\includegraphics[width=0.5\textwidth]{content/3/chapter7/images/16.png}\\
 \end{center}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{7.3.3.3\hspace{0.2cm}yield\_value从不挂起}
 
-成员函数yield\_value由co\_yield value触发，并准备current\_value。该函数返回std::suspend\_always，因此暂停协程。因此，后续gen.getNextValue必须恢复协程。当我改变成员函数yield\_value的返回值为std::suspend\_never时，来看看会发生什么。
+成员函数yield\_value由co\_yield value触发，并准备current\_value。该函数返回std::suspend\_always，因此暂停协程，后续gen.getNextValue必须恢复协程。当我改变成员函数yield\_value的返回值为std::suspend\_never时，来看看会发生什么。
 
 \begin{lstlisting}[style=styleCXX]
 std::suspend_never yield_value(int value) {
@@ -184,7 +179,7 @@ std::suspend_never yield_value(int value) {
 正如各位猜到的那样，while循环会永远运行，协程不返回任何东西。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter7/images/17.png}\\
+\includegraphics[width=0.5\textwidth]{content/3/chapter7/images/17.png}\\
 \end{center}
 
 重构infiniteDataStreamComments.cpp中的生成器很简单，这样它就能产生有限数量的值了。
@@ -293,7 +288,7 @@ int main() {
 }
 \end{lstlisting}
 
-在本例中，生成器进行了实例化，并使用了三次。在前两种情况下，gen(第75行)和gen2(第82行)使用std::string helloWorld进行了初始化，而gen3使用std::vector<int>(第90行)进行初始化。程序的输出应该没啥好说的。第77行依次返回字符串helloWorld的所有字符，第84行只返回前5个字符，第92行返回std::vector<int>的元素。
+本例中，生成器进行了实例化，并使用了三次。前两种情况下，gen(第75行)和gen2(第82行)使用std::string helloWorld进行了初始化，而gen3使用std::vector<int>(第90行)进行初始化。程序的输出应该没啥好说的。第77行依次返回字符串helloWorld的所有字符，第84行只返回前5个字符，第92行返回std::vector<int>的元素。
 
 您可以在\href{https://godbolt.org/z/j9znva}{Compiler Explorer}上尝试编译运行该程序。
 
@@ -314,7 +309,7 @@ Generator<typename Cont::value_type> getNext(Cont cont) {
 }
 \end{lstlisting}
 
-getNext是一个函数模板，接受容器作为参数，并在基于范围的for循环中遍历容器的所有元素。每次迭代后，函数模板都会暂停。生成器的返回类型可能会让你感到惊讶，Cont::value\_type是一个依赖的模板参数，解析器需要对此进行提示。默认情况下，若它可以解释为类型或非类型，则编译器假定其是一个非类型。出于这个原因，必须把typename放在Cont::value\_type前面。
+getNext是一个函数模板，接受容器作为参数，并在基于范围的for循环中遍历容器的所有元素。每次迭代后，函数模板都会暂停。生成器的返回类型可能会让你感到惊讶，Cont::value\_type是一个依赖的模板参数，解析器需要对此进行提示。默认情况下，若可以解释为类型或非类型，则编译器假定其是一个非类型。出于这个原因，必须把typename放在Cont::value\_type的前面。
 
 
 \newpage

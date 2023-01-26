@@ -1,9 +1,9 @@
 \begin{center}
-\includegraphics[width=0.6\textwidth]{content/3/chapter7/images/7.png}\\
+\includegraphics[width=0.4\textwidth]{content/3/chapter7/images/7.png}\\
 Cippi开启工作流
 \end{center}
 
-在有关co\_return的章节中创建future变量之前，我们应该理解其控制流。注释使控制流透明。此外，我还提供了在线编译器上提供的程序的链接。
+在使用co\_return的章节中创建future之前，我们应该理解其控制流。注释使控制流透明。此外，我还提供了在线编译器上提供的程序的链接。
 
 \begin{lstlisting}[style=styleCXX]
 // eagerFutureWithComments.cpp
@@ -70,23 +70,22 @@ int main() {
 	std::cout << "res: " << res << '\n';
 	
 	std::cout << '\n';
-
 }
 \end{lstlisting}
 
-调用createFuture(第60行)创建MyFuture实例(第59行)。MyFuture的构造函数调用(第10行)完成之前，promise promise\_type就会创建、执行和销毁(第20-48行)。promise在其控制流的每一步中都使用可等待的std::suspend\_never(第36和40行)，因此从不暂停。为了为后面的fut.get()保存promise的结果(第60行)，所以必须对它进行内存分配。此外，使用的std::shared\_ptr的(第9行和第21行)程序不会出现内存泄漏。作为局部变量，fut在第65行超出了范围，C++运行时届时会调用其析构函数。
+调用createFuture(第60行)创建MyFuture实例。MyFuture的构造函数调用(第10行)完成之前，promise promise\_type就会创建、执行和销毁(第21-49行)。promise在其控制流的每一步中都使用可等待的std::suspend\_never(第37和41行)，因此从不暂停。为了为后面的fut.get()保存promise的结果(第60行)，所以必须对它进行内存分配。此外，使用的std::shared\_ptr的(第9行和第21行)程序不会出现内存泄漏。作为局部变量，fut在第65行超出了范围，C++运行时届时会调用其析构函数。
 
 您可以在\href{https://godbolt.org/z/Y9naEx}{Compiler Explorer}上尝试编译运行该程序。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter7/images/8.png}\\
+\includegraphics[width=0.4\textwidth]{content/3/chapter7/images/8.png}\\
 \end{center}
 
 所呈现的协程立即运行。此外，协程会在调用者的线程中运行。
 
 现在，来让协程变懒惰。
 
-\subsubsubsection{7.2.1\hspace{0.2cm}惰性Future}
+\subsubsubsection{7.2.1\hspace{0.2cm}惰性future}
 
 惰性future是指仅在请求值时才运行的future，来看看需要对eagerFutureWithComments.cpp中的立即协程中进行哪些修改，才能使其变得懒惰。
 
@@ -171,7 +170,7 @@ int main() {
 可以在\href{https://godbolt.org/z/EejWcj}{Compiler Explorer}上尝试编译运行该程序。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter7/images/9.png}\\
+\includegraphics[width=0.4\textwidth]{content/3/chapter7/images/9.png}\\
 \end{center}
 
 若调用端对future的结果不感兴趣怎么办?让我们模拟一下。
@@ -192,13 +191,13 @@ int main() {
 正如读者们可能猜到的那样，promise永远不会运行，成员函数return\_value和final\_suspend也不会执行。
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{content/3/chapter7/images/10.png}\\
+\includegraphics[width=0.4\textwidth]{content/3/chapter7/images/10.png}\\
 \end{center}
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={关于数据}]
-处理协程的挑战之一是处理协程的生命周期。在前面的eagerFutureWithComments.cpp中，我将协程结果存储在std::shared\_ptr中。这很重要，因为协程是立即执行的。
+处理协程的挑战之一是处理协程的生命周期。在前面的eagerFutureWithComments.cpp中，我将协程结果存储在std::shared\_ptr中。这很重要，因为协程会立即执行。
 
-在lazyFuture.cpp中，使用final\_suspend总是挂起(第48行):std::suspend\_always final\_suspend()。因此，promise比调用端的生命周期更长，不再需要std::shared\_ptr。这种情况下，从函数final\_suspend返回std::suspend\_never将导致未定义行为。因此，结果的生命周期在调用端请求它之前就结束了。
+lazyFuture.cpp中，使用final\_suspend总是挂起(第48行):std::suspend\_always final\_suspend()。因此，promise比调用端的生命周期更长，不再需要std::shared\_ptr。所以，从函数final\_suspend返回std::suspend\_never将导致未定义行为。因此，结果的生命周期在调用端请求它之前就结束了。
 \end{tcolorbox}
 
 让我们进一步修改协程，并在单独的线程中运行promise。
@@ -299,7 +298,7 @@ int main() {
 你可以在\href{https://wandbox.org/permlink/jFVVj80Gxu6bnNkc}{Wandbox}在线编译器上尝试这个程序。
 
 \begin{center}
-\includegraphics[width=1.0\textwidth]{content/3/chapter7/images/11.png}\\
+\includegraphics[width=0.8\textwidth]{content/3/chapter7/images/11.png}\\
 \end{center}
 
 我想补充一些关于成员函数get的内容。在另一个线程中恢复的promise，必须在返回coro.promise().result之前完成，这一点至关重要。
@@ -315,7 +314,7 @@ T get() {
 }
 \end{lstlisting}
 
-函数在调用return coro.promise()后将线程t汇入。结果，程序将具有未定义行为。在下面函数get的实现中，我使用了std::jthread。因为std::jthread在超出作用域时自动汇入，但这太迟了。
+函数在调用return coro.promise()后将线程t汇入，程序将具有未定义行为。下面函数get的实现中，我使用了std::jthread。std::jthread在超出作用域时可以自动汇入，但这太迟了。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -330,8 +329,7 @@ T get() {
 这种情况下，调用端很可能在promise使用成员函数return\_value准备promise之前，就得到了结果。result有一个任意值，res也一样。
 
 \begin{center}
-\includegraphics[width=1.0\textwidth]{content/3/chapter7/images/12.png}\\
-在另一个线程上执行协程
+\includegraphics[width=0.8\textwidth]{content/3/chapter7/images/12.png}\\
 \end{center}
 
 还有其他方法可以确保线程在返回调用之前完成。
