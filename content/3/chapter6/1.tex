@@ -442,7 +442,7 @@ std::suspend_never initial_suspend() {
 结束时暂停的惰性协程
 
 \begin{lstlisting}[style=styleCXX]
-std::suspend_always final_suspend noexcept noexcept noexcept noexcept() {
+std::suspend_always final_suspend() noexcept {
 	return {};
 }
 \end{lstlisting}
@@ -668,7 +668,7 @@ anotherCoroutineHandle & 恢复另一个协程，并将运行权返回给调用�
 \end{tabular}
 \end{table}
 
-若抛出异常会发生什么?若异常发生在await\_read、await\_suspend或await\_resume中，情况会有所不同。
+若抛出异常会发生什么?若异常发生在await\_ready、await\_suspend或await\_resume中，情况会有所不同。
 
 \begin{itemize}
 \item 
