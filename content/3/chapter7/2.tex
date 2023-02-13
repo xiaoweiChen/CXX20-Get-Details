@@ -73,7 +73,7 @@ int main() {
 }
 \end{lstlisting}
 
-调用createFuture(第60行)创建MyFuture实例。MyFuture的构造函数调用(第10行)完成之前，promise promise\_type就会创建、执行和销毁(第21-49行)。promise在其控制流的每一步中都使用可等待的std::suspend\_never(第37和41行)，因此从不暂停。为了为后面的fut.get()保存promise的结果(第60行)，所以必须对它进行内存分配。此外，使用的std::shared\_ptr的(第9行和第21行)程序不会出现内存泄漏。作为局部变量，fut在第65行超出了范围，C++运行时届时会调用其析构函数。
+调用createFuture(第60行)创建MyFuture实例。MyFuture的构造函数调用(第10行)完成之前，promise promise\_type就会创建、执行和销毁(第21-49行)。promise在其控制流的每一步中都使用可等待的std::suspend\_never(第37和41行)，因此从不暂停。为了为后面的fut.get()保存promise的结果(第60行)，所以必须对它进行内存分配。此外，使用的std::shared\_ptr的(第9行和第22行)程序不会出现内存泄漏。作为局部变量，fut在第65行超出了范围，C++运行时届时会调用其析构函数。
 
 您可以在\href{https://godbolt.org/z/Y9naEx}{Compiler Explorer}上尝试编译运行该程序。
 
@@ -204,7 +204,7 @@ lazyFuture.cpp中，使用final\_suspend总是挂起(第48行):std::suspend\_alw
 
 \subsubsubsection{7.2.2\hspace{0.2cm}在另一个线程上执行协程}
 
-进入协程createFuture之前，因为成员函数initial\_suspend返回std::suspend\_always(第52行)，所以协程处于挂起(第67行)状态。因此，promise可以在另一个线程上执行。
+进入协程createFuture之前，因为成员函数initial\_suspend返回std::suspend\_always(第51行)，所以协程处于挂起(第66行)状态。因此，promise可以在另一个线程上执行。
 
 \begin{lstlisting}[style=styleCXX]
 // lazyFutureOnOtherThread.cpp
@@ -293,7 +293,7 @@ int main() {
 }
 \end{lstlisting}
 
-我在代码中添加了一些注释，显示正在运行的线程的id。lazyFutureOnOtherThread.cpp与前面的程序lazyFuture.cpp非常相似。主要区别在于成员函数get(第19行)。使用std::thread t([this] \{coro.resume();\});(第24行)，将在另一个线程上恢复协程的执行。
+我在代码中添加了一些注释，显示正在运行的线程的id。lazyFutureOnOtherThread.cpp与前面的程序lazyFuture.cpp非常相似。主要区别在于成员函数get(第19行)。使用std::thread t([this] \{coro.resume();\});(第23行)，将在另一个线程上恢复协程的执行。
 
 你可以在\href{https://wandbox.org/permlink/jFVVj80Gxu6bnNkc}{Wandbox}在线编译器上尝试这个程序。
 
