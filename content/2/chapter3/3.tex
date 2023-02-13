@@ -69,7 +69,7 @@ std::cout << std::bitset<8>(std::rotr(num, 2)) << '\n'; // 10101100
 
 \subsubsubsection{3.3.4\hspace{0.2cm}日期和时区}
 
-C++11中的\href{https://en.cppreference.com/w/cpp/chrono}{chrono库}扩展了日期和时区功能。日期由表示年、月、周中的天和月中的第n个工作日组成。这些基本类型可以组合，形成复杂类型，例如：yea\_month、year\_month\_day、year\_month\_day\_last、year\_month\_weekday和year\_month\_weekday\_last。为了方便地指定时间点，操作符“/”可以重载。此外，可以用新字面量: d表示天，y表示年。
+C++11中的\href{https://en.cppreference.com/w/cpp/chrono}{chrono库}扩展了日期和时区功能。日期由表示年、月、周中的天和月中的第n个工作日组成。这些基本类型可以组合，形成复杂类型，例如：year\_month、year\_month\_day、year\_month\_day\_last、year\_month\_weekday和year\_month\_weekday\_last。为了方便地指定时间点，操作符“/”可以重载。此外，可以用新字面量: d表示天，y表示年。
 
 时间点可以显示在不同的时区。由于扩展了chrono库，下面的用例实现起来就很简单:
 
