@@ -30,17 +30,17 @@ void needInt(int i){
 int main(){
 
 	std::cout << std::boolalpha << '\n';
-	
+
 	double d{1.234};
 	std::cout << "double: " << d << '\n';
 	needInt(d);
-	
+
 	std::cout << '\n';
-	
+
 	bool b{true};
 	std::cout << "bool: " << b << '\n';
 	needInt(b);
-	
+
 	std::cout << '\n';
 
 }
@@ -122,11 +122,11 @@ bool提升为int
 #include <list>
 
 int main(){
-	
+
 	std::list<int> myList{1, 10, 3, 2, 5};
-	
+
 	std::sort(myList.begin(), myList.end());
-	
+
 }
 \end{lstlisting}
 
@@ -165,13 +165,13 @@ constexpr void sort(RandomIt first, RandomIt last, Compare comp);
 下面是std::sort重载的类型要求:
 
 \begin{itemize}
-\item 
+\item
 RandomIt必须满足ValueSwappable和LegacyRandomAccessIterator的要求
 
-\item 
+\item
 解引用RandomIt的类型必须满足MoveAssignable和MoveConstructible的要求。
 
-\item 
+\item
 可解引用的RandomIt的类型必须满足Compare的要求。
 \end{itemize}
 
@@ -223,25 +223,25 @@ template<class I>
 \subsubsubsection{4.1.2\hspace{0.2cm}概念的优势}
 
 \begin{itemize}
-\item 
+\item
 模板参数的需求描述是接口声明的一部分。
 
-\item 
+\item
 函数的重载和类模板的特化可以基于概念。
 
-\item 
+\item
 概念可用于函数模板、类模板和类或类模板的泛型成员函数。
 
-\item 
+\item
 因为编译器会将模板形参的要求与给定的模板实参进行比较，所以可得到明确的错误消息。
 
-\item 
+\item
 可以使用预定义的概念，也可以自定义概念。
 
-\item 
+\item
 auto和概念的用法统一，可以用概念来代替auto。
 
-\item 
+\item
 若函数声明使用了概念，则它自动成为函数模板。因此，编写函数模板就会如同编写函数一样简单。
 \end{itemize}
 
@@ -258,13 +258,13 @@ Haskell类型的层次结构
 但C++的概念不同。以下是我观察到的结果。
 
 \begin{itemize}
-\item 
+\item
 Haskell中，类型都必须是实例。C++20中，类型必须满足概念的需求。
 
-\item 
+\item
 C++中，概念可以用在模板的非类型参数上。例如，像值5这样的数字就是非类型参数。例如，当想要一个包含5个元素的整型数组std::array时，可以使用非类型参数5:std::array<int, 5> myArray。
 
-\item 
+\item
 概念不会增加运行时的成本。
 \end{itemize}
 
@@ -316,12 +316,12 @@ auto gcd3(std::integral auto a, std::integral auto b) {
 int main(){
 
 	std::cout << '\n';
-	
+
 	std::cout << "gcd(100, 10)= " << gcd(100, 10) << '\n';
 	std::cout << "gcd1(100, 10)= " << gcd1(100, 10) << '\n';
 	std::cout << "gcd2(100, 10)= " << gcd2(100, 10) << '\n';
 	std::cout << "gcd3(100, 10)= " << gcd3(100, 10) << '\n';
-	
+
 	std::cout << '\n';
 
 }
@@ -332,16 +332,16 @@ int main(){
 下面是使用概念的四种方式:
 
 \begin{itemize}
-\item 
+\item
 requires子句(第6行)
 
-\item 
+\item
 尾部requires子句(第14行)
 
-\item 
+\item
 约束模板参数(第19行)
 
-\item 
+\item
 简化的函数模板(第25行)
 \end{itemize}
 
@@ -384,10 +384,10 @@ int sum(int j) {
 int main() {
 
 	std::cout << '\n';
-	
+
 	std::cout << "sum<20>(2000): " << sum<20>(2000) << '\n',
 	// std::cout << "sum<23>(2000): " << sum<23>(2000) << '\n', // ERROR
-	
+
 	std::cout << '\n';
 
 }
@@ -461,30 +461,30 @@ struct Test{};
 int main() {
 
 	std::cout << '\n';
-	
+
 	std::cout << std::boolalpha;
-	
+
 	std::cout << "std::three_way_comparable<int>: "
 	<< std::three_way_comparable<int> << "\n";
-	
+
 	std::cout << "std::three_way_comparable<double>: ";
 	if (std::three_way_comparable<double>) std::cout << "True";
 	else std::cout << "False";
-	
+
 	std::cout << "\n\n";
-	
+
 	static_assert(std::three_way_comparable<std::string>);
-	
+
 	std::cout << "std::three_way_comparable<Test>: ";
 	if constexpr(std::three_way_comparable<Test>) std::cout << "True";
 	else std::cout << "False";
-	
+
 	std::cout << '\n';
-	
+
 	std::cout << "std::three_way_comparable<std::vector<int>>: ";
 	if constexpr(std::three_way_comparable<std::vector<int>>) std::cout << "True";
 	else std::cout << "False";
-	
+
 	std::cout << '\n';
 
 }
@@ -564,7 +564,7 @@ int main() {
 
 	MyVector<int> myVec1;
 	myVec1.push_back(2020);
-	
+
 	MyVector<NotCopyable> myVec2;
 	myVec2.push_back(NotCopyable()); // ERROR because not copyable
 
@@ -595,13 +595,13 @@ template<std::integral... Args>
 bool none(Args... args) { return not(... || args); }
 
 int main(){
-	
+
 	std::cout << std::boolalpha << '\n';
-	
+
 	std::cout << "all(5, true, false): " << all(5, true, false) << '\n';
-	
+
 	std::cout << "any(5, true, false): " << any(5, true, false) << '\n';
-	
+
 	std::cout << "none(5, true, false): " << none(5, true, false) << '\n';
 
 }
@@ -650,19 +650,19 @@ void advance(I& iter, int n){
 int main() {
 
 	std::cout << '\n';
-	
+
 	std::forward_list forwList{1, 2, 3};
 	std::forward_list<int>::iterator itFor = forwList.begin();
 	advance(itFor, 2);
-	
+
 	std::list li{1, 2, 3};
 	std::list<int>::iterator itBi = li.begin();
 	advance(itBi, 2);
-	
+
 	std::vector vec{1, 2, 3};
 	std::vector<int>::iterator itRa = vec.begin();
 	advance(itRa, 2);
-	
+
 	std::cout << '\n';
 }
 \end{lstlisting}
@@ -704,18 +704,18 @@ struct Vector<Reg> {
 };
 
 int main() {
-	
+
 	std::cout << '\n';
-	
+
 	Vector<int> myVec1;
 	Vector<int&> myVec2;
-	
+
 	std::cout << '\n';
 
 }
 \end{lstlisting}
 
-实例化类模板时，编译器会选择最特化的一个。吃点饭VVVVVVVVVV对于Vector<int> myVec(第24行)，会选择std::regular(第13行)的偏特化模板。引用Vector<int\&> myVec2(第25行)不是std::regular类型，因此选择主模板(第6行)。
+实例化类模板时，编译器会选择最特化的一个。对于Vector<int> myVec(第24行)，会选择std::regular(第13行)的偏特化模板。引用Vector<int\&> myVec2(第25行)不是std::regular类型，因此选择主模板(第6行)。
 
 \begin{tcblisting}{commandshell={}}
 Vector<std::regular>
@@ -738,10 +738,10 @@ Iter find(Iter b, Iter e, Val v)
 find需要Iter迭代器与Val进行比较
 
 \begin{itemize}
-\item 
+\item
 迭代器必须是输入迭代器;
 
-\item 
+\item
 迭代器的值类型必须与Val相同。
 \end{itemize}
 
@@ -780,15 +780,15 @@ auto addTemplate(T fir, T2 sec){ return fir + sec; }
 int main(){
 
 	std::cout << std::boolalpha << '\n';
-	
+
 	std::cout << addLambda(1, 5) << " " << addTemplate(1, 5) << '\n';
 	std::cout << addLambda(true, 5) << " " << addTemplate(true, 5) << '\n';
 	std::cout << addLambda(1, 5.5) << " " << addTemplate(1, 5.5) << '\n';
-	
+
 	const std::string fir{"ge"};
 	const std::string sec{"neric"};
 	std::cout << addLambda(fir, sec) << " " << addTemplate(fir, sec) << '\n';
-	
+
 	std::cout << '\n';
 
 }
@@ -825,20 +825,20 @@ std::integral auto getIntegral(int val){
 int main(){
 
 std::cout << std::boolalpha << '\n';
-	
+
 	std::vector<int> vec{1, 2, 3, 4, 5};
 	for (std::integral auto i: vec) std::cout << i << " ";
 	std::cout << '\n';
-	
+
 	std::integral auto b = true;
 	std::cout << b << '\n';
-	
+
 	std::integral auto integ = getIntegral(10);
 	std::cout << integ << '\n';
-	
+
 	auto integ1 = getIntegral(10);
 	std::cout << integ1 << '\n';
-	
+
 	std::cout << '\n';
 
 }
@@ -895,13 +895,13 @@ auto gcd4(auto a, auto b){
 int main() {
 
 	std::cout << '\n';
-	
+
 	std::cout << "gcd(100, 10)= " << gcd(100, 10) << '\n';
 	std::cout << "gcd1(100, 10)= " << gcd1(100, 10) << '\n';
 	std::cout << "gcd2(100, 10)= " << gcd2(100, 10) << '\n';
 	std::cout << "gcd3(100, 10)= " << gcd3(100, 10) << '\n';
 	std::cout << "gcd4(100, 10)= " << gcd4(100, 10) << '\n';
-	
+
 	std::cout << '\n';
 
 }
@@ -976,11 +976,11 @@ void overload(long t){
 int main(){
 
 	std::cout << '\n';
-	
+
 	overload(3.14);
 	overload(2010);
 	overload(2020L);
-	
+
 	std::cout << '\n';
 
 }
@@ -1016,7 +1016,7 @@ Integral{T}
 class ConstrainedClass{};
 \end{lstlisting}
 
-上面的这个小代码片段，以两种方式引入了模板。首先，定义一个带有约束模板参数的函数模板;其次，定义带有约束模板参数的类模板。引入模板有一个限制，只能将其用于有约束的模板参数(concept)，而不能用于无约束的模板参数(auto)。这种不对称性可以通过定义一个总是返回true的概念轻松搞定: 
+上面的这个小代码片段，以两种方式引入了模板。首先，定义一个带有约束模板参数的函数模板;其次，定义带有约束模板参数的类模板。引入模板有一个限制，只能将其用于有约束的模板参数(concept)，而不能用于无约束的模板参数(auto)。这种不对称性可以通过定义一个总是返回true的概念轻松搞定:
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -1068,25 +1068,25 @@ concept bool Generic(){
 本节有大约15个概念，这些概念表示类型、类型分类和基本类型属性之间的关系。其实现通常直接基于\href{https://en.cppreference.com/w/cpp/header/type_traits}{类型特性库}中的相应函数。若有必要，我会提供额外的解释。
 
 \begin{itemize}
-\item 
+\item
 same\_as
 
-\item 
+\item
 derived\_from
 
-\item 
+\item
 convertible\_to
 
-\item 
+\item
 common\_reference\_with: common\_reference\_with<T, U>必须定义良好，T和U必须可以转换为引用类型C，其中C与common\_reference\_t<T, U>相同
 
-\item 
+\item
 common\_with: 类似于common\_reference\_with，但是common类型C与common\_type\_t<T, U>相同，并且可能不是引用类型
 
-\item 
+\item
 assignable\_from
 
-\item 
+\item
 swappable
 \end{itemize}
 
@@ -1095,16 +1095,16 @@ swappable
 \textbf{4.1.7.2.2\hspace{0.2cm}算术的概念}
 
 \begin{itemize}
-\item 
+\item
 integral
 
-\item 
+\item
 signed\_integral
 
-\item 
+\item
 unsigned\_integral
 
-\item 
+\item
 floating\_point
 \end{itemize}
 
@@ -1129,19 +1129,19 @@ concept floating_point = is_floating_point_v<T>;
 \textbf{4.1.7.2.3\hspace{0.2cm}生命周期的概念}
 
 \begin{itemize}
-\item 
+\item
 destructible
 
-\item 
+\item
 constructible\_from
 
-\item 
+\item
 default\_constructible
 
-\item 
+\item
 move\_constructible
 
-\item 
+\item
 copy\_constructible
 \end{itemize}
 
@@ -1150,29 +1150,29 @@ copy\_constructible
 \textbf{4.1.7.2.4\hspace{0.2cm}比较的概念}
 
 \begin{itemize}
-\item 
+\item
 equality\_comparable
 
-\item 
+\item
 totally\_ordered
 \end{itemize}
 
 学习数学时会了解:对于类型T的值a、b和c，若以下描述成立，则T类型为totally\_ordered(全序关系)
 
 \begin{itemize}
-\item 
+\item
 bool(a < b)、bool(a > b)或bool(a == b)中的一个为真
 
-\item 
+\item
 bool(a < b)和bool(b < c)，则bool(a < c)
 
-\item 
+\item
 bool(a > b) == bool(b < a)
 
-\item 
+\item
 bool(a <= b) == !bool(b < a)
 
-\item 
+\item
 bool(a >= b) == !bool(a < b)
 \end{itemize}
 
@@ -1181,16 +1181,16 @@ bool(a >= b) == !bool(a < b)
 \textbf{4.1.7.2.5\hspace{0.2cm}对象的概念}
 
 \begin{itemize}
-\item 
+\item
 movable
 
-\item 
+\item
 copyable
 
-\item 
+\item
 semiregular
 
-\item 
+\item
 regular
 \end{itemize}
 
@@ -1222,13 +1222,13 @@ concept regular = semiregular<T> && equality_comparable<T>;
 \textbf{4.1.7.2.6\hspace{0.2cm}可调用的概念}
 
 \begin{itemize}
-\item 
+\item
 invocable
 
-\item 
+\item
 regular\_invocable:类型建模为可调用且保持相等，并且不修改函数参数;保持相等，说明在给定相同的输入时会产生相同的输出
 
-\item 
+\item
 predicate:若类型对可调用对象建模并返回布尔值，则可对谓词建模
 \end{itemize}
 
@@ -1245,22 +1245,22 @@ predicate:若类型对可调用对象建模并返回布尔值，则可对谓词�
 迭代器库有许多重要的概念，在<iterator>头文件中定义。下面是迭代器的类别:
 
 \begin{itemize}
-\item 
+\item
 input\_iterator
 
-\item 
+\item
 output\_iterator
 
-\item 
+\item
 forward\_iterator
 
-\item 
+\item
 bidirectional\_iterator
 
-\item 
+\item
 random\_access\_iterator
 
-\item 
+\item
 contiguous\_iterator
 \end{itemize}
 
@@ -1276,17 +1276,17 @@ std::forward\_iterator &
 std::bidirectional\_iterator & -{}-It,It-{}-           & \begin{tabular}[c]{@{}l@{}}std::set\\ std::map\\ std::multiset\\ std::multimap\\ std::list\end{tabular} \\ \hline
 std::random\_access\_iterator &
 \begin{tabular}[c]{@{}l@{}}It{[}i{]}\\ It += n, It -= n\\ It + n, It - n,\\ n + It,\\ It - It2,\\ It \textless It2, It \textless{}= It2\\ It \textless It2, It \textgreater{}= It2\end{tabular} &
-\begin{tabular}[c]{@{}l@{}}std::array\\ std::vector\\ std::deque\\ std::string\end{tabular} 
+\begin{tabular}[c]{@{}l@{}}std::array\\ std::vector\\ std::deque\\ std::string\end{tabular}
 \end{tabular}
 \end{table}
 
 以下关系成立:
 
 \begin{itemize}
-\item 
+\item
 随机访问迭代器是双向迭代器，双向迭代器是前向迭代器。
 
-\item 
+\item
 连续迭代器是一种随机访问迭代器，要求容器的元素连续存储在内存中。
 \end{itemize}
 
@@ -1297,13 +1297,13 @@ std::random\_access\_iterator &
 \textbf{4.1.7.4.1\hspace{0.2cm}算法的概念}
 
 \begin{itemize}
-\item 
+\item
 permutable:元素可直接重排序
 
-\item 
+\item
 mergeable:可以将已排序的序列合并到输出序列中
 
-\item 
+\item
 sortable:可以将一个序列排列成有序序列
 \end{itemize}
 
@@ -1318,29 +1318,29 @@ sortable:可以将一个序列排列成有序序列
 \textbf{4.1.7.5.1\hspace{0.2cm}范围}
 
 \begin{itemize}
-\item 
+\item
 range:范围指定可以遍历的一组项，提供了一个开始迭代器和一个结束哨兵。当然，STL容器也有范围。
 \end{itemize}
 
 对于std::ranges::range还可以进一步的细化。
 
 \begin{itemize}
-\item 
+\item
 input\_range:指定一个范围，其迭代器类型满足input\_iterator(例如，可以从开始迭代到结束至少一次)
 
-\item 
+\item
 output\_range:指定迭代器类型满足output\_iterator的范围
 
-\item 
+\item
 forward\_range:指定一个范围，其迭代器类型满足forward\_iterator(可以从开始到结束迭代多次)
 
-\item 
+\item
 bidirectional\_range:指定迭代器类型满足bidirectional\_iterator的范围(可以向前和向后迭代不止一次)
 
-\item 
+\item
 random\_access\_range:指定迭代器类型满足random\_access\_iterator的范围(可以在常量时间内使用索引操作符[]跳访问任意元素)
 
-\item 
+\item
 contiguous\_range:指定一个范围，其迭代器类型满足contiguous\_iterator(元素连续存储在内存中)
 \end{itemize}
 
@@ -1393,30 +1393,30 @@ concept concept-name = constraint-expression;
 约束表达式可以是:
 
 \begin{itemize}
-\item 
+\item
 概念或编译时谓词的逻辑组合
 
 \begin{itemize}
-\item 
+\item
 逻辑组合可以由连接(\&\&)、析取(||)或否定(!)
 
-\item 
+\item
 编译时谓词是在编译时返回布尔值的可调用对象
 \end{itemize}
 
-\item 
+\item
 需求表达式
 \begin{itemize}
-\item 
+\item
 简单的需求
 
-\item 
+\item
 类型的需求
 
-\item 
+\item
 复合的需求
 
-\item 
+\item
 嵌套的需求
 \end{itemize}
 \end{itemize}
@@ -1431,9 +1431,9 @@ concept concept-name = constraint-expression;
 
 \hspace*{\fill} \\ %插入空行
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={不要递归地定义概念或尝试约束它们}]
-	
+
 概念的递归定义无效:
-	
+
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{递归地定义概念}
@@ -1441,12 +1441,12 @@ concept concept-name = constraint-expression;
 template<typename T>
 concept Recursive = Recursive<T*>;
 \end{lstlisting}
-	
+
 GCC编译器在这种情况下抱怨'Recursive'没有在此作用域中声明。
 
 \hspace*{\fill} \\ %插入空行
 当尝试约束概念(例如下面的代码片段)时，GCC编译器会明确地提示概念不能约束。
-	
+
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{约束概念}
@@ -1502,12 +1502,12 @@ void func(UnsignedIntegral auto integ) {
 }
 
 int main() {
-	
+
 	std::cout << '\n';
-	
+
 	func(-5);
 	func(5u);
-	
+
 	std::cout << '\n';
 
 }
@@ -1538,10 +1538,10 @@ requires (parameter-list(optional)) {requirement-seq}
 \end{lstlisting}
 
 \begin{itemize}
-\item 
+\item
 参数列表:以逗号分隔的参数列表，例如：在函数声明中
 
-\item 
+\item
 需求序列:由简单需求、类型需求、复合需求或嵌套需求组成
 \end{itemize}
 
@@ -1561,7 +1561,7 @@ concept Addable = requires (T a, T b) {
 Addable的概念要求两个相同类型T可以进行加法a + b。
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={避免使用匿名概念}]
-	
+
 可以定义一个匿名概念并直接使用，但请避免这样做。这会使得代码难以阅读，并且无法重用相应的概念。
 
 \hspace*{\fill} \\ %插入空行
@@ -1584,7 +1584,7 @@ T add2(T a, T b) { return a + b; }
 \end{lstlisting}
 
 概念应该对一般情况进行封装，并为它们提供一个自解释的名称以便重用。这对于维护代码非常重要。匿名概念读起来更像模板参数的语法约束。
-	
+
 \end{tcolorbox}
 
 \hspace*{\fill} \\ %插入空行
@@ -1670,14 +1670,14 @@ int main() {
 
 	std::cout << std::boolalpha << '\n';
 	std::cout << "areEqual(1, 5): " << areEqual(1, 5) << '\n';
-	
+
 	/*
-	
+
 	bool res = areEqual(WithoutEqual(), WithoutEqual());
 	bool res2 = areEqual(WithoutUnequal(), WithoutUnequal());
-	
+
 	*/
-	
+
 	std::cout << '\n';
 
 }
@@ -1837,18 +1837,18 @@ T getSmaller(const T& a, const T& b) {
 int main() {
 
 	std::cout << std::boolalpha << '\n';
-	
+
 	std::cout << "areEqual(1, 5): " << areEqual(1, 5) << '\n';
-	
+
 	std::cout << "getSmaller(1, 5): " << getSmaller(1, 5) << '\n';
-	
+
 	std::unordered_set<int> firSet{1, 2, 3, 4, 5};
 	std::unordered_set<int> secSet{5, 4, 3, 2, 1};
-	
+
 	std::cout << "areEqual(firSet, secSet): " << areEqual(firSet, secSet) << '\n';
-	
+
 	// auto smallerSet = getSmaller(firSet, secSet);
-	
+
 	std::cout << '\n';
 
 }
@@ -1874,10 +1874,10 @@ areEqual(firSet, secSet): true
 排序概念已经是C++20标准的一部分。
 
 \begin{itemize}
-\item 
+\item
 std::three\_way\_comparable:等价于上面提出的排序概念
 
-\item 
+\item
 std::three\_way\_comparable\_with:允许比较不同类型的值;例如:1.0 < 1.0f
 \end{itemize}
 
@@ -1892,7 +1892,7 @@ C++20中，可以使用三向比较操作符，也称为宇宙飞船操作符<=>
 半常规和常规是C++中的基本思想。抱歉，我应该说概念。例如，在《C++核心指南》中的解释\href{http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rt-regular}{T.46:要求模板参数至少是半常规和常规类型}。现在，只剩下一个重要的问题需要回答:什么是常规类型或半常规类型?在讨论之前，先给出结论:
 
 \begin{itemize}
-\item 
+\item
 常规类型“行为类似于int型”，可以复制，并且复制操作的结果独立于原始操作，具有相同的值。
 \end{itemize}
 
@@ -1904,19 +1904,19 @@ C++20中，可以使用三向比较操作符，也称为宇宙飞船操作符<=>
 \href{https://en.wikipedia.org/wiki/Alexander_Stepanov}{Alexander Stepanov}，标准模板库的设计者，定义了术语常规类型和半常规类型。根据他的说法，若一个类型支持这些函数，那么它就是常规类型
 
 \begin{itemize}
-\item 
+\item
 复制构造
 
-\item 
+\item
 赋值
 
-\item 
+\item
 等式
 
-\item 
+\item
 析构
 
-\item 
+\item
 全序
 \end{itemize}
 
@@ -1931,38 +1931,38 @@ C++20中，可以使用三向比较操作符，也称为宇宙飞船操作符<=>
 一个半常规的X型必须支持六大函数，并且可交换。六大函数包括:
 
 \begin{itemize}
-\item 
-默认构造函数: 
+\item
+默认构造函数:
 \begin{lstlisting}[style=styleCXX]
 X()
 \end{lstlisting}
 
-\item 
+\item
 复制构造函数:
 \begin{lstlisting}[style=styleCXX]
 X(const X&)
 \end{lstlisting}
 
-\item 
-复制赋值操作符: 
+\item
+复制赋值操作符:
 \begin{lstlisting}[style=styleCXX]
 X& operator = (const X&)
 \end{lstlisting}
 
-\item 
-移动构造函数: 
+\item
+移动构造函数:
 \begin{lstlisting}[style=styleCXX]
 X(X&&)
 \end{lstlisting}
 
-\item 
-移动赋值操作符: 
+\item
+移动赋值操作符:
 \begin{lstlisting}[style=styleCXX]
 X& operator = (X&&)
 \end{lstlisting}
 
-\item 
-析构函数: 
+\item
+析构函数:
 \begin{lstlisting}[style=styleCXX]
 ~X()
 \end{lstlisting}
@@ -2077,7 +2077,7 @@ concept Equal =
 template<typename T>
 concept Regular = Equal<T> &&
 				SemiRegular<T>;
-				
+
 template <Regular T>
 void behavesLikeAnInt(T) {
 	// ...
@@ -2101,15 +2101,15 @@ int main() {
 	int myInt{};
 	behavesLikeAnInt(myInt);
 	behavesLikeAnInt2(myInt);
-	
+
 	std::vector<int> myVec{};
 	behavesLikeAnInt(myVec);
 	behavesLikeAnInt2(myVec);
-	
+
 	EqualityComparable equComp;
 	behavesLikeAnInt(equComp);
 	behavesLikeAnInt2(equComp);
-	
+
 	NotEqualityComparable notEquComp;
 	behavesLikeAnInt(notEquComp);
 	behavesLikeAnInt2(notEquComp);
@@ -2122,7 +2122,7 @@ int main() {
 虽然目前处于概念实现的早期阶段，这里就比较一下新的GCC和MSVC编译器的错误消息。
 
 \begin{itemize}
-\item 
+\item
 GCC
 
 我在\href{https://godbolt.org/}{Compiler Explorer}上使用当前的GCC 10.2命令行参数-std=c++20。当使用用户自定义的Regular(第64行)概念时，会出现编译错误，这里只展示比较重要的错误消息:
@@ -2137,7 +2137,7 @@ C++20概念std::regular更加全面。因此，第65行中的调用给出了一�
 \includegraphics[width=1.0\textwidth]{content/3/chapter4/images/1-7.png}\\
 \end{center}
 
-\item 
+\item
 MSVC
 
 MSVC编译器给出的错误信息就不太具体了。
@@ -2161,16 +2161,16 @@ MSVC编译器给出的错误信息就不太具体了。
 \textbf{改进派}
 
 \begin{itemize}
-\item 
+\item
 概念促进在更高抽象级别上使用泛型代码。
 
-\item 
+\item
 当编译模板失败时，概念会给出可以理解的错误消息，提供了无法通过\href{https://en.cppreference.com/w/cpp/header/type_traits}{type-traits库}、\href{https://en.cppreference.com/w/cpp/language/sfinae}{SFINAE}和\href{https://en.cppreference.com/w/cpp/language/static_assert}{static\_assert}实现的功能。
 
-\item 
+\item
 auto是一种不受约束的占位符。C++20中，可以将概念用作有约束的占位符。
 
-\item 
+\item
 C++14中，可以使用泛型Lambda定义函数模板。
 \end{itemize}
 
@@ -2178,16 +2178,16 @@ C++14中，可以使用泛型Lambda定义函数模板。
 \textbf{革命派}
 
 \begin{itemize}
-\item 
+\item
 概念促进在更高抽象级别上使用泛型代码。
 
-\item 
+\item
 概念允许我们验证模板需求。当然，也可以通过组合\href{https://en.cppreference.com/w/cpp/header/type_traits}{type-traits库}、\href{https://en.cppreference.com/w/cpp/language/sfinae}{SFINAE}和\href{https://en.cppreference.com/w/cpp/language/static_assert}{static\_assert}来实现模板参数的验证，但是这种技术太高级了，不能将其视为通用解决方案。
 
-\item 
+\item
 有了简写的函数模板语法，从而模板定义得到了根本性的改进。
 
-\item 
+\item
 概念表示语义类别，而不是语法约束。我们不需要像Addable这样的概念，要求类型支持加法操作符，而应该考虑数字概念，其中数字是一个语义类别，例如：相等或有序。
 \end{itemize}
 
@@ -2200,22 +2200,22 @@ C++14中，可以使用泛型Lambda定义函数模板。
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 \begin{itemize}
-\item 
+\item
 定义在特定类型或类型参数上的函数或类有一组问题，概念通过对类型参数施加语义约束来解决这些问题。
 
-\item 
+\item
 概念可以应用在requires子句中，约束的模板参数，或在缩写函数模板中。
 
-\item 
+\item
 概念是编译时谓词，可用于各种模板。也可以重载概念，使用概念特化模板，将概念用于成员函数或可变参数模板。
 
-\item 
+\item
 因为C++20和概念，不受约束占位符(auto)和受约束占位符(concept)的使用方式统一了。无论何时使用auto，都可以使用C++20中的概念。
 
-\item 
+\item
 新的简化的函数模板语法，使得定义函数模板变得更加简单。
 
-\item 
+\item
 定义自己的概念之前，请先研究C++20标准中丰富的预定义概念集。定义概念时，可以使用两种技术:结合概念和编译时谓词，或者使用需求表达式。
 \end{itemize}
 \end{tcolorbox}
