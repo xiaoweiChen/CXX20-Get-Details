@@ -111,7 +111,7 @@ int main() {
 
 来分析一下控制流。
 
-调用getNext()(第89行)创建Generator<int>，同时创建promise\_type(第38行)，然后下面的get\_return\_object(第55行)创建生成器(第58行)，并将其存储在一个局部变量中。当协程第一次挂起时，此调用的结果返回给调用方，初始暂停立即发生(第46行)。因为成员函数调用initial\_suspend返回可等待std::suspend\_always(第46行)，控制流继续使用协程getNext，直到指令co\_yield value(第82行)。该调用会映射到yield\_value(int value)(第61行)，当前值为current\_value = value(第64行)，成员函数yield\_value(int value)返回可等待的std::suspend\_always(第58行)。因此，协程的执行暂停，控制流返回到主函数，for循环开始(第90行)。gen.getNextValue()(第91行)通过使用coro.resume()(第34行)恢复协程来开始执行协程。此外，函数getNextValue()返回使用前面调用的成员函数yield\_value(int value)准备的当前值(第61行)。最后，生成的数字显示在第93行，for循环继续。最后，销毁生成器和promise。
+调用getNext()(第89行)创建Generator<int>，同时创建promise\_type(第38行)，然后下面的get\_return\_object(第55行)创建生成器(第58行)，并将其存储在一个局部变量中。当协程第一次挂起时，此调用的结果返回给调用方，初始暂停立即发生(第46行)。因为成员函数调用initial\_suspend返回可等待std::suspend\_always(第46行)，控制流继续使用协程getNext，直到指令co\_yield value(第82行)。该调用会映射到yield\_value(int value)(第61行)，当前值为current\_value = value(第64行)，成员函数yield\_value(int value)返回可等待的std::suspend\_always(第58行)。因此，协程的执行暂停，控制流返回到主函数，for循环开始(第90行)。gen.getNextValue()(第91行)通过使用coro.resume()(第34行)恢复协程来开始执行协程。此外，函数getNextValue()返回使用前面调用的成员函数yield\_value(int value)准备的当前值(第61行)。最后，生成的数字显示在第92行，for循环继续。最后，销毁生成器和promise。
 
 详细分析之后，我想对控制流进行第一次修改。
 
@@ -123,7 +123,7 @@ int main() {
 \noindent
 \textbf{7.3.3.1\hspace{0.2cm}协程不会恢复}
 
-当我禁用协程恢复(第92行中的gen.getNextValue())和其值的显示(第93行)时，协程会立即暂停。
+当我禁用协程恢复(第91行中的gen.getNextValue())和其值的显示(第92行)时，协程会立即暂停。
 
 \begin{lstlisting}[style=styleCXX]
 int main() {

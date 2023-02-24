@@ -442,7 +442,7 @@ std::suspend_never initial_suspend() {
 结束时暂停的惰性协程
 
 \begin{lstlisting}[style=styleCXX]
-std::suspend_always final_suspend noexcept noexcept noexcept noexcept() {
+std::suspend_always final_suspend() noexcept {
 	return {};
 }
 \end{lstlisting}
@@ -631,27 +631,27 @@ awaitable.await_ready() returns false:
 			coroutine keeps suspended
 			return to caller
 	
-	bool:
-		bool result = awaitable.await_suspend(coroutineHandle);
-		if result:
-			coroutine keep suspended
-			return to caller
-		else:
-			go to resumptionPoint
+		bool:
+			bool result = awaitable.await_suspend(coroutineHandle);
+			if result:
+				coroutine keep suspended
+				return to caller
+			else:
+				go to resumptionPoint
 	
-	another coroutine handle:
-		auto anotherCoroutineHandle = awaitable.await_suspend(coroutineHandle);
-		anotherCoroutineHandle.resume();
-		return to caller
+		another coroutine handle:
+			auto anotherCoroutineHandle = awaitable.await_suspend(coroutineHandle);
+			anotherCoroutineHandle.resume();
+			return to caller
 
 resumptionPoint:
 
 return awaitable.await_resume();
 \end{lstlisting}
 
-只有当awaitable.await\_ready()返回false(第1行)时，工作流才会执行。若返回true，协程已经准备就绪，并返回调用awaitable.await\_resume()的结果(第27行)。
+只有当awaitable.await\_ready()返回false(第1行)时，工作流才会执行。若返回true，协程已经准备就绪，并返回调用awaitable.await\_resume()的结果(第26行)。
 
-假设awaitable.await\_ready()返回false。首先，将协程挂起(第3行)，并立即计算awaitable.await\_suspend()的返回值。返回类型可以是void(第7行)、布尔值(第12行)或另一个协程句柄(第20行)，例如：anotherCoroutineHandle。根据返回类型，程序流返回或执行另一个协程。
+假设awaitable.await\_ready()返回false。首先，将协程挂起(第3行)，并立即计算awaitable.await\_suspend()的返回值。返回类型可以是void(第6行)、布尔值(第11行)或另一个协程句柄(第19行)，例如：anotherCoroutineHandle。根据返回类型，程序流返回或执行另一个协程。
 
 \begin{center}
 返回awaitable.await\_suspend()的值
@@ -668,7 +668,7 @@ anotherCoroutineHandle & 恢复另一个协程，并将运行权返回给调用�
 \end{tabular}
 \end{table}
 
-若抛出异常会发生什么?若异常发生在await\_read、await\_suspend或await\_resume中，情况会有所不同。
+若抛出异常会发生什么?若异常发生在await\_ready、await\_suspend或await\_resume中，情况会有所不同。
 
 \begin{itemize}
 \item 
@@ -866,7 +866,7 @@ int main() {
 }
 \end{lstlisting}
 
-主程序创建了两个协程。第一个gen(第79行)返回从0到10的值，第二个gen2(第88行)返回从100到-100的值。在深入了解工作流程之前，可以在在线编译器\href{https://wandbox.org/}{Wandbox}上尝试这段程序，下面是程序的输出。
+主程序创建了两个协程。第一个gen(第80行)返回从0到10的值，第二个gen2(第89行)返回从100到-100的值。在深入了解工作流程之前，可以在在线编译器\href{https://wandbox.org/}{Wandbox}上尝试这段程序，下面是程序的输出。
 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter6/images/5.png}\\
@@ -1169,15 +1169,15 @@ int main() {
 
 若将无限数据流中的类Generator与本例中的类Event进行比较，就会发现细微的差异。第一种情况下，生成器是可等待的和待等待的;第二种情况下，事件使用操作符co\_await返回待等待对象。这种将关注点分离为可等待对象和待等待对象的方法，改善了代码结构。
 
-输出显示第二个协程的执行大约需要两秒钟。原因是event1在协程挂起之前发送了通知(第119行)，而event2在2秒(第130行)后才发送的通知。
+输出显示第二个协程的执行大约需要两秒钟。原因是event1在协程挂起之前发送了通知(第119行)，而event2在2秒(第132行)后才发送的通知。
 
-现在，切换为实现者角色。协程的工作流程确实很难掌控。类Event有两个有趣的成员:suspendedWaiter和notified。第30行中的变量suspendedWaiter保存了信号的等待器，第31行中的notify具有通知的状态。
+现在，切换为实现者角色。协程的工作流程确实很难掌控。类Event有两个有趣的成员:suspendedWaiter和notified。第31行中的变量suspendedWaiter保存了信号的等待器，第32行中的notify具有通知的状态。
 
 在对这两个工作流的解释中，假设在第一种情况下(第一个工作流)，事件通知发生在协程等待事件之前。对于第二种情况(第二个工作流)，假设正好相反。
 
-先来看看event1和第一个工作流，event1在启动receiverThread1之前发送通知。调用event1(第118行)触发notify(第74行)。设置通知标志，然后调用static\_cast<Awaiter*>(suspendedWaiter.load());装载waiter。本例中，waiter是nullptr，因为之前没有设置，所以不会执行第83行中对waiter的以下恢复调用。随后执行函数await\_ready(第50行)首先检查是否有多个waiter，若是的话抛出std::runtime异常，该方法的关键部分是返回值。event.notification已经在notify方法中设置为true，所以协程不会挂起，而是会像正常函数一样执行。
+先来看看event1和第一个工作流，event1在启动receiverThread1之前发送通知。调用event1(第118行)触发notify(第75行)。设置通知标志，然后调用static\_cast<Awaiter*>(suspendedWaiter.load());装载waiter。本例中，waiter是nullptr，因为之前没有设置，所以不会执行第84行中对waiter的以下恢复调用。随后执行函数await\_ready(第51行)首先检查是否有多个waiter，若是的话抛出std::runtime异常，该方法的关键部分是返回值。event.notification已经在notify方法中设置为true，所以协程不会挂起，而是会像正常函数一样执行。
 
-第二个工作流中，co\_await event2发生在event2发送通知之前。co\_wait event2会触发await\_ready(第50行)，与第一个工作流不同就是该事件。event.notified为false，从而使协程挂起。在这里，执行await\_suspend(第62行)，获取协程句柄corHandle，并将其存储在变量coroutineHandle中供后续使用(第64行)。当然，稍后的使用意味着协程恢复执行。其次，waiter存储在变量suspendedWaiter中。在之后event2.notify触发通知，执行notify(第74行)。与第一个工作流的不同之处在于条件waiter != nullptr的计算结果为true，从而waiter可以使用coroutineHandle来恢复协程。
+第二个工作流中，co\_await event2发生在event2发送通知之前。co\_wait event2会触发await\_ready(第51行)，与第一个工作流不同就是该事件。event.notified为false，从而使协程挂起。在这里，执行await\_suspend(第63行)，获取协程句柄corHandle，并将其存储在变量coroutineHandle中供后续使用(第65行)。当然，稍后的使用意味着协程恢复执行。其次，waiter存储在变量suspendedWaiter中。在之后event2.notify触发通知，执行notify(第75行)。与第一个工作流的不同之处在于条件waiter != nullptr的计算结果为true，从而waiter可以使用coroutineHandle来恢复协程。
 
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=mygreen!5!white,colframe=mygreen!75!black,title={总结}]
 	

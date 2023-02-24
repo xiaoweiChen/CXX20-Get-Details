@@ -10,6 +10,8 @@
 >
 > <p align="right"> — 云风，程序员修炼之道第2版译者</p>
 
+PDF可在本库的[Release页面](https://github.com/xiaoweiChen/CXX20-Get-Details/releases)获取。
+
 ## 本书概述
 
 这本书既是C++20标准的教程，也是C++20标准的参考资料。会教你如何使用C++20，并提供新C++标准的细节。这里最主要是C++20的四大特性。
