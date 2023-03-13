@@ -84,17 +84,6 @@ int main(){
 
 \href{https://cppinsights.io/s/9bd14f99}{C++ Insights}在编译器在实例化中转换函数模板后，并将上面的源代码可视化。
 
-\begin{lstlisting}[style=styleCXX]
-template <typename T>
-auto add(T first, T second){
-	return first + second;
-}
-
-int main(){
-	add(true, false);
-}
-\end{lstlisting}
-
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter4/images/1-1.png}\\
 bool提升为int
@@ -278,7 +267,7 @@ C++中，概念可以用在模板的非类型参数上。例如，像值5这样�
 \noindent
 \textbf{4.1.4.1\hspace{0.2cm}四种方式}
 
-我在conceptsintegralvariables.cpp中演示了这四种方式，使用了预定义的概念std::integral。
+我在conceptsIntegralVariations.cpp中演示了这四种方式，使用了预定义的概念std::integral。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -333,7 +322,7 @@ int main(){
 
 \begin{itemize}
 \item
-requires子句(第6行)
+requires子句(第7行)
 
 \item
 尾部requires子句(第14行)
@@ -465,7 +454,7 @@ int main() {
 	std::cout << std::boolalpha;
 
 	std::cout << "std::three_way_comparable<int>: "
-	<< std::three_way_comparable<int> << "\n";
+	          << std::three_way_comparable<int> << "\n";
 
 	std::cout << "std::three_way_comparable<double>: ";
 	if (std::three_way_comparable<double>) std::cout << "True";
@@ -490,7 +479,7 @@ int main() {
 }
 \end{lstlisting}
 
-例子中，我使用了std::three\_way\_comparable<T>这个概念，在比较时检查T是否支持六个比较运算符。作为编译时谓词std::thre\_way\_comparable可以在运行时(第16行和第20行)或编译时使用。static\_assert(第25行)和\href{https://en.cppreference.com/w/cpp/language/if}{constepr if}(第28和34行)可在编译时进行计算。
+例子中，我使用了std::three\_way\_comparable<T>这个概念，在比较时检查T是否支持六个比较运算符。作为编译时谓词std::thre\_way\_comparable可以在运行时(第17行和第20行)或编译时使用。static\_assert(第25行)和\href{https://en.cppreference.com/w/cpp/language/if}{constepr if}(第28和34行)可在编译时进行计算。
 
 \begin{tcblisting}{commandshell={}}
 std::three_way_coparable<int>: True
@@ -621,7 +610,7 @@ none(5, ture, false): false
 \noindent
 \textbf{4.1.4.4.5\hspace{0.2cm}重载}
 
-\href{https://en.cppreference.com/w/cpp/iterator/advance}{std::advance}是标准模板库的算法，对给定的迭代器iter增加n个元素，根据给定迭代器的功能，可以使用不同的策略。例如，std::forward\_list支持只能朝一个方向前进的迭代器，而std::list支持双向迭代器，std::vector支持随机访问迭代器。因此，对于std::forward\_list或std::list提供的迭代器，对std::advance(iter, n)的调用必须加n倍(参见std::list的结构)耗时。这个时间复杂度不适用于std::vector提供的std::randomaccess\_iterator，数字n可以直接加到迭代器中。因此，线性时间复杂度O(n)变成了O(1)。为了区分迭代器类型，可以使用概念。conceptsOverloadingFunctionTemplates.cpp展示了这样使用概念的方式。
+\href{https://en.cppreference.com/w/cpp/iterator/advance}{std::advance}是标准模板库的算法，对给定的迭代器iter增加n个元素，根据给定迭代器的功能，可以使用不同的策略。例如，std::forward\_list支持只能朝一个方向前进的迭代器，而std::list支持双向迭代器，std::vector支持随机访问迭代器。因此，对于std::forward\_list或std::list提供的迭代器，对std::advance(iter, n)的调用必须加n倍(参见std::list的结构)耗时。这个时间复杂度不适用于std::vector提供的std::random\_access\_iterator，数字n可以直接加到迭代器中。因此，线性时间复杂度O(n)变成了O(1)。为了区分迭代器类型，可以使用概念。conceptsOverloadingFunctionTemplates.cpp展示了这样使用概念的方式。
 
 \begin{lstlisting}[style=styleCXX]
 // conceptsOverloadingFunctionTemplates.cpp
@@ -667,7 +656,7 @@ int main() {
 }
 \end{lstlisting}
 
-函数advance的三种重载位于std::forward\_iterator(第9行)、std::bidirectional\_iterator(第14行)和std::random\_access\_iterator(第19行)这三个概念上，编译器会选择最合适的重载。所以，对于std::forward\_list(第28行)，对应的是基于std::forward\_list概念的重载；对于std::list(第32行)，对应的是基于std::bidirectional\_iterator概念的重载；对于std::vector(第36行)，对应的是基于std::random\_access\_iterator概念的重载。
+函数advance的三种重载位于std::forward\_iterator(第9行)、std::bidirectional\_iterator(第14行)和std::random\_access\_iterator(第19行)这三个概念上，编译器会选择最合适的重载。所以，对于std::forward\_list(第28行)，对应的是基于std::forward\_iterator概念的重载；对于std::list(第32行)，对应的是基于std::bidirectional\_iterator概念的重载；对于std::vector(第36行)，对应的是基于std::random\_access\_iterator概念的重载。
 
 \begin{tcblisting}{commandshell={}}
 forward_iterator
@@ -824,7 +813,7 @@ std::integral auto getIntegral(int val){
 
 int main(){
 
-std::cout << std::boolalpha << '\n';
+	std::cout << std::boolalpha << '\n';
 
 	std::vector<int> vec{1, 2, 3, 4, 5};
 	for (std::integral auto i: vec) std::cout << i << " ";
@@ -1069,13 +1058,16 @@ concept bool Generic(){
 
 \begin{itemize}
 \item
+default\_initializable: default\_initializable<T>保证T可以默认构造
+
+\item
 same\_as
 
 \item
 derived\_from
 
 \item
-convertible\_to
+convertible\_to: convertible\_to<T, U>保证T可以隐式或显式转换为U
 
 \item
 common\_reference\_with: common\_reference\_with<T, U>必须定义良好，T和U必须可以转换为引用类型C，其中C与common\_reference\_t<T, U>相同
@@ -1226,10 +1218,10 @@ concept regular = semiregular<T> && equality_comparable<T>;
 invocable
 
 \item
-regular\_invocable:类型建模为可调用且保持相等，并且不修改函数参数;保持相等，说明在给定相同的输入时会产生相同的输出
+regular\_invocable:类型建模为invocable且保持相等，并且不修改函数参数;保持相等，说明在给定相同的输入时会产生相同的输出
 
 \item
-predicate:若类型对可调用对象建模并返回布尔值，则可对谓词建模
+predicate:若类型对invocable建模并返回布尔值，则可对谓词建模
 \end{itemize}
 
 \hspace*{\fill} \\ %插入空行
@@ -1276,7 +1268,10 @@ std::forward\_iterator &
 std::bidirectional\_iterator & -{}-It,It-{}-           & \begin{tabular}[c]{@{}l@{}}std::set\\ std::map\\ std::multiset\\ std::multimap\\ std::list\end{tabular} \\ \hline
 std::random\_access\_iterator &
 \begin{tabular}[c]{@{}l@{}}It{[}i{]}\\ It += n, It -= n\\ It + n, It - n,\\ n + It,\\ It - It2,\\ It \textless It2, It \textless{}= It2\\ It \textless It2, It \textgreater{}= It2\end{tabular} &
-\begin{tabular}[c]{@{}l@{}}std::array\\ std::vector\\ std::deque\\ std::string\end{tabular}
+\begin{tabular}[c]{@{}l@{}}std::deque\end{tabular} \\ \hline
+std::contiguous\_iterator &
+\begin{tabular}[c]{@{}l@{}}It{[}i{]}\\ It += n, It -= n\\ It + n, It - n,\\ n + It,\\ It - It2,\\ It \textless It2, It \textless{}= It2\\ It \textless It2, It \textgreater{}= It2\end{tabular} &
+\begin{tabular}[c]{@{}l@{}}std::array\\ std::vector\\ std::string\end{tabular}
 \end{tabular}
 \end{table}
 
@@ -1320,6 +1315,13 @@ sortable:可以将一个序列排列成有序序列
 \begin{itemize}
 \item
 range:范围指定可以遍历的一组项，提供了一个开始迭代器和一个结束哨兵。当然，STL容器也有范围。
+\begin{lstlisting}[style=styleCXX]
+template<typename T>
+concept range = requires(T& t) {
+	ranges::begin(t);
+	ranges::end (t);
+};
+\end{lstlisting}
 \end{itemize}
 
 对于std::ranges::range还可以进一步的细化。
@@ -1356,7 +1358,7 @@ std::ranges::input\_range &
 std::ranges::bidirectional\_range & -{}-It,It-{}-           & \begin{tabular}[c]{@{}l@{}}std::set\\ std::map\\ std::multiset\\ std::multimap\\ std::list\end{tabular} \\ \hline
 std::ranges::random\_access\_range &
 \begin{tabular}[c]{@{}l@{}}It{[}i{]}\\ It += n, It -= n\\ It + n, It - n,\\ n + It,\\ It - It2,\\ It \textless It2, It \textless{}= It2\\ It \textless It2, It \textgreater{}= It2\end{tabular} &
-std::deque \\ \hline
+\begin{tabular}[c]{@{}l@{}}std::deque\end{tabular} \\ \hline
 std::ranges::contiguous\_range &
 \begin{tabular}[c]{@{}l@{}}It{[}i{]}\\ It += n, It -= n\\ It + n, It - n,\\ n + It,\\ It - It2,\\ It \textless It2, It \textless{}= It2\\ It \textless It2, It \textgreater{}= It2\end{tabular} &
 \begin{tabular}[c]{@{}l@{}}std::array\\ std::vector\\ std::string\end{tabular}
@@ -1365,11 +1367,36 @@ std::ranges::contiguous\_range &
 
 若容器支持std::ranges::continuous\_range概念，则支持表中提到的所有概念，如std::ranges::random\_access\_range，std::ranges::bidirectional\_range和std::ranges::input\_range。对于其他范围同理。
 
+有两个特殊范围
+
+\begin{itemize}
+\item
+sized\_rang:保证可以使用元素的开始和结束的差值在恒定时间内计算元素的数量
+
+\item
+borrowed\_range:确保迭代器不绑定到范围的生存期
+\end{itemize}
+
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{4.1.7.5.2\hspace{0.2cm}视图}
 
-std::ranges::view通常是应用在一个范围上，并用其执行一些操作。视图不拥有数据，视图用于复制、移动或赋值的时间恒定。下面引用Eric Niebler的range-v3实现(是C++20范围的基础):“视图是范围的组合适配，随着视图的迭代，这种适配的功能会慢慢地发挥其功效。”
+std::ranges::view是一个具有恒定时间复制、移动和赋值操作的范围。
+以下几行显示了概念视图的定义。
+
+\begin{lstlisting}[style=styleCXX]
+template<typename T>
+concept view = range<T> &&
+		movable<T> &&
+		default_initializable<T> &&
+		enable_view<T>;
+template<class T>
+inline constexpr bool enable_view = derived_from<T, view_base>;
+\end{lstlisting}
+
+视图通常是应用在一个范围上，并用其执行一些操作。视图不拥有数据，视图用于复制、移动或赋值的时间恒定。它应该是只读的、无状态的和保持相等。这里引用Eric Niebler的range-v3实现(是C++20范围的基础):“视图是范围的组合适配，随着视图的迭代，这种适配的功能会慢慢地发挥其功效。”
+
+因此，STL的容器是范围而不是视图。
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -1377,9 +1404,9 @@ std::ranges::view通常是应用在一个范围上，并用其执行一些操作
 
 数值库提供了uniform\_random\_bit\_generator的概念，该概念定义在头文件<random>中。类型G的uniform\_random\_bit\_generator g必须返回均分布的无符号整数，类型为G的均匀随机位生成器g必须支持成员函数G::min和G::max。
 
-\subsubsubsection{4.1.8\hspace{0.2cm}自定义概念}
+\subsubsubsection{4.1.8\hspace{0.2cm}定义概念}
 
-当在C++20中没有合适的预定义的概念时，可以自定义概念。在本节中，我将定义几个概念，使用CamelCase语法将它们与预定义的概念区别开来。因此，我的带符号整型的概念命名为signeintegral，而C++标准的概念为signed\_integral。
+当在C++20中没有合适的预定义的概念时，可以自定义概念。在本节中，我将定义几个概念，使用CamelCase语法将它们与预定义的概念区别开来。因此，我的带符号整型的概念命名为SignedIntegral，而C++标准的概念为signed\_integral。
 
 定义概念的语法很简单:
 
@@ -1388,7 +1415,7 @@ template <template-parameter-list>
 concept concept-name = constraint-expression;
 \end{lstlisting}
 
-概念定义从关键字template开始，并有一个模板参数列表。第二行更有趣，使用关键字概念，后面跟着概念名称和约束表达式。
+概念定义从关键字template开始，并有一个模板参数列表。第二行更有趣，使用关键字concept，后面跟着概念名称和约束表达式。
 
 约束表达式可以是:
 
@@ -1427,7 +1454,8 @@ concept concept-name = constraint-expression;
 \noindent
 \textbf{4.1.8.1\hspace{0.2cm}其他概念和编译时谓词的组合}
 
-可以使用连接词(\&\&)和析取词(||)组合概念和编译时谓词。构建逻辑组合时，可以使用感叹号(!)否定。因为\href{https://en.cppreference.com/w/cpp/header/type_traits}{类型特性库}有许多编译时谓词，所以具备了使用构建强大概念所需的工具。
+可以使用连接词(\&\&)和析取词(||)组合概念和编译时谓词。构建逻辑组合时，可以使用感叹号(!)否定。对概念和编译时谓词的这种逻辑组合的评估遵循\href{https://en.wikipedia.org/wiki/Short-circuit_evaluation}{短路求值}. 短路求值意味着逻辑表达式的求值在其总体结果已经确定时自动停止。
+因为\href{https://en.cppreference.com/w/cpp/header/type_traits}{类型特性库}有许多编译时谓词，所以具备了使用构建强大概念所需的工具。
 
 \hspace*{\fill} \\ %插入空行
 \begin{tcolorbox}[breakable,enhanced jigsaw,colback=red!5!white,colframe=red!75!black,title={不要递归地定义概念或尝试约束它们}]
@@ -1461,7 +1489,7 @@ concept Error = true;
 
 \end{tcolorbox}
 
-我们先从Integral、signeintegral和unsigneintegral概念开始。
+我们先从Integral、SignedIntegral和UnsignedIntegral概念开始。
 
 \begin{lstlisting}[style=styleCXX]
 template <typename T>
@@ -1545,6 +1573,8 @@ requires (parameter-list(optional)) {requirement-seq}
 需求序列:由简单需求、类型需求、复合需求或嵌套需求组成
 \end{itemize}
 
+当需要编译时谓词时，需求表达式也可以用作独立功能。阅读(需求表达式)中有关此功能的详细信息。
+
 \hspace*{\fill} \\ %插入空行
 \noindent
 \textbf{4.1.8.2.1\hspace{0.2cm}简单的需求}
@@ -1559,33 +1589,6 @@ concept Addable = requires (T a, T b) {
 \end{lstlisting}
 
 Addable的概念要求两个相同类型T可以进行加法a + b。
-
-\begin{tcolorbox}[breakable,enhanced jigsaw,colback=blue!5!white,colframe=blue!75!black,title={避免使用匿名概念}]
-
-可以定义一个匿名概念并直接使用，但请避免这样做。这会使得代码难以阅读，并且无法重用相应的概念。
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{一个匿名概念，用于添加两个概念}
-\begin{lstlisting}[style=styleCXX]
-template<typename T>
-	requires requires (T x) { x + x; }
-T add1(T a, T b) { return a + b; }
-\end{lstlisting}
-
-函数模板自定义了概念，Add1在require子句中使用需求表达式。匿名概念等同于前面定义的概念Addable，下面使用命名概念Addable的函数模板add2也是如此。
-
-\hspace*{\fill} \\ %插入空行
-\noindent
-\textbf{使用Addable概念}
-\begin{lstlisting}[style=styleCXX]
-template<Addable T>
-T add2(T a, T b) { return a + b; }
-\end{lstlisting}
-
-概念应该对一般情况进行封装，并为它们提供一个自解释的名称以便重用。这对于维护代码非常重要。匿名概念读起来更像模板参数的语法约束。
-
-\end{tcolorbox}
 
 \hspace*{\fill} \\ %插入空行
 \noindent
@@ -1702,7 +1705,7 @@ requires constraint-expression;
 
 嵌套需求用于指定类型参数上的需求。
 
-下面是定义概念unsigneintegral的另一种方法(参见概念和谓词的逻辑组合):
+下面是定义概念UnsignedIntegral的另一种方法(参见概念和谓词的逻辑组合):
 
 \begin{lstlisting}[style=styleCXX]
 // nestedRequirements.cpp
@@ -1732,11 +1735,14 @@ int main() {
 }
 \end{lstlisting}
 
-第14行使用signeintegral概念，嵌套需求来细化Integral概念。老实说，第11行中注释掉的概念unsigneintegral阅读起来更方便。
+第14行使用SignedIntegral概念，嵌套需求来细化Integral概念。老实说，第11行中注释掉的概念UnsignedIntegral阅读起来更方便。
 
 下一节中的有序概念演示了嵌套需求的使用。
 
-\subsubsubsection{4.1.9\hspace{0.2cm}应用}
+\subsubsubsection{4.1.9\hspace{0.2cm}Requires表达式}
+翻译暂缺
+
+\subsubsubsection{4.1.10\hspace{0.2cm}用户定义的概念}
 
 前面的章节中，回答了关于概念的两个基本问题:“如何使用概念?“和“如何定义你的概念?”
 
@@ -1744,7 +1750,7 @@ int main() {
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{4.1.9.1\hspace{0.2cm}Equal和Ordering的概念}
+\textbf{4.1.10.1\hspace{0.2cm}Equal和Ordering的概念}
 
 我已经在Haskell的类型的层次结构中介绍了概念的漫长历史:
 
@@ -1778,7 +1784,7 @@ class Eq a => Ord a where
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{4.1.9.1.1\hspace{0.2cm}排序概念}
+\textbf{4.1.10.1.1\hspace{0.2cm}排序概念}
 
 有了需求表达式，排序概念的定义看起来与Haskell中类型类ord的定义相似。
 
@@ -1854,9 +1860,7 @@ int main() {
 }
 \end{lstlisting}
 
-函数模板areEqual(第25行)要求实参a和b具有相同的类型并支持Equal概念，函数模板getsmall(第30行)要求两个参数都支持有序概念。当然，像1和5这样的整数可以同时匹配这两个概念，而\href{https://en.cppreference.com/w/cpp/container/unordered_set}{std::unordered\_set}并不匹配有序概念。
-
-因此，我将第48行注释掉。
+函数模板areEqual(第25行)要求实参a和b具有相同的类型并支持Equal概念，函数模板getSmaller(第30行)要求两个参数都支持有序概念。当然，像1和5这样的整数可以同时匹配这两个概念，而\href{https://en.cppreference.com/w/cpp/container/unordered_set}{std::unordered\_set}并不匹配有序概念。因此，我将第48行注释掉。
 
 \begin{tcblisting}{commandshell={}}
 areEqual(1, 5): false
@@ -1864,7 +1868,7 @@ getSmaller(1, 5): 1
 areEqual(firSet, secSet): true
 \end{tcblisting}
 
-接下来，当编译第48行会发生什么?GCC编译器明确指出std::unordered\_set不是函数模板getsmall的有效参数。
+接下来，当编译第48行会发生什么?GCC编译器明确指出std::unordered\_set不是函数模板getSmaller的有效参数。
 
 \begin{center}
 \includegraphics[width=1.0\textwidth]{content/3/chapter4/images/1-5.png}\\
@@ -1885,7 +1889,7 @@ C++20中，可以使用三向比较操作符，也称为宇宙飞船操作符<=>
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{4.1.9.2\hspace{0.2cm}半常规(SemiRegular)和常规(Regular)的概念}
+\textbf{4.1.10.2\hspace{0.2cm}半常规(SemiRegular)和常规(Regular)的概念}
 
 想要在C++生态系统中定义一个工作良好的类型时，应该定义一个“行为像int型”的类型。形式上，具体类型应该是常规类型在本节中，来定义半常规和常规概念。
 
@@ -1926,7 +1930,7 @@ C++20中，可以使用三向比较操作符，也称为宇宙飞船操作符<=>
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{4.1.9.2.1\hspace{0.2cm}半常规概念}
+\textbf{4.1.10.2.1\hspace{0.2cm}半常规概念}
 
 一个半常规的X型必须支持六大函数，并且可交换。六大函数包括:
 
@@ -1994,7 +1998,7 @@ concept SemiRegular = isSemiRegular<T>::value;
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{4.1.9.2.2\hspace{0.2cm}常规概念}
+\textbf{4.1.10.2.2\hspace{0.2cm}常规概念}
 
 我们已经完成了对Regular概念的定义。除了SemiRegular概念的需求外，Regular概念还要求类型具有相等的可比性。我已经在需求表达式一节中定义了Equal概念。因此，已经完成了，只需要把Equal和SemiRegular这两个概念组合起来就可以了。
 
@@ -2008,7 +2012,7 @@ concept Regular = Equal<T> &&
 
 \hspace*{\fill} \\ %插入空行
 \noindent
-\textbf{4.1.9.2.3\hspace{0.2cm}std::semiregular和std::regular}
+\textbf{4.1.10.2.3\hspace{0.2cm}std::semiregular和std::regular}
 
 C++20使用了现有类型特征和概念，定义了std::semiregular和std::regular概念。
 

@@ -67,7 +67,40 @@ std::cout << std::bitset<8>(std::rotl(num, 2)) << '\n'; // 11001010
 std::cout << std::bitset<8>(std::rotr(num, 2)) << '\n'; // 10101100
 \end{lstlisting}
 
-\subsubsubsection{3.3.4\hspace{0.2cm}日期和时区}
+\subsubsubsection{3.3.4\hspace{0.2cm}格式化库}
+
+新的格式化库提供了更安全且可扩展的替代方案，旨在补充现有的I/O流，并重用其一些基础结构，例如：用于定义类型的重载插入操作符。
+
+\begin{lstlisting}[style=styleCXX]
+std::string message = std::format("The answer is {}.", 42);
+\end{lstlisting}
+
+std::format使用Python的语法进行格式化。下面的例子展示了一些用例:
+
+\begin{itemize}
+\item 
+格式和使用位置参数
+
+\begin{lstlisting}[style=styleCXX]
+std::string s = std::format("I'd rather be {1} than {0}.", "right", "happy");
+// s == "I'd rather be happy than right."
+\end{lstlisting}
+
+\item 
+以安全的方式将整数转换为字符串
+
+\begin{lstlisting}[style=styleCXX]
+memory_buffer buf;
+std::format_to(buf, "{}", 42); // replaces itoa(42, buffer, 10)
+std::format_to(buf, "{:x}", 42); // replaces itoa(42, buffer, 16)
+\end{lstlisting}
+
+\item 
+格式化用户定义的类型
+
+\end{itemize}
+
+\subsubsubsection{3.3.5\hspace{0.2cm}日期和时区}
 
 C++11中的\href{https://en.cppreference.com/w/cpp/chrono}{chrono库}扩展了日期和时区功能。日期由表示年、月、周中的天和月中的第n个工作日组成。这些基本类型可以组合，形成复杂类型，例如：year\_month、year\_month\_day、year\_month\_day\_last、year\_month\_weekday和year\_month\_weekday\_last。为了方便地指定时间点，操作符“/”可以重载。此外，可以用新字面量: d表示天，y表示年。
 
@@ -107,37 +140,4 @@ std::cout << berlinTime << '\n'; // 2020-05-23 21:07:20.290 CEST
 std::cout << newYorkTime << '\n'; // 2020-05-23 15:07:20.290 EDT
 std::cout << tokyoTime << '\n'; // 2020-05-24 04:07:20.290 JST
 \end{lstlisting}
-
-\subsubsubsection{3.3.5\hspace{0.2cm}格式化库}
-
-新的格式化库提供了更安全且可扩展的替代方案，旨在补充现有的I/O流，并重用其一些基础结构，例如：用于定义类型的重载插入操作符。
-
-\begin{lstlisting}[style=styleCXX]
-std::string message = std::format("The answer is {}.", 42);
-\end{lstlisting}
-
-std::format使用Python的语法进行格式化。下面的例子展示了一些用例:
-
-\begin{itemize}
-\item 
-格式和使用位置参数
-
-\begin{lstlisting}[style=styleCXX]
-std::string s = std::format("I'd rather be {1} than {0}.", "right", "happy");
-// s == "I'd rather be happy than right."
-\end{lstlisting}
-
-\item 
-以安全的方式将整数转换为字符串
-
-\begin{lstlisting}[style=styleCXX]
-memory_buffer buf;
-std::format_to(buf, "{}", 42); // replaces itoa(42, buffer, 10)
-std::format_to(buf, "{:x}", 42); // replaces itoa(42, buffer, 16)
-\end{lstlisting}
-
-\item 
-格式化用户定义的类型
-
-\end{itemize}
 
