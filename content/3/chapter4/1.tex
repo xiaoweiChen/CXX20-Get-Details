@@ -84,17 +84,6 @@ int main(){
 
 \href{https://cppinsights.io/s/9bd14f99}{C++ Insights}在编译器在实例化中转换函数模板后，并将上面的源代码可视化。
 
-\begin{lstlisting}[style=styleCXX]
-template <typename T>
-auto add(T first, T second){
-	return first + second;
-}
-
-int main(){
-	add(true, false);
-}
-\end{lstlisting}
-
 \begin{center}
 \includegraphics[width=0.8\textwidth]{content/3/chapter4/images/1-1.png}\\
 bool提升为int
