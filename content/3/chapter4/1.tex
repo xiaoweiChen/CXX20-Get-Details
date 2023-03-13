@@ -1739,10 +1739,152 @@ int main() {
 
 下一节中的有序概念演示了嵌套需求的使用。
 
-\subsubsubsection{4.1.9\hspace{0.2cm}Requires表达式}
-翻译暂缺
+\subsubsubsection{4.1.9\hspace{0.2cm}Require表达式}
 
-\subsubsubsection{4.1.10\hspace{0.2cm}用户定义的概念}
+当需要编译时谓词时，require表达式也可以作为独立的特性使用。因此，require表达式的用例可以是require子句、[static\_assert]或 \href{https://en.cppreference.com/w/cpp/language/if}{constexpr if}。
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{4.1.9.1\hspace{0.2cm}static\_assert}
+
+static\_assert需要一个编译时谓词，并在编译时谓词失败时显示一条信息。C++17中，信息是可选的。C++20中，这个编译谓词可以是require表达式。
+
+\begin{lstlisting}[style=styleCXX]
+// staticAssertRequires.cpp
+
+#include <concepts>
+#include <iostream>
+
+struct Fir {
+	int count() const {
+		return 2020;
+	}
+};
+
+struct Sec {
+	int size() const {
+		return 2021;
+	}
+};
+
+int main() {
+
+	std::cout << '\n';
+	
+	First first;
+	static_assert(requires(Fir fir){ { fir.count() } -> std::convertible_to<int>; });
+	
+	Second second;
+	static_assert(requires(Sec sec){ { sec.count() } -> std::convertible_to<int>; });
+	
+	int third;
+	static_assert(requires(int third){ { third.count() } -> std::convertible_to<int>; });
+	
+	std::cout << '\n';
+
+}
+\end{lstlisting}
+
+require表达式(第23、26和29行)检查对象是否有成员函数count，以及结果是否可转换为int。这个检查只对Fir类有效(第6-10行)。相反，第26行和第29行的检查会失败。
+
+\begin{center}
+\includegraphics[width=1.0\textwidth]{content/3/chapter4/images/1-9.png}\\
+require表达式可作为static\_assert的谓词
+\end{center}
+
+可能会希望根据编译时检查，来编译不同的代码。这时，若将constexpr与require表达式结合使用，则可以事半功倍。
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{4.1.9.2\hspace{0.2cm}constexpr if}
+
+constexpr if在C++17中允许有条件地编译源代码。条件部分中，require表达式就可以发挥作用了，并且if的所有分支都必须有效。
+
+得益于constexpr if，现在可以定义在编译时检查参数的函数，并根据分析生成的功能。
+
+\begin{lstlisting}[style=styleCXX]
+// constexprIfRequires.cpp
+#include <concepts>
+#include <iostream>
+
+struct First {
+	int count() const {
+		return 2020;
+	}
+};
+
+struct Second {
+	int size() const {
+		return 2021;
+	}
+};
+
+template <typename T>
+int getNumberOfElements(T t) {
+
+	if constexpr (requires(T t){ { t.count() } -> std::convertible_to<int>; }) {
+		return t.count();
+	}
+	if constexpr (requires(T t){ { t.size() } -> std::convertible_to<int>; }) {
+		return t.size();
+	}
+	else return 42;
+
+}
+
+int main() {
+	std::cout << '\n';
+	
+	First first;
+	std::cout << "getNumberOfElements(first): " << getNumberOfElements(first) << '\n';
+	
+	Second second;
+	std::cout << "getNumberOfElements(second): " << getNumberOfElements(second) << '\n';
+	
+	int third;
+	std::cout << "getNumberOfElements(third): " << getNumberOfElements(i) << '\n';
+	
+	std::cout << '\n';
+
+}
+\end{lstlisting}
+
+这个示例中，第21和22行非常重要。第21行中，require表达式确定变量t是否有成员函数count，该函数返回int。因此，第22行确定变量t是否具有成员函数size。
+
+\begin{tcblisting}{commandshell={}}
+getNumberOfElements(first): 2020
+getNumberOfElements(second): 2021
+getNumberOfElements(third): 42
+\end{tcblisting}
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{4.1.9.3\hspace{0.2cm}requires requires或匿名概念}
+
+可以定义一个匿名概念并直接使用，但通常不应该这样做。匿名概念会使代码难以阅读，并且无法重用定义的概念。
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{一个用于添加两个概念的匿名概念}
+\begin{lstlisting}[style=styleCXX]
+template<typename T>
+	requires requires (T x) { x + x; }
+T add1(T a, T b) { return a + b; }
+\end{lstlisting}
+
+函数模板定义了它的概念。add1在require子句中使用require表达式，匿名概念等同于前面定义的概念Addable。下面使用命名概念Addable定义的函数模板add2具有与add1相同的功能。
+
+\hspace*{\fill} \\ %插入空行
+\noindent
+\textbf{Addable概念的使用}
+\begin{lstlisting}[style=styleCXX]
+template<Addable T>
+T add2(T a, T b) { return a + b; }
+\end{lstlisting}
+
+概念应该对通用的需求进行封装，并为其提供自解释的名称以便重用，因此其对于维护代码非常重要。而匿名概念读起来，更像是模板参数上的语法约束。
+
+\subsubsubsection{4.1.10\hspace{0.2cm}自定义概念}
 
 前面的章节中，回答了关于概念的两个基本问题:“如何使用概念?“和“如何定义你的概念?”
 
